@@ -32,6 +32,8 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - A User may play against another User
 - A User can view their game history
 - Hovering a game piece in the UI will show potential paths of movement
+- The application should keep a game log in algebraic notation and the user should be able to export the log as a .PGN file to be used with other chess software.
+- Users should have the option to play timed matches, where running out of time counts as a loss.
 
 ## Implementation
 
