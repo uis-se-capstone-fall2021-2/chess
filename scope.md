@@ -41,3 +41,7 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - UI will be written as a thin-client SPA using Javascript in the browser
 - Business logic will be written in Java and run on a persistent server in the cloud, vendor TBD
 - Game state may be stored in memory or in a database, depending on available time. MVP functionality will see it stored in memory.
+- At a minimum, we will define two business entities, the **Game** and the **Player**
+- A Chess AI and a User will both be categorized under the **Player** entity abstraction
+- A **Player** entity will interact with a **Game** entity via a well-defined interface
+- Chess AI(s) will use the adapter pattern to implement the **Player** interface. The result is both a decoupling of algorithm development from infrastructure development, allowing parallel development trajectories, as well as risk mitigation by offering the ability to rapidly expand or swap out algorithm implementations with minimal code change.
