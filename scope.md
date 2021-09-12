@@ -32,6 +32,7 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - A User may play against another User
 - A User can view their game history
 - Hovering a game piece in the UI will show potential paths of movement
+- "Mini game" where the board is set up so that checkmake is possible in X number of moves. If User does not checkmate in X moves the board is reset to original position, if User wins they can choose to play again.
 
 ## Implementation
 
