@@ -26,7 +26,7 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - Upon completion of the game, the User will be presented with state of win, loss, or stalemate and given the option to play again.
 - The application should keep a game log in algebraic notation and the User should be able to export the log as a .PGN file to be used with other chess software.
 
-## Stage 2 Features (Stretch Goals)
+## Stage 2..n Features (Stretch Goals)
 
 - A User may engage in multiple simultaneous games of chess independent of one another
 - A User may select from one of several AI alogrithms to play against
