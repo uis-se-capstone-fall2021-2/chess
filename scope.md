@@ -24,6 +24,7 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - Player movements will be constrained to the rules of chess
 - Invalid movements will return the game piece to its orignal location, provide an indication of the prohibited movement, and allow the User to try the move again.
 - Upon completion of the game, the User will be presented with state of win, loss, or stalemate and given the option to play again.
+- The application should keep a game log in algebraic notation and the User should be able to export the log as a .PGN file to be used with other chess software.
 
 ## Stage 2 Features (Stretch Goals)
 
@@ -32,7 +33,6 @@ Users would like to be able to engage in chess matches in a modern web browser.
 - A User may play against another User
 - A User can view their game history
 - Hovering a game piece in the UI will show potential paths of movement
-- The application should keep a game log in algebraic notation and the user should be able to export the log as a .PGN file to be used with other chess software.
 - Users should have the option to play timed matches, where running out of time counts as a loss.
 - "Mini game" where the board is set up so that checkmake is possible in X number of moves. If User does not checkmate in X moves the board is reset to original position, if User wins they can choose to play again.
 
