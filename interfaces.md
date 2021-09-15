@@ -1,6 +1,10 @@
 
 # Chess
 
+### Changes:
+>(9/15 : Bennett):
+> - GameRecord stores the pieces as ints because ChessPiece objects do not tell if the piece is white or black. Instead comparison from the int to the enum's representative int can be made.
+
 ## Entities
 
 ```java
@@ -10,11 +14,11 @@ interface PlayerInfo {
   String alias;
 }
 
-// how a Player is represented in persistence 
-interface PlayerRecord extends PlayerInfo {} 
+// how a Player is represented in persistence
+interface PlayerRecord extends PlayerInfo {}
 
 // runtime object
-interface Player extends PlayerInfo {
+interface Player extends PlayerInfo{
   void notify(GameState gameState)
 }
 
@@ -86,7 +90,7 @@ interface GameInfo {
 
 // how a Game is represented in persistence 
 interface GameRecord extends GameInfo {
-  ChessPiece[64] board;
+  int[64] board;
   // TODO: add record of algebraic moves here
 }
 
