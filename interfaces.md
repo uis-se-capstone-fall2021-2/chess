@@ -19,8 +19,8 @@ interface Player extends PlayerInfo {
 }
 
 enum GameCompletionState {
-  Active 1
-  Complete 2
+  Active 1,
+  Complete 2,
   Terminated 3
 }
 
@@ -63,10 +63,15 @@ enum PlayerColor {
   BLACK -1
 }
 
+interface Position {
+  File file;
+  Rank rank;
+}
+
 interface MoveIntent {
   ChessPiece chessPiece;
-  [File, Rank] from;
-  [File, Rank] to;
+  Position from;
+  Position to;
 }
 
 // high level for summary views
@@ -98,15 +103,19 @@ interface Game {
   boolean complete;
   Player winner;
 
-  boolean move(Player player, MoveIntent intent); // validate move, update game state, increment moveCount, and notify players of new game state
+  // validate move,
+  // update game state, persist
+  // increment moveCount
+  // notify players of new game state
+  boolean move(Player player, MoveIntent intent);
   GameState getGameState();
 }
 
 interface MoveValidator {
   boolean validateMove(
-    PlayerColor playerColor
     MoveIntent intent,
-    ChessPiece[64] board
+    ChessPiece[64] board,
+    PlayerColor playerColor
   );
 }
 ```
