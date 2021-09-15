@@ -3,7 +3,7 @@
 
 ### Changes:
 >(9/15 : Bennett):
-> - GameRecord stores the pieces as ints because ChessPiece objects do not tell if the piece is white or black. Instead comparison from the int to the enum's representative int can be made.
+> - GameRecord stores the pieces as ints because ChessPiece objects do not tell if the piece is white or black. Board array will store same ints but negative when on black team.
 
 ## Entities
 
