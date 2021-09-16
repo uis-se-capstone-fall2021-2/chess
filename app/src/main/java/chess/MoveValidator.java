@@ -26,8 +26,7 @@ public class MoveValidator {
                 //TODO: handle king move validation
                 break;
             default:
-                //shouldn't happen
-                break;
+                throw new IllegalArgumentException("MoveValidator: Invalid piece type input");
         }
         return moveIsLegal;
     }
