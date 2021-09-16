@@ -1,4 +1,7 @@
 package game;
+/**
+ * A lightweight summary of a Game for display in a list view
+ */
 public abstract class GameInfo {
     int gameId;
     int owner;
