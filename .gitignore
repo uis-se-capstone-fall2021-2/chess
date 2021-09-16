@@ -1,5 +1,5 @@
 scope.pdf
-src/Testing.java
+package-lock.json
 # Ignore Gradle project-specific cache directory
 .gradle
 

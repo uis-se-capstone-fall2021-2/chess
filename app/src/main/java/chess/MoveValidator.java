@@ -1,8 +1,7 @@
 package chess;
 
 public class MoveValidator {
-    public boolean validateMove(MoveIntent intent, int[] board, PlayerColor playerColor) {
-        //TODO: write method for move validation.
+    public boolean validateMove(MoveIntent intent, GameRecord record, PlayerColor playerColor) throws IllegalArgumentException {
         boolean moveIsLegal = false;
         switch(intent.chessPiece){
             case PAWN:
@@ -24,8 +23,7 @@ public class MoveValidator {
                 //TODO: handle king move validation
                 break;
             default:
-                //shouldn't happen
-                break;
+                throw new IllegalArgumentException("MoveValidator: Invalid piece type input");
         }
         return moveIsLegal;
     }
