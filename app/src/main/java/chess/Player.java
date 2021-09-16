@@ -1,5 +1,5 @@
 
-package game;
+package chess;
 /**
  * Abstract player class, should be exteneded by {@link game.ChessAIPlayer} and {@link game.userPlayer}
  */

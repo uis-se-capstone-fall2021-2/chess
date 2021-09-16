@@ -1,4 +1,4 @@
-package game;
+package chess;
 /**
  * A lightweight summary of a Game for display in a list view
  */

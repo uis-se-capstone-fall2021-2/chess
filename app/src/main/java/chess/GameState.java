@@ -1,4 +1,4 @@
-package game;
+package chess;
 
 /**
  * Information for Players during game 

@@ -1,4 +1,4 @@
-package game;
+package chess;
 public enum Rank {
     _1(0),
     _2(1),

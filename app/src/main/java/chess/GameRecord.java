@@ -1,4 +1,4 @@
-package game;
+package chess;
 /**
  * How a game is persisted to db
  */

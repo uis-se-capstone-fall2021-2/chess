@@ -1,4 +1,5 @@
-package game;
+package chess;
+
 public enum ChessPiece {
     NONE(0),
     PAWN(1),

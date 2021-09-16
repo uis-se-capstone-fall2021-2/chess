@@ -1,4 +1,4 @@
-package game;
+package chess;
 public class PlayerInfo {
     int playerId;
     String alias;

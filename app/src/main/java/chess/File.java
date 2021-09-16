@@ -1,4 +1,5 @@
-package game;
+package chess;
+
 public enum File {
     A(0),
     B(1),

@@ -1,4 +1,4 @@
-package game;
+package chess;
 
 public interface IGame {
   public int gameId();
