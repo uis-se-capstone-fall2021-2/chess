@@ -1,4 +1,7 @@
 package game;
+/**
+ * How a game is persisted to db
+ */
 public class GameRecord extends GameInfo{
     int[] board;
     // TODO: add record of algebraic moves here

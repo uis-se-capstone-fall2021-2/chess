@@ -13,7 +13,7 @@ public abstract class Player extends PlayerInfo{
         super(playerId, alias);
     }
     /**
-     *  Used to notify player of changeins in gamestate.
+     *  Used to notify player of changes in gamestate.
      *  Should notify when player is in check, when the game is over,
      *  and when the player's turn has begun
      *  @param gameState
