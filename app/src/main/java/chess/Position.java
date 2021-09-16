@@ -1,4 +1,4 @@
-package game;
+package chess;
 
 public class Position {
     File file;

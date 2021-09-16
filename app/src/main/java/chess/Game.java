@@ -1,4 +1,4 @@
-package game;
+package chess;
 
 // TODO: remove abstract and implement methods
 public abstract class Game implements IGame {

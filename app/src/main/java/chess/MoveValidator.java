@@ -1,4 +1,4 @@
-package game;
+package chess;
 
 public class MoveValidator {
     boolean validateMove(MoveIntent intent, int[] board, PlayerColor playerColor) {

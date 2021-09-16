@@ -1,4 +1,4 @@
-package game;
+package chess;
 public enum PlayerColor {
     WHITE(1),
     BLACK(-1);
