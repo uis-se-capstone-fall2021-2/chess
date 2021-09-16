@@ -1,5 +1,5 @@
 package game;
-public class GameInfo {
+public abstract class GameInfo {
     int gameId;
     int owner;
     int winner;
