@@ -1,5 +1,4 @@
 scope.pdf
-package-lock.json
 # Ignore Gradle project-specific cache directory
 .gradle
 
