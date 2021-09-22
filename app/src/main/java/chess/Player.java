@@ -1,5 +1,8 @@
 
 package chess;
+
+import chess.game.GameState;
+
 /**
  * Abstract player class, should be exteneded by {@link game.ChessAIPlayer} and {@link game.userPlayer}
  */
