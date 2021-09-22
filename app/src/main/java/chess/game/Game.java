@@ -1,4 +1,7 @@
-package chess;
+package chess.game;
+
+import chess.MoveIntent;
+import chess.Player;
 
 // TODO: remove abstract and implement methods
 public abstract class Game implements IGame {
