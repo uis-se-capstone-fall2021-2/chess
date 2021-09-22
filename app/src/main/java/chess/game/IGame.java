@@ -1,4 +1,7 @@
-package chess;
+package chess.game;
+
+import chess.MoveIntent;
+import chess.Player;
 
 public interface IGame {
   public int gameId();
