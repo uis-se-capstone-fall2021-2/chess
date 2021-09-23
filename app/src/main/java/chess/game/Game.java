@@ -34,12 +34,21 @@ public abstract class Game implements IGame {
         // TODO:
         // replay the moves to bring the board to current state
         // notify players
+        // players[0].notify(this.getGameState());
+        // players[1].notify(this.getGameState());
     }
 
     public int gameId() {
         return this.gameId; // TODO: I feel like my IDE should be complaining about this but isn't
     }
+
+    // first verify it is player's turn
+    // validate with MoveValidator
+    // update board
+    // notify players
     public abstract boolean move(Player player, MoveIntent intent);
+    // determine game state
+    // return new GameState(this.gameId, ...)
     public abstract GameState getGameState();
 
 }
