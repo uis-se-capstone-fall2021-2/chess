@@ -3,11 +3,6 @@ package chess;
 import java.util.ArrayList;
 
 public class MoveValidator {
-
-    public static void main(String[] args) {
-        System.out.println("Test");
-    }
-
     public boolean validateMove(MoveIntent intent, int[] board,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor) {
 
         ArrayList<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
