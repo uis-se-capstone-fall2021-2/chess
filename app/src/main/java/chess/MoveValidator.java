@@ -91,15 +91,8 @@ public class MoveValidator {
         return validMoves;
 
     }
-
-
-    private int getPiece(File file, Rank rank, int[] board){
-        return board[rank.value * 8 + file.value];
-    }
-    private int getPiece(Position position, int[] board){
+    //FIXME: maybe this doesn't belong here?
+    public int getPiece(Position position, int[] board){
         return board[position.rank.value * 8 + position.file.value];
-    }
-    private int getPiece(int x, int y, int[] board) {
-        return board[y * 8 + x];
     }
 }
