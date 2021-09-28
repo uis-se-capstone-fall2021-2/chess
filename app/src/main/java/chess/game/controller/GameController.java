@@ -12,9 +12,9 @@ import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.controller.requests.CreateGameRequest;
 import chess.game.service.IGameService;
-import chess.game.service.params.CreateGameParams;
-import chess.game.service.params.QuitGameParams;
-import chess.game.service.params.UpdateGameParams;
+import chess.game.service.params.*;
+import chess.game.service.results.*;
+
 
 @RestController
 public class GameController {
@@ -34,7 +34,7 @@ public class GameController {
   }
 
   @PostMapping("/games")
-  public long createGame(@RequestBody(required=true) CreateGameRequest req) {
+  public GameInfo createGame(@RequestBody(required=true) CreateGameRequest req) {
     return gameService.createGame(
       new CreateGameParams(
         mockPlayerIdFromRequest,
@@ -43,42 +43,61 @@ public class GameController {
   }
 
   @DeleteMapping("/games/{id}")
-  public boolean deleteGame(@PathVariable(value="id", required=true) long gameId) {
-    GameInfo gameInfo = gameService.getGameInfo(gameId);
-    if(gameInfo == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    } else if(mockPlayerIdFromRequest != gameInfo.owner) {
-      // only owner can delete game
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+  public void deleteGame(@PathVariable(value="id", required=true) long gameId) {
+    DeleteGameResult result = gameService.deleteGame(
+      new DeleteGameParams(gameId, mockPlayerIdFromRequest));
+    
+    switch(result) {
+      case GAME_NOT_FOUND:
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      case UNAUTHORIZED:
+        // only owner can delete game
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      case GAME_ACTIVE:
+        throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Cannot delete an active game");
+      case OK:
+      default:
+        return;
     }
-    // TODO: GameService impl must reject if game is active
-    return gameService.deleteGame(gameId);
   }
 
   @PostMapping("/games/{id}/quit")
-  public boolean quitGame(@PathVariable(value="id", required=true) long gameId) {
-    GameInfo gameInfo = gameService.getGameInfo(gameId);
-    if(gameInfo == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    } else if(!GameInfo.playerIsInGame(gameInfo, mockPlayerIdFromRequest)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-    } 
-    return gameService.quitGame(
+  public void quitGame(@PathVariable(value="id", required=true) long gameId) {
+    QuitGameResult result = gameService.quitGame(
       new QuitGameParams(
         gameId,
         mockPlayerIdFromRequest));
+
+    switch(result) {
+      case GAME_NOT_FOUND:
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      case UNAUTHORIZED:
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      case ALREADY_COMPLETE:
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Game already completed");
+      case OK:
+      default:
+        return;
+    }
   }
 
   @GetMapping("/games/{id}")
   public GameState getGameState(@PathVariable(value="id", required=true) long gameId) {
-    GameInfo gameInfo = gameService.getGameInfo(gameId);
-    if(gameInfo == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    } else if(!GameInfo.playerIsInGame(gameInfo, mockPlayerIdFromRequest)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-    } 
-    // TODO: GameService impl must instantiate a new Game from db if no game is loaded
-    return gameService.getGameState(gameId);
+    GameStateResult result = gameService.getGameState(
+      new GetGameStateParams(gameId, mockPlayerIdFromRequest));
+
+    if(result.value == null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return result.value;
+    }
   }
 
   @PatchMapping("/games/{id}")
@@ -86,19 +105,28 @@ public class GameController {
     @PathVariable(value="id", required=true) long gameId,
     @RequestBody(required=true) MoveIntent moveIntent
   ) {
-    GameInfo gameInfo = gameService.getGameInfo(gameId);
-    if(gameInfo == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    } else if(!GameInfo.playerIsInGame(gameInfo, mockPlayerIdFromRequest)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-    }
-
-    // TODO: GameService impl must reject if move is invalid
-    return gameService.move(
+    UpdateGameResult result = gameService.move(
       new UpdateGameParams(
+        gameId,
         mockPlayerIdFromRequest,
         moveIntent
       ));
+    if(result.value == null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        case OUT_OF_TURN:
+          throw new ResponseStatusException(HttpStatus.LOCKED, "Cannot move out of turn");
+        case ILLEGAL_MOVE:
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal move");
+        default:
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return result.value;
+    }
   }
 
 }

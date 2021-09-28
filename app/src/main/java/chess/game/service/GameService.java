@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import chess.game.Game;
-
+import chess.game.GameCompletionState;
 import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.service.params.*;
+import chess.game.service.results.*;
 
 
 
@@ -41,41 +42,65 @@ public class GameService implements IGameService {
   }
 
   @Override
-  public long createGame(CreateGameParams params) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public boolean deleteGame(long gameId) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean quitGame(QuitGameParams params) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public GameState getGameState(long gameId) {
-    chess.game.db.Game record = gamesRepo.getGameById(gameId);
-    if(record == null) {
-      return null;
-    }
-    Game game = games.get(gameId);
-    if(game == null) {
-      // TODO: create game instance
-      return null;
-    }
-    return game.getGameState();
-  }
-
-  @Override
-  public GameState move(UpdateGameParams params) {
+  public GameInfo createGame(CreateGameParams params) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public DeleteGameResult deleteGame(DeleteGameParams params) {
+    chess.game.db.Game record = gamesRepo.getGameById(params.gameId);
+    if(record == null) {
+      return DeleteGameResult.GAME_NOT_FOUND;
+    } else if(record.getOwner() != params.playerId) {
+      return DeleteGameResult.UNAUTHORIZED;
+    } else if(record.getCompletionState() == GameCompletionState.ACTIVE) {
+      return DeleteGameResult.GAME_ACTIVE;
+    }
+    // TODO: gameRepo.deleteGame(gameId)
+    return DeleteGameResult.OK;
+  }
+
+  @Override
+  public QuitGameResult quitGame(QuitGameParams params) {
+    chess.game.db.Game record = gamesRepo.getGameById(params.gameId);
+    if(record == null) {
+      return QuitGameResult.GAME_NOT_FOUND;
+    } else if(!GameInfo.playerIsInGame(record.info(), params.playerId)) {
+      return QuitGameResult.UNAUTHORIZED;
+    } else if(record.getCompletionState() != GameCompletionState.ACTIVE) {
+      return QuitGameResult.ALREADY_COMPLETE;
+    }
+    // TODO: quit game, save, notify players
+    return QuitGameResult.OK;
+  }
+
+  @Override
+  public GameStateResult getGameState(GetGameStateParams params) {
+    chess.game.db.Game record = gamesRepo.getGameById(params.gameId);
+    if(record == null) {
+      return new GameStateResult(GameStateResult.Code.GAME_NOT_FOUND);
+    } else if(!GameInfo.playerIsInGame(record.info(), params.playerId)) {
+      return new GameStateResult(GameStateResult.Code.UNAUTHORIZED);
+    }
+    Game game = games.get(params.gameId);
+    if(game == null) {
+      // TODO: create game instance
+      new GameStateResult(GameStateResult.Code.GAME_NOT_FOUND);
+    }
+    return new GameStateResult(game.getGameState());
+  }
+
+  @Override
+  public UpdateGameResult move(UpdateGameParams params) {
+    chess.game.db.Game record = gamesRepo.getGameById(params.gameId);
+    if(record == null) {
+      return new UpdateGameResult(UpdateGameResult.Code.GAME_NOT_FOUND);
+    } else if(!GameInfo.playerIsInGame(record.info(), params.playerId)) {
+      return new UpdateGameResult(UpdateGameResult.Code.UNAUTHORIZED);
+    }
+    // TODO: implement
+    return new UpdateGameResult(UpdateGameResult.Code.OUT_OF_TURN);
   }
   
 }
