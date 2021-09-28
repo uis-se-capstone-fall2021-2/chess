@@ -1,5 +1,6 @@
 package chess.game.db;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -13,7 +14,7 @@ public class Game {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
-  private long gameId;
+  private long id;
   @Column
   private long owner; // playerId
   @Column
@@ -23,10 +24,11 @@ public class Game {
   @Column
   private GameCompletionState completionState;
   @Column
-  private List<MoveIntent> moveHistory;
+  @ElementCollection(targetClass=Move.class)
+  private List<Move> moves = new ArrayList<Move>();
 
   public long getGameId() {
-    return gameId;
+    return id;
   }
   public long getOwner() {
     return owner;
@@ -41,7 +43,12 @@ public class Game {
     return completionState;
   }
   public List<MoveIntent> getMoveHistory() {
-    return moveHistory;
+    List<MoveIntent> history = new ArrayList<MoveIntent>();
+    int i = 0;
+    for(Move move: moves) {
+      history.add(i++, move.asIntent());
+    }
+    return history;
   }
 
   public GameInfo info() {
