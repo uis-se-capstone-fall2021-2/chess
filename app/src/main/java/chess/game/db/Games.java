@@ -19,7 +19,7 @@ public class Games {
 		session.beginTransaction();
 		String q = "FROM Games G WHERE some elements(G.players) = :playerId";
 		Query<Game> query = session.createQuery(q, Game.class);
-		query.setParameter("gameId", playerId);
+		query.setParameter("playerId", playerId);
 		List<Game> games = query.list();
 		session.getTransaction().commit();
 		session.close();
