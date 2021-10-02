@@ -38,8 +38,22 @@ public class GameService implements IGameService {
     return game.info();
   }
 
-  public GameInfo createGame(CreateGameParams params) {
+  public CreateGameResult createGame(CreateGameParams params) {
+
+    if(params.playerId == params.opponentId) {
+      return new CreateGameResult(CreateGameResult.Code.INVALID_OPPONENT);
+    }
+    
+
     long player1, player2, owner = params.playerId;
+   
+    /*
+    if(! both players exist in system) {
+      // TODO: check that both players exist
+      return new CreateGameResult(CreateGameResult.Code.UNKNOWN_OPPONENT);
+    }
+    */
+
     if(params.playerColor == PlayerColor.WHITE) {
       player1 = owner;
       player2 = params.opponentId;
@@ -54,7 +68,7 @@ public class GameService implements IGameService {
         owner
       ));
     // TODO: notify players
-    return game.info();
+    return new CreateGameResult(game.info());
   }
 
   public DeleteGameResult deleteGame(DeleteGameParams params) {

@@ -19,7 +19,7 @@ import chess.game.service.results.*;
 @RestController
 public class GameController {
 
-  private final static long mockPlayerIdFromRequest = 1;
+  private final static long TEST_PLAYER_ID = 1;
 
   private final IGameService gameService;
 
@@ -30,23 +30,36 @@ public class GameController {
 
   @GetMapping("/games")
   public List<GameInfo> listAvailableGames() {
-    return gameService.listAvailableGames(mockPlayerIdFromRequest);
+    return gameService.listAvailableGames(TEST_PLAYER_ID);
   }
 
   @PostMapping("/games")
   public GameInfo createGame(@RequestBody(required=true) CreateGameRequest req) {
-    return gameService.createGame(
+    CreateGameResult result = gameService.createGame(
       new CreateGameParams(
-        mockPlayerIdFromRequest,
+        TEST_PLAYER_ID,
         req.playerColor,
         req.opponentId
         ));
+    
+    if(result.value != null) {
+      return result.value;
+    } else {
+      switch(result.code) {
+        case INVALID_OPPONENT:
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One's opponent cannot be oneself");
+        case UNKNOWN_OPPONENT:
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown opponent");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 
   @DeleteMapping("/games/{id}")
   public void deleteGame(@PathVariable(value="id", required=true) long gameId) {
     DeleteGameResult result = gameService.deleteGame(
-      new DeleteGameParams(gameId, mockPlayerIdFromRequest));
+      new DeleteGameParams(gameId, TEST_PLAYER_ID));
     
     switch(result) {
       case GAME_NOT_FOUND:
@@ -67,7 +80,7 @@ public class GameController {
     QuitGameResult result = gameService.quitGame(
       new QuitGameParams(
         gameId,
-        mockPlayerIdFromRequest));
+        TEST_PLAYER_ID));
 
     switch(result) {
       case GAME_NOT_FOUND:
@@ -85,7 +98,7 @@ public class GameController {
   @GetMapping("/games/{id}")
   public GameState getGameState(@PathVariable(value="id", required=true) long gameId) {
     GameStateResult result = gameService.getGameState(
-      new GetGameStateParams(gameId, mockPlayerIdFromRequest));
+      new GetGameStateParams(gameId, TEST_PLAYER_ID));
 
     if(result.value == null) {
       switch(result.code) {
@@ -109,7 +122,7 @@ public class GameController {
     UpdateGameResult result = gameService.move(
       new UpdateGameParams(
         gameId,
-        mockPlayerIdFromRequest,
+        TEST_PLAYER_ID,
         moveIntent
       ));
     if(result.value == null) {
