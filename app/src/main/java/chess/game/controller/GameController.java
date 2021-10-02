@@ -38,8 +38,9 @@ public class GameController {
     return gameService.createGame(
       new CreateGameParams(
         mockPlayerIdFromRequest,
-        req.opponentId,
-        req.player1Color));
+        req.playerColor,
+        req.opponentId
+        ));
   }
 
   @DeleteMapping("/games/{id}")

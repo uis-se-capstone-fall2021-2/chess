@@ -7,6 +7,7 @@ import javax.persistence.*;
 import chess.MoveIntent;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
+import chess.game.GameState;
 
 @Entity
 @Table(name="Games")
@@ -20,12 +21,27 @@ public class Game {
   @Column
   private long winner; // playerId
   @Column
-  private long[] players; // playerId, array of length 2, first player is white
+  private long player1; // playerId, player1 is white
+  @Column
+  private long player2; // playerId, player2 is black
   @Column
   private GameCompletionState completionState;
   @Column
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
+
+  public Game() {}
+
+  public Game(
+    long player1,
+    long player2,
+    long owner
+  ) {
+    this.player1 = player1;
+    this.player2 = player2;
+    this.owner = owner;
+    this.completionState = GameCompletionState.ACTIVE;
+  }
 
   public long getGameId() {
     return id;
@@ -33,15 +49,31 @@ public class Game {
   public long getOwner() {
     return owner;
   }
+
   public long getWinner() {
     return winner;
   }
-  public long[] getPlayers() {
-    return players;
+  public void setWinnner(long playerId) {
+    winner = playerId;
   }
+
+  public long[] getPlayers() {
+    return new long[] {player1, player2};
+  }
+  public boolean hasPlayer(long playerId) {
+    return (
+      player1 == playerId ||
+      player2 == playerId
+    );
+  }
+
   public GameCompletionState getCompletionState() {
     return completionState;
   }
+  public void setCompletionState(GameCompletionState state) {
+    completionState = state;
+  }
+
   public List<MoveIntent> getMoveHistory() {
     List<MoveIntent> history = new ArrayList<MoveIntent>();
     int i = 0;
@@ -59,5 +91,13 @@ public class Game {
       getPlayers(),
       getMoveHistory().size(),
       getCompletionState());
+  }
+
+  public GameState getGameState() {
+    return null;
+  }
+
+  public boolean move(long playerId, MoveIntent intent) {
+    return true;
   }
 }
