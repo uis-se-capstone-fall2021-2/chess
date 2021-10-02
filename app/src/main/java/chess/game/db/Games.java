@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import chess.game.db.params.*;
 
@@ -43,9 +44,9 @@ public class Games {
 		return game;
 	}
 
+	@Transactional
 	public Game createGame(CreateGameParams params) {
 		Session session = getSession();
-		session.beginTransaction();
 
 		Game game = new Game(
 			params.player1,
@@ -54,25 +55,22 @@ public class Games {
 		);
 		
 		session.save(game);
-		session.getTransaction().commit();
 		return game;
 	}
 
+	@Transactional
 	public void deleteGame(long gameId) {
 		Session session = getSession();
-		session.beginTransaction();
 		Game game = session.get(Game.class, gameId);
 		session.remove(game);
-		session.getTransaction().commit();
 	}
 
+	@Transactional
 	public void endGame(EndGameParams params) {
 		Session session = getSession();
-		session.beginTransaction();
 		Game game = session.get(Game.class, params.gameId);
 		game.setWinnner(params.winner);
 		game.setCompletionState(params.completionState);
 		session.saveOrUpdate(game);
-		session.getTransaction().commit();
 	}
 }
