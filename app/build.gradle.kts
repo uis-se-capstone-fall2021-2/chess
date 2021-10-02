@@ -21,6 +21,8 @@ application {
 }
 
 dependencies {
+	implementation(group="io.springfox", name="springfox-swagger2", version ="2.7.0")
+	implementation(group="io.springfox", name="springfox-swagger-ui", version="2.7.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
