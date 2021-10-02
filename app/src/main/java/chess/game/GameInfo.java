@@ -10,15 +10,15 @@ public class GameInfo {
     public final long winner; // playerId
     public final long[] players; // playerId, array of length 2, first player is white
     public final long moveCount;
-    public final GameCompletionState completed;
+    public final GameCompletionState state;
 
     // default constructor
-    public GameInfo(long gameId, long owner, long winner, long[] players, long moveCount, GameCompletionState completed) {
+    public GameInfo(long gameId, long owner, long winner, long[] players, long moveCount, GameCompletionState completionState) {
         this.gameId = gameId;
         this.owner = owner;
         this.winner = winner;
         this.players = players;
         this.moveCount = moveCount;
-        this.completed = completed;
+        this.state = completionState;
     }
 }
