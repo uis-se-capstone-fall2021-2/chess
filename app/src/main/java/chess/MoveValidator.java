@@ -3,8 +3,18 @@ import chess.board.*;
 import java.util.ArrayList;
 
 public class MoveValidator {
-    public boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor) {
-
+    public boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord) {
+        PlayerColor playerColor;
+        Position startingPoint = intent.from;
+        int piece = board.getPiece(startingPoint);
+        if(piece > 0) {
+            playerColor = PlayerColor.WHITE;
+        } else if (piece < 0) {
+            playerColor = PlayerColor.BLACK;
+        } else {
+            // Attempted to move a piece that does not exist.
+            return false;
+        }
         ArrayList<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
         for(MoveIntent move : validMoves){
             if(move.equals(intent)) {
