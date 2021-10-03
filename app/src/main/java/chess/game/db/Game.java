@@ -52,7 +52,16 @@ public class Game {
   }
 
   private int[] initializeBoard(List<Move> moves) {
-    int[] board = new int[64];
+    int[] board =  new int[] {
+      2,3,4,6,5,4,3,2,
+      1,1,1,1,1,1,1,1,
+      0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,
+      -1,-1,-1,-1,-1,-1,-1,-1,
+      -2,-3,-4,-6,-5,-4,-3,-2
+    };
     // replay the moves to bring the board to current state
     for(Move move : moves){
       // TODO: update board with move
@@ -120,6 +129,7 @@ public class Game {
       getPlayers(),
       moves.size(),
       playerInCheck(),
+      this.board,
       getCompletionState()
     );
   }
