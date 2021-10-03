@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.*;
 
 import chess.MoveIntent;
+import chess.MoveValidator;
+import chess.PlayerColor;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
 import chess.game.GameState;
@@ -30,7 +32,11 @@ public class Game {
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
-  public Game() {}
+  private final int[] board;
+
+  public Game() {
+    this.board = initializeBoard(moves);
+  }
 
   public Game(
     long player1,
@@ -39,8 +45,19 @@ public class Game {
   ) {
     this.player1 = player1;
     this.player2 = player2;
+    this.board = initializeBoard(moves);
     this.owner = owner;
     this.completionState = GameCompletionState.ACTIVE;
+  }
+
+  private int[] initializeBoard(List<Move> moves) {
+    int[] board = new int[64];
+    // replay the moves to bring the board to current state
+    for(Move move : moves){
+      // TODO: update board with move
+    }
+
+    return board;
   }
 
   public long getGameId() {
@@ -89,7 +106,7 @@ public class Game {
       getOwner(),
       getWinner(),
       getPlayers(),
-      getMoveHistory().size(),
+      moves.size(),
       getCompletionState()
     );
   }
@@ -100,13 +117,37 @@ public class Game {
       getOwner(),
       getWinner(),
       getPlayers(),
-      getMoveHistory().size(),
+      moves.size(),
+      playerInCheck(),
       getCompletionState()
     );
   }
 
-  public boolean move(long playerId, MoveIntent intent) {
-    // TODO: implement me
-    return true;
+  public long currentPlayer() {
+    return getPlayers()[(int)moves.size() % 2];
+  }
+
+  public long playerInCheck() {
+    // TODO: determine if one of the players is in check
+    return -1;
+  }
+
+
+  public boolean move(long playerId, MoveIntent intent){
+    MoveValidator validator = new MoveValidator();
+
+    int moveCount = moves.size();
+    
+    PlayerColor playerColor = moveCount % 2 == 0 ? PlayerColor.WHITE: PlayerColor.BLACK;
+    
+    // validate with MoveValidator
+    if(validator.validateMove(intent, this.board, getMoveHistory(), playerColor)){
+        moves.add(new Move(intent));
+
+        // TODO: update board
+        return true;
+    } else {
+      return false;
+    }
   }
 }

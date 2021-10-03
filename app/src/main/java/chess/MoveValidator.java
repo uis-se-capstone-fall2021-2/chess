@@ -1,9 +1,10 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MoveValidator {
-    public boolean validateMove(MoveIntent intent, int[] board,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor) {
+    public boolean validateMove(MoveIntent intent, int[] board, List<MoveIntent> moveRecord, PlayerColor playerColor) {
 
         ArrayList<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
         for(MoveIntent move : validMoves){
@@ -14,7 +15,7 @@ public class MoveValidator {
         return false;
     }
 
-    public ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, int[] board,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor){
+    public ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, int[] board, List<MoveIntent> moveRecord, PlayerColor playerColor){
 
         ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         ArrayList<Position> locationsToCheck = new ArrayList<Position>();

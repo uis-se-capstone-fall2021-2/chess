@@ -24,6 +24,16 @@ public class Move {
   @Column
   private File endFile;
 
+  public Move() {}
+
+  public Move(MoveIntent intent) {
+    this.chessPiece = intent.chessPiece;
+    this.startRank = intent.from.rank;
+    this.startFile = intent.from.file;
+    this.endRank = intent.to.rank;
+    this.endFile = intent.to.file;
+  }
+
   public ChessPiece getChessPiece() {
     return chessPiece;
   }

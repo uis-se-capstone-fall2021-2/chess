@@ -1,7 +1,6 @@
 package chess.game.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,11 +127,19 @@ public class GameService implements IGameService {
       return new UpdateGameResult(UpdateGameResult.Code.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(params.playerId)) {
       return new UpdateGameResult(UpdateGameResult.Code.UNAUTHORIZED);
+    } else if(game.currentPlayer() != params.playerId) {
+      return new UpdateGameResult(UpdateGameResult.Code.OUT_OF_TURN);
     }
 
-    game.move(params.playerId, params.moveIntent);
-    // TODO: Notify players
-    return new UpdateGameResult(game.getGameState());
+    boolean success = game.move(params.playerId, params.moveIntent);
+    if(success) {
+      // TODO: Notify players
+      return new UpdateGameResult(game.getGameState());
+    } else {
+      return new UpdateGameResult(UpdateGameResult.Code.ILLEGAL_MOVE);
+    }
+
+    
   }
   
 }
