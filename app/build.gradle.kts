@@ -21,15 +21,15 @@ application {
 }
 
 dependencies {
-	implementation(group="io.springfox", name="springfox-swagger2", version ="2.7.0")
-	implementation(group="io.springfox", name="springfox-swagger-ui", version="2.7.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.hibernate:hibernate-core:5.5.7.Final")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("com.h2database:h2")
+	implementation("org.springframework.boot:spring-boot-devtools")
+	implementation(group="io.springfox", name="springfox-swagger2", version ="2.7.0")
+	implementation(group="io.springfox", name="springfox-swagger-ui", version="2.7.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	runtimeOnly("com.h2database:h2")
 }
 
 tasks.test {

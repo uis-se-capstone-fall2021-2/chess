@@ -90,14 +90,23 @@ public class Game {
       getWinner(),
       getPlayers(),
       getMoveHistory().size(),
-      getCompletionState());
+      getCompletionState()
+    );
   }
 
   public GameState getGameState() {
-    return null;
+    return new GameState(
+      getGameId(),
+      getOwner(),
+      getWinner(),
+      getPlayers(),
+      getMoveHistory().size(),
+      getCompletionState()
+    );
   }
 
   public boolean move(long playerId, MoveIntent intent) {
+    // TODO: implement me
     return true;
   }
 }
