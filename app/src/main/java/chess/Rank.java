@@ -9,7 +9,15 @@ public enum Rank {
     _7(6),
     _8(7);
     public int value;
-    Rank(int value){
+    private Rank(int value){
         this.value = value;
+    }
+    public static Rank FromInteger(int i){
+        for(Rank type : values()) {
+            if(type.value == i){
+                return type;
+            }
+        }
+        return null;
     }
 }
