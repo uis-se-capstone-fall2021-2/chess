@@ -40,7 +40,7 @@ public class GameController {
         TEST_PLAYER_ID,
         req.playerColor,
         req.opponentId
-        ));
+      ));
     
     if(result.value != null) {
       return result.value;
@@ -80,7 +80,8 @@ public class GameController {
     QuitGameResult result = gameService.quitGame(
       new QuitGameParams(
         gameId,
-        TEST_PLAYER_ID));
+        TEST_PLAYER_ID
+      ));
 
     switch(result) {
       case GAME_NOT_FOUND:
@@ -98,7 +99,8 @@ public class GameController {
   @GetMapping("/games/{id}")
   public GameState getGameState(@PathVariable(value="id", required=true) long gameId) {
     GameStateResult result = gameService.getGameState(
-      new GetGameStateParams(gameId, TEST_PLAYER_ID));
+      new GetGameStateParams(gameId, TEST_PLAYER_ID)
+    );
 
     if(result.value == null) {
       switch(result.code) {
@@ -125,6 +127,7 @@ public class GameController {
         TEST_PLAYER_ID,
         moveIntent
       ));
+
     if(result.value == null) {
       switch(result.code) {
         case GAME_NOT_FOUND:
