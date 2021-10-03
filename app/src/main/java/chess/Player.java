@@ -1,5 +1,6 @@
 
 package chess;
+import chess.game.GameState;
 /**
  * Abstract player class, should be exteneded by {@link game.ChessAIPlayer} and {@link game.userPlayer}
  */
@@ -18,6 +19,6 @@ public abstract class Player extends PlayerInfo{
      *  and when the player's turn has begun
      *  @param gameState
      */
-    abstract void notify(GameState gameState);
+    public abstract void notify(GameState gameState);
 
 }
