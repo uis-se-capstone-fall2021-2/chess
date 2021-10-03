@@ -10,7 +10,15 @@ public enum File {
     G(6),
     H(7);
     public int value;
-    File(int value){
+    private File(int value){
         this.value = value;
+    }
+    public static File FromInteger(int i) {
+        for(File type : values()) {
+            if(type.value == i){
+                return type;
+            }
+        }
+        return null;
     }
 }
