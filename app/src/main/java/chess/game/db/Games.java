@@ -13,27 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import chess.game.db.params.*;
 
-
 @Repository
 public class Games {
 
 	@PersistenceContext
-  private EntityManager entityManager;
+	private EntityManager entityManager;
 
 	private Session getSession() {
 		return entityManager.unwrap(Session.class);
 	}
-	
+
 	public List<Game> listGamesForPlayer(long playerId) {
 		Session session = getSession();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Game> q = cb.createQuery(Game.class);
 		Root<Game> Game = q.from(Game.class);
 		q.select(Game)
-			.where(
-				cb.or(
-					cb.equal(Game.get("player1"), playerId),
-					cb.equal(Game.get("player2"), playerId)));
+			.where(cb.or(
+				cb.equal(Game.get("player1"), playerId),
+				cb.equal(Game.get("player2"), playerId)));
 		final List<Game> results = session.createQuery(q).getResultList();
 		return results;
 	}
@@ -48,12 +46,8 @@ public class Games {
 	public Game createGame(CreateGameParams params) {
 		Session session = getSession();
 
-		Game game = new Game(
-			params.player1,
-			params.player2,
-			params.owner
-		);
-		
+		Game game = new Game(params.player1, params.player2, params.owner);
+
 		session.save(game);
 		return game;
 	}
