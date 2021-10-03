@@ -29,9 +29,118 @@ public class MoveValidator {
         ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         ArrayList<Position> locationsToCheck = new ArrayList<Position>();
 
+        // TODO: after populating validMoves, should make checks for if king is in check and remove moves that end with king in check. Alternatively, king checks could made before moves are put into validmoves in the first place.
+
         switch(piece){
             case PAWN:
- 
+                if(playerColor == PlayerColor.WHITE){
+                    // white pawn
+                    if(startPos.rank.value < 7) {
+                        Position front = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value + 1));
+                        if(board.getPiece(front) == 0) {
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, front));
+                        }
+                        // if pawn is on its starting position
+                        if(startPos.rank.value == 1){
+                            Position doubleFront = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value + 2));
+                            if(board.getPiece(front) == 0 && board.getPiece(doubleFront) == 0){
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
+                            }
+                        }
+                    }
+
+
+                    // CAPTURES
+                    if(startPos.file.value > 0) {
+                        Position leftCapture = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 1));
+                        if(board.getPiece(leftCapture) < 0){
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                        }
+                    }
+                    if(startPos.file.value < 7) {
+                        Position rightCapture = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 1));
+                        if(board.getPiece(rightCapture) < 0){
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
+                        }
+                    }
+
+                    // EN PASSANT
+                        // LEFT EN PASSANT
+                    if(startPos.file.value > 0 && startPos.rank.value == 4) {
+                        Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
+                        Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 2));
+                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
+                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                            // if the previous move was the opposite pawn moving adjectent to this pawn.
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 1))));
+                        }
+                    }
+                        // RIGHT EN PASSANT
+                    if(startPos.file.value < 7 && startPos.rank.value == 4) {
+                        Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
+                        Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 2));
+                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
+                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                            // if the previous move was the opposite pawn moving adjectent to this pawn.
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 1))));
+                        }
+                    }
+                        
+
+
+                } else {
+                    // black pawn
+                    if(startPos.rank.value > 0) {
+                        Position front = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value - 1));
+                        if(board.getPiece(front) == 0) {
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, front));
+                        }
+                        // if pawn is on its starting position
+                        if(startPos.rank.value == 6){
+                            Position doubleFront = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value - 2));
+                            if(board.getPiece(front) == 0 && board.getPiece(doubleFront) == 0){
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
+                            }
+                        }
+                    }
+                    // CAPTURES
+                    if(startPos.file.value > 0) {
+                        Position leftCapture = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 1));
+                        if(board.getPiece(leftCapture) > 0){
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                        }
+                    }
+                    if(startPos.file.value < 7) {
+                        Position rightCapture = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 1));
+                        if(board.getPiece(rightCapture) > 0){
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
+                        }
+                    }
+
+
+                    // EN PASSANT
+                        // LEFT EN PASSANT
+                    if(startPos.file.value > 0 && startPos.rank.value == 3) {
+                        Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
+                        Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 2));
+                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
+                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                            // if the previous move was the opposite pawn moving adjectent to this pawn.
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 1))));
+                        }
+                    }
+                        // RIGHT EN PASSANT
+                    if(startPos.file.value < 7 && startPos.rank.value == 3) {
+                        Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
+                        Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 2));
+                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
+                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                            // if the previous move was the opposite pawn moving adjectent to this pawn.
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 1))));
+                        }
+                    }
+
+                }
                 break;
             case KNIGHT:
                 //a knight has 8 potential moves that it can make. Here we add these 8 potential moves to an array, if they exist on the game board
@@ -100,9 +209,5 @@ public class MoveValidator {
 
         return validMoves;
 
-    }
-    //FIXME: maybe this doesn't belong here?
-    public int getPiece(Position position, int[] board){
-        return board[position.rank.value * 8 + position.file.value];
     }
 }
