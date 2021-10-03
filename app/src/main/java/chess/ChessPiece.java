@@ -12,4 +12,12 @@ public enum ChessPiece {
     ChessPiece(int value){
         this.value = value;
     }
+    public static ChessPiece FromInteger(int i) {
+        for(ChessPiece type : values()) {
+            if(type.value == i){
+                return type;
+            }
+        }
+        return null;
+    }
 }
