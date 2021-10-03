@@ -28,8 +28,7 @@ public class MoveValidator {
 
         ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         ArrayList<Position> locationsToCheck = new ArrayList<Position>();
-
-        // TODO: after populating validMoves, should make checks for if king is in check and remove moves that end with king in check. Alternatively, king checks could made before moves are put into validmoves in the first place.
+        int x,y;
 
         switch(piece){
             case PAWN:
@@ -191,22 +190,172 @@ public class MoveValidator {
 
                 break;
             case BISHOP:
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                // Direction : Up & right
+                while(x < 7 && y < 7){
+                    x++;
+                    y++;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                // Direction : Up & left
+                while(x > 0 && y < 7){
+                    x--;
+                    y++;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                // Direction : down & right
+                while(x < 7 && y > 0){
+                    x++;
+                    y--;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                // Direction : down & left
+                while(x > 0 && y > 0){
+                    x--;
+                    y--;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
 
+                for(Position endPos : locationsToCheck) {
+                    if(playerColor == PlayerColor.WHITE) {
+                        if(board.getPiece(endPos) <= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    } else {
+                        if(board.getPiece(endPos) >= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    }
+                }
                 break;
             case ROOK:
-
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                // right
+                while(x < 7) {
+                    x++;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                // left
+                while(x > 0) {
+                    x--;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                // up
+                while(y < 7) {
+                    y++;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                // down
+                while(y > 0) {
+                    y--;
+                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    locationsToCheck.add(next);
+                    if(board.getPiece(next) != 0) {
+                        break;
+                    }
+                }
+                for(Position endPos : locationsToCheck) {
+                    if(playerColor == PlayerColor.WHITE) {
+                        if(board.getPiece(endPos) <= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    } else {
+                        if(board.getPiece(endPos) >= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    }
+                }
                 break;
             case QUEEN:
-
+                // reuse bishop and rook switches and combine the results of those calls.
+                ArrayList<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
+                validMoves = getValidMoves(ChessPiece.BISHOP, startPos, board, moveRecord, playerColor);
+                validMoves.addAll(horizontalMoves);
                 break;
             case KING:
+                x = startPos.file.value;
+                y = startPos.rank.value;
+                if(x < 7) {
+                    locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y)));
+                    if(y < 7)
+                        locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y + 1)));
+                    if (y > 0)
+                        locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y - 1)));
+                }
+                if(x > 0){
+                    locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y)));
+                    if(y < 7)
+                        locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y + 1)));
+                    if (y > 0)
+                        locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y - 1)));
+                }
+                if(y > 0)
+                    locationsToCheck.add(new Position(File.FromInteger(x), Rank.FromInteger(y - 1)));
+                if(y < 7)
+                    locationsToCheck.add(new Position(File.FromInteger(x), Rank.FromInteger(y + 1)));
 
+                // TODO: Find out if castling is legal.
+
+
+                for(Position endPos : locationsToCheck) {
+                    if(playerColor == PlayerColor.WHITE) {
+                        if(board.getPiece(endPos) <= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    } else {
+                        if(board.getPiece(endPos) >= 0) {
+                            // make a new moveIntent for it
+                            validMoves.add(new MoveIntent(piece, startPos, endPos));
+                        }
+                    }
+                }
                 break;
             default:
                 throw new IllegalArgumentException("MoveValidator: Invalid piece type input");
         
         }
-
+        // TODO: Remove moves that result in check from validMoves
         return validMoves;
 
     }
