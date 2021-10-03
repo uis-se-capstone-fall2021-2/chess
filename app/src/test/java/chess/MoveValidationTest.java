@@ -51,4 +51,49 @@ public class MoveValidationTest {
         ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
         assertFalse(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
     }
+    @DisplayName("Pawn should be able to move forward")
+    @Test void testPawnMovement() {
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
+        Position desiredPosition = new Position(File.FromInteger(2), Rank.FromInteger(2)); // pawn at C3
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertTrue(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
+    @DisplayName("Pawn should be able to move forward twice on first move")
+    @Test void testPawnDoubleMovement() {
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
+        Position desiredPosition = new Position(File.FromInteger(2), Rank.FromInteger(3)); // pawn at C4
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertTrue(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
+    @DisplayName("Pawn should not be able to double move if not on starting position")
+    @Test void testPawnDoubleMovementIllegal() {
+        board.board[18] = 1;
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(2)); // pawn at C3
+        Position desiredPosition = new Position(File.FromInteger(2), Rank.FromInteger(4)); // pawn at C5
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertFalse(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
+    @DisplayName("Pawn should not be able to move diagonally without capturing")
+    @Test void testPawnImproperMove() {
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
+        Position desiredPosition = new Position(File.FromInteger(3), Rank.FromInteger(2)); // pawn at D3
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertFalse(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
+    @DisplayName("Pawn should be able to capture piece")
+    @Test void testPawnCapture() {
+        board.board[19] = -1;
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
+        Position desiredPosition = new Position(File.FromInteger(3), Rank.FromInteger(2)); // pawn at D3
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertTrue(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
+    @DisplayName("Pawn should be able to en passant capture")
+    @Test void testPawnCaptureEnPassant() {
+        board.board[19] = -1;
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
+        Position desiredPosition = new Position(File.FromInteger(3), Rank.FromInteger(2)); // pawn at D3
+        ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
+        assertTrue(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
+    }
 }
