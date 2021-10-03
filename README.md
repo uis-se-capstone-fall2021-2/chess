@@ -9,8 +9,14 @@ Install [**Gradle**](https://docs.gradle.org/current/userguide/installation.html
 Run application
 
 ```
-gradle run
+gradle bootRun
 ```
+
+### API Documentation
+
+Interact with the data (app must be running, and since we use the H2 in-memory database for now, data will reset when app restarts)
+
+[Swagger WEB UI](http://localhost:8080/swagger-ui.html)
 
 ### Tests
 
