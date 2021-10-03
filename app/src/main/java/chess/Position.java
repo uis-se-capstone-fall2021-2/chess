@@ -1,8 +1,8 @@
 package chess;
 
 public class Position {
-    public Rank rank;
-    public File file;
+    public final Rank rank;
+    public final File file;
 
     public Position(File file, Rank rank) {
         this.file = file;
