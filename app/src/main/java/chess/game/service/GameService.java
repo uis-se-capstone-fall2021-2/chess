@@ -12,25 +12,25 @@ import chess.game.GameInfo;
 import chess.game.service.params.*;
 import chess.game.service.results.*;
 
-
+import chess.game.db.*;
 
 @Service
 public class GameService implements IGameService {
 
   @Autowired
-  chess.game.db.Games games;
+  Games games;
 
   public List<GameInfo> listAvailableGames(long playerId) {
     List<GameInfo> infos = new ArrayList<GameInfo>();
-    List<chess.game.db.Game> playerGames = games.listGamesForPlayer(playerId);
-    for(chess.game.db.Game game: playerGames) {
+    List<Game> playerGames = games.listGamesForPlayer(playerId);
+    for(Game game: playerGames) {
       infos.add(game.info());
     }
     return infos;
   }
 
   public GameInfo getGameInfo(long gameId) {
-    chess.game.db.Game game = games.getGameById(gameId);
+    Game game = games.getGameById(gameId);
     if(game == null) {
       return null;
     }
@@ -60,7 +60,7 @@ public class GameService implements IGameService {
       player1 = params.opponentId;
       player2 = owner;
     }
-    chess.game.db.Game game = games.createGame(
+    Game game = games.createGame(
       new chess.game.db.params.CreateGameParams(
         player1,
         player2,
@@ -71,7 +71,7 @@ public class GameService implements IGameService {
   }
 
   public DeleteGameResult deleteGame(DeleteGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+    Game game = games.getGameById(params.gameId);
     if(game == null) {
       return DeleteGameResult.GAME_NOT_FOUND;
     } else if(game.getOwner() != params.playerId) {
@@ -85,7 +85,7 @@ public class GameService implements IGameService {
   }
 
   public QuitGameResult quitGame(QuitGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+    Game game = games.getGameById(params.gameId);
     if(game == null) {
       return QuitGameResult.GAME_NOT_FOUND;
     } else if(!game.hasPlayer(params.playerId)) {
@@ -112,7 +112,7 @@ public class GameService implements IGameService {
 
 
   public GameStateResult getGameState(GetGameStateParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+    Game game = games.getGameById(params.gameId);
     if(game == null) {
       return new GameStateResult(GameStateResult.Code.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(params.playerId)) {
@@ -122,7 +122,7 @@ public class GameService implements IGameService {
   }
 
   public UpdateGameResult move(UpdateGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+    Game game = games.getGameById(params.gameId);
     if(game == null) {
       return new UpdateGameResult(UpdateGameResult.Code.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(params.playerId)) {

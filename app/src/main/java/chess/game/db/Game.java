@@ -32,6 +32,7 @@ public class Game {
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
+  @Transient
   private final int[] board;
 
   public Game() {
