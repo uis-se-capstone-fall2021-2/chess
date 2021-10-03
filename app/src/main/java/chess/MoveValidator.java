@@ -70,7 +70,7 @@ public class MoveValidator {
                         Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
                         Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 2));
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
-                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 1))));
                         }
@@ -80,7 +80,7 @@ public class MoveValidator {
                         Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
                         Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 2));
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
-                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 1))));
                         }
@@ -124,7 +124,7 @@ public class MoveValidator {
                         Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
                         Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 2));
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
-                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 1))));
                         }
@@ -134,7 +134,7 @@ public class MoveValidator {
                         Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
                         Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 2));
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
-                        if(moveRecord.get(moveRecord.size()).equals(intentToCheck)) {
+                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 1))));
                         }

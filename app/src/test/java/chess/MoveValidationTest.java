@@ -90,9 +90,14 @@ public class MoveValidationTest {
     }
     @DisplayName("Pawn should be able to en passant capture")
     @Test void testPawnCaptureEnPassant() {
-        board.board[19] = -1;
-        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(1)); // pawn at C2
-        Position desiredPosition = new Position(File.FromInteger(3), Rank.FromInteger(2)); // pawn at D3
+        board.board[10] = 0;
+        board.board[34] = 1;
+        board.board[35] = -1;
+        Position prev = new Position(File.FromInteger(3), Rank.FromInteger(6));
+        Position cur = new Position(File.FromInteger(3), Rank.FromInteger(4));
+        moveRecord.add(new MoveIntent(ChessPiece.PAWN, prev, cur));
+        Position currentPosition = new Position(File.FromInteger(2), Rank.FromInteger(4)); // pawn at C5
+        Position desiredPosition = new Position(File.FromInteger(3), Rank.FromInteger(5)); // pawn at D6
         ChessPiece piece = ChessPiece.FromInteger(board.getPiece(currentPosition));
         assertTrue(validator.validateMove(new MoveIntent(piece, currentPosition, desiredPosition), board, moveRecord));
     }
