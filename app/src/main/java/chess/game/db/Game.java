@@ -123,7 +123,7 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      playerInCheck(),
+      -1,
       this.board,
       getCompletionState()
     );

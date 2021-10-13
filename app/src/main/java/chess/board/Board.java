@@ -2,7 +2,7 @@ package chess.board;
 import java.util.ArrayList;
 import chess.*;
 public class Board implements IBoard {
-    int[] board;
+    public final int[] board;
 
     public Board() {
         board = new int[] {
