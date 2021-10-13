@@ -20,6 +20,6 @@ public abstract class Player extends PlayerInfo{
      *  and when the player's turn has begun
      *  @param gameState
      */
-    abstract void notify(GameState gameState);
+    public abstract void notify(GameState gameState);
 
 }

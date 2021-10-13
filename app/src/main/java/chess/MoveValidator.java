@@ -1,6 +1,9 @@
 package chess;
 import chess.board.*;
 import java.util.ArrayList;
+import java.util.List;
+import chess.*;
+import chess.board.Board;
 
 public class MoveValidator {
     public boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord) {

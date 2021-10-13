@@ -1,6 +1,6 @@
 package chess;
 public class PlayerInfo {
-    int playerId;
+    public int playerId;
     String alias;
     public PlayerInfo(int playerId, String alias) {
         this.playerId = playerId;
