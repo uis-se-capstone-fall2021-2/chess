@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+import chess.ChessPiece;
+import chess.File;
 import chess.MoveIntent;
 import chess.MoveValidator;
 import chess.PlayerColor;
+import chess.Position;
+import chess.Rank;
+import chess.board.Board;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
 import chess.game.GameState;
@@ -33,7 +38,7 @@ public class Game {
   private List<Move> moves = new ArrayList<Move>();
 
   @Transient
-  private final int[] board;
+  private Board board = new Board();
 
   public Game() {
     this.board = initializeBoard(moves);
@@ -51,23 +56,13 @@ public class Game {
     this.completionState = GameCompletionState.ACTIVE;
   }
 
-  private int[] initializeBoard(List<Move> moves) {
-    int[] board =  new int[] {
-      2,3,4,6,5,4,3,2,
-      1,1,1,1,1,1,1,1,
-      0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,
-      -1,-1,-1,-1,-1,-1,-1,-1,
-      -2,-3,-4,-6,-5,-4,-3,-2
-    };
-    // replay the moves to bring the board to current state
+  private Board initializeBoard(List<Move> moves) {
+    ArrayList<MoveIntent> moveRecord = new ArrayList<>();
     for(Move move : moves){
-      // TODO: update board with move
+      moveRecord.add(move.asIntent());
     }
 
-    return board;
+    return board = new Board(moveRecord);
   }
 
   public long getGameId() {
@@ -138,8 +133,45 @@ public class Game {
     return getPlayers()[(int)moves.size() % 2];
   }
 
+  // determine if one of the players is in check
   public long playerInCheck() {
-    // TODO: determine if one of the players is in check
+    MoveValidator moveValidator = new MoveValidator();
+
+    // check if white king is in check
+    // first, get position of white king
+    Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
+    // check every black piece to see if white king's position is a possible move
+    // if it is, return white player's id
+    for(int row = 0; row < 8; row++){
+      for(int column = 0; column < 8; column++){
+        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
+        int chessPiece = board.getPiece(position);
+        // get black piece
+        if(board.getPiece(position) < 0){
+          // if white king's location is possible move, then white king is in check
+          if(moveValidator.validateMove(new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation), board, null, PlayerColor.BLACK));
+            return player1;
+        }
+      }
+    }
+
+    // check if black king is in check
+    // first, get position of black king
+    Position blackKingLocation = board.getPositionOf(-ChessPiece.KING.value);
+    // check every white piece to see if black king's position is a possible move
+    // if it is, return black player's id
+    for(int row = 0; row < 8; row++){
+      for(int column = 0; column < 8; column++){
+        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
+        int chessPiece = board.getPiece(position);
+        // get white piece
+        if(board.getPiece(position) > 0){
+          // if black king's location is a possible move, then black king is in check
+          if(moveValidator.validateMove(new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation), board, null, PlayerColor.WHITE));
+            return player2;
+        }
+      }
+    }
     return -1;
   }
 
@@ -155,8 +187,9 @@ public class Game {
     if(validator.validateMove(intent, this.board, getMoveHistory(), playerColor)){
         moves.add(new Move(intent));
 
-        // TODO: update board
+        board.updateBoard(intent, playerColor.value);
         return true;
+        
     } else {
       return false;
     }

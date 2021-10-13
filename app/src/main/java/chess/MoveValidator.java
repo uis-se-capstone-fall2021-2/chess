@@ -2,9 +2,11 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import chess.*;
+import chess.board.Board;
 
 public class MoveValidator {
-    public boolean validateMove(MoveIntent intent, int[] board, List<MoveIntent> moveRecord, PlayerColor playerColor) {
+    public boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord, PlayerColor playerColor) {
 
         ArrayList<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
         for(MoveIntent move : validMoves){
@@ -15,7 +17,7 @@ public class MoveValidator {
         return false;
     }
 
-    public ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, int[] board, List<MoveIntent> moveRecord, PlayerColor playerColor){
+    public ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board, List<MoveIntent> moveRecord, PlayerColor playerColor){
 
         ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         ArrayList<Position> locationsToCheck = new ArrayList<Position>();
@@ -57,7 +59,7 @@ public class MoveValidator {
                 if(playerColor == PlayerColor.WHITE) {
                     for(Position endPos : locationsToCheck){
                         // if the piece that exists on the desired location is empty, or is a black piece:
-                        if(getPiece(endPos, board) <= 0) {
+                        if(board.getPiece(endPos) <= 0) {
                             // make a new moveIntent for it
                             validMoves.add(new MoveIntent(piece, startPos, endPos));
                         }
@@ -65,7 +67,7 @@ public class MoveValidator {
                 } else {
                     for(Position endPos : locationsToCheck) {
                         // same as above, but for other team
-                        if(getPiece(endPos,board) >= 0) {
+                        if(board.getPiece(endPos) >= 0) {
                             validMoves.add(new MoveIntent(piece, startPos, endPos));
                         }
                     }
@@ -96,4 +98,5 @@ public class MoveValidator {
     public int getPiece(Position position, int[] board){
         return board[position.rank.value * 8 + position.file.value];
     }
+    
 }

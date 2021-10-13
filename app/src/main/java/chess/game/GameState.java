@@ -1,10 +1,12 @@
 package chess.game;
 
+import chess.board.Board;
+
 /**
  * Information for Players during game 
  */
 public class GameState extends GameInfo {
-  public final int[] board;
+  public Board board = null;
 
   public final long inCheck; // playerId, null if no one in check
   public GameState(
@@ -14,7 +16,7 @@ public class GameState extends GameInfo {
     long[] players,
     long moveCount,
     long inCheck,
-    int[] board,
+    Board board,
     GameCompletionState completed
   ) {
     super(gameId, owner, winner, players, moveCount, completed);
