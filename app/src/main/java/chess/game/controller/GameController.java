@@ -1,11 +1,19 @@
 package chess.game.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import chess.MoveIntent;
 import chess.game.GameInfo;
@@ -17,6 +25,8 @@ import chess.game.service.results.*;
 
 
 @RestController
+@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin(origins={"*"})
 public class GameController {
 
   private final static long TEST_PLAYER_ID = 1;
@@ -26,6 +36,13 @@ public class GameController {
   @Autowired
   public GameController(IGameService gameService) {
     this.gameService = gameService;
+  }
+
+  
+  @GetMapping("/user")
+  public String getUser(Authentication authentication) {
+    Jwt token = (Jwt)authentication.getPrincipal();
+    return token.getSubject();
   }
 
   @GetMapping("/games")

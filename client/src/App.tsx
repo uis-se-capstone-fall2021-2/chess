@@ -1,18 +1,18 @@
 import * as React from 'react';
+import * as axios from 'axios';
 import './App.css';
 import {Auth0Provider, Auth0Context, Auth0ContextInterface, User} from '@auth0/auth0-react';
 import {LoginButton} from './user/components/LoginButton';
 import {LogoutButton} from './user/components/LogoutButton';
 
-export default class App extends React.Component<{}, {token: string|null}> {
-
-  public state = {token: null};
+export default class App extends React.Component {
 
   public render(): React.ReactNode {
     return (
       <Auth0Provider
         domain='dev-tt4we0ft.us.auth0.com'
         clientId='GlzgXiWMhSPvu0DRBo1jAaYIMmRSEf9r'
+        audience='chess-api'
         redirectUri={window.location.origin}
         cacheLocation='localstorage'
       >
@@ -25,8 +25,7 @@ export default class App extends React.Component<{}, {token: string|null}> {
                 </div>
                 <div className='app-body'>
                   <pre>{JSON.stringify(user, null, 2)}</pre>
-                  <button onClick={() => this.getToken(user)}>Get Token</button>
-                  <span>{`Token: ${this.state.token}`}</span>
+                  <button onClick={() => this.getUser(user)}>Get Token</button>
                 </div>
               </div>
             )}
@@ -36,9 +35,14 @@ export default class App extends React.Component<{}, {token: string|null}> {
     );
   } 
 
-  private async getToken(user: Auth0ContextInterface<User>): Promise<void> {
+  private async getUser(user: Auth0ContextInterface<User>): Promise<void> {
     const token = await user.getAccessTokenSilently();
-    this.setState({token});
+    const response = axios.default.get('http://localhost:8080/api/v1/user/', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log({response});
   }
 }
 
