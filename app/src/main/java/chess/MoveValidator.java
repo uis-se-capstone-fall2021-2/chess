@@ -6,7 +6,7 @@ import chess.*;
 import chess.board.Board;
 
 public class MoveValidator {
-    public boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord) {
+    public static boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord) {
         PlayerColor playerColor;
         Position startingPoint = intent.from;
         int piece = board.getPiece(startingPoint);
@@ -27,7 +27,7 @@ public class MoveValidator {
         return false;
     }
 
-    public ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board ,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor){
+    public static ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board ,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor){
 
         ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         ArrayList<Position> locationsToCheck = new ArrayList<Position>();
