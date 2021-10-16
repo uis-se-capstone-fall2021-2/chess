@@ -268,6 +268,8 @@ public class MoveValidator {
                         break;
                     }
                 }
+                x = startPos.file.value;
+                y = startPos.rank.value;
                 // left
                 while(x > 0) {
                     x--;
@@ -277,6 +279,8 @@ public class MoveValidator {
                         break;
                     }
                 }
+                x = startPos.file.value;
+                y = startPos.rank.value;
                 // up
                 while(y < 7) {
                     y++;
@@ -286,6 +290,8 @@ public class MoveValidator {
                         break;
                     }
                 }
+                x = startPos.file.value;
+                y = startPos.rank.value;
                 // down
                 while(y > 0) {
                     y--;
