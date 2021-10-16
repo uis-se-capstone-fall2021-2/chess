@@ -31,8 +31,7 @@ public class Board implements IBoard {
 
         // replay the moves to bring the board to current state
         for(MoveIntent move : moveRecord){
-            // update board with move
-            updateBoard(move, moveRecord.size() % 2);
+            updateBoard(move);
         }
     }
 
@@ -53,16 +52,13 @@ public class Board implements IBoard {
         return position;
     }
 
-    public int[] updateBoard(MoveIntent intent, int playerNumber){
-        int fromPosition = intent.from.rank.value * 8 + intent.from.file.value;
-        int toPosition = intent.to.rank.value * 8 + intent.to.file.value;
+    public int[] updateBoard(MoveIntent intent){
+        int fromIndex = intent.from.rank.value * 8 + intent.from.file.value;
+        int toIndex = intent.to.rank.value * 8 + intent.to.file.value;
+        int piece = getPiece(intent.from);
 
-        board[fromPosition] = 0;
-
-        if(playerNumber == 1)
-            board[toPosition] = intent.chessPiece.value;
-        else
-            board[toPosition] = -intent.chessPiece.value;
+        board[fromIndex] = 0;
+        board[toIndex] = piece;
 
         return board;
     }

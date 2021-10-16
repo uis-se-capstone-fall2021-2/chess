@@ -1,12 +1,12 @@
 package chess;
-import chess.board.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import chess.*;
+
 import chess.board.Board;
 
 public class MoveValidator {
-    public static boolean validateMove(MoveIntent intent, Board board,ArrayList<MoveIntent> moveRecord) {
+    public static boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord) {
         PlayerColor playerColor;
         Position startingPoint = intent.from;
         int piece = board.getPiece(startingPoint);
@@ -18,7 +18,7 @@ public class MoveValidator {
             // Attempted to move a piece that does not exist.
             return false;
         }
-        ArrayList<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
+        List<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
         for(MoveIntent move : validMoves){
             if(move.equals(intent)) {
                 return true;
@@ -27,10 +27,10 @@ public class MoveValidator {
         return false;
     }
 
-    public static ArrayList<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board ,ArrayList<MoveIntent> moveRecord, PlayerColor playerColor){
+    public static List<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board, List<MoveIntent> moveRecord, PlayerColor playerColor){
 
-        ArrayList<MoveIntent> validMoves = new ArrayList<MoveIntent>();
-        ArrayList<Position> locationsToCheck = new ArrayList<Position>();
+        List<MoveIntent> validMoves = new ArrayList<MoveIntent>();
+        List<Position> locationsToCheck = new ArrayList<Position>();
         int x,y;
 
         switch(piece){
@@ -311,7 +311,7 @@ public class MoveValidator {
                 break;
             case QUEEN:
                 // reuse bishop and rook switches and combine the results of those calls.
-                ArrayList<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
+                List<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
                 validMoves = getValidMoves(ChessPiece.BISHOP, startPos, board, moveRecord, playerColor);
                 validMoves.addAll(horizontalMoves);
                 break;
