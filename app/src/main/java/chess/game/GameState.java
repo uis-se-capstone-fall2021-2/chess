@@ -1,19 +1,26 @@
 package chess.game;
 
+import chess.board.Board;
+
 /**
  * Information for Players during game 
  */
 public class GameState extends GameInfo {
+  public Board board = null;
 
-  int inCheck; // playerId, null if no one in check
-  public GameState(long gameId, long owner, long winner, long[] players, long moveCount, int inCheck, GameCompletionState completed) {
+  public final long inCheck; // playerId, null if no one in check
+  public GameState(
+    long gameId,
+    long owner,
+    long winner,
+    long[] players,
+    long moveCount,
+    long inCheck,
+    Board board,
+    GameCompletionState completed
+  ) {
     super(gameId, owner, winner, players, moveCount, completed);
     this.inCheck = inCheck;
-      }
-
-  public GameState(long gameId, long owner, long winner, long[] players, long moveCount, GameCompletionState completed) {
-    super(gameId, owner, winner, players, moveCount, completed);
+    this.board = board;
   }
-
-
 }

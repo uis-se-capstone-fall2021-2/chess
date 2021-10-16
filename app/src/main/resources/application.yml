@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: secrets.yml
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
     username: sa
@@ -17,6 +15,9 @@ spring:
         jwt:
           # trailing slash is important!
           issuer-uri: https://dev-tt4we0ft.us.auth0.com/
+  h2:
+    console:
+      enabled: true
 auth0:
   audience: chess-api
 
