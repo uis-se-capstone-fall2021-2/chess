@@ -27,8 +27,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	implementation("org.hibernate:hibernate-core:5.5.7.Final")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	implementation(group="io.springfox", name="springfox-swagger2", version ="2.7.0")
-	implementation(group="io.springfox", name="springfox-swagger-ui", version="2.7.0")
+	implementation(group="org.springdoc", name="springdoc-openapi-ui", version="1.2.32")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	runtimeOnly("com.h2database:h2")
 }
