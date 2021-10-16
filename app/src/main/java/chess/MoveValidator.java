@@ -365,7 +365,204 @@ public class MoveValidator {
         
         }
         // TODO: Remove moves that result in check from validMoves
-        return validMoves;
+
+        ArrayList<MoveIntent> validMovesNotInCheck = new ArrayList<MoveIntent>();
+        for(MoveIntent move : validMoves) {
+            Board tempBoard = board.copy();
+            tempBoard.updateBoard(move, playerColor.value);
+            if(tempBoard.inCheck() != playerColor.value) {
+                validMovesNotInCheck.add(move);
+            }
+        }
+        return validMovesNotInCheck;
+
+    }
+
+
+
+    public static boolean positionUnderThreat(Position loc, int team) {
+        int x = loc.file.value;
+        int y = loc.rank.value;
+        // check for pawns:
+
+        if ( team == 1 ) {
+            if(x > 0 && y < 7) {
+                Position leftCapture = new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value + 1));
+                if(board.getPiece(leftCapture) == (-team)){
+                    return true;
+                }
+            }
+            if(x < 7 && y < 7) {
+                Position rightCapture = new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value + 1));
+                if(board.getPiece(rightCapture) == (-team)){
+                    vreturn true;
+                }
+            }
+        } else {
+            if(x > 0 && y > 0) {
+                Position leftCapture = new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value - 1));
+                if(board.getPiece(leftCapture) == (-team)){
+                    return true;
+                }
+            }
+            if(x < 7 && y > 0) {
+                Position rightCapture = new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value - 1));
+                if(board.getPiece(rightCapture) == (-team)){
+                    vreturn true;
+                }
+            }
+        }
+
+
+
+        // check for knights:
+        if(loc.file.value < 6) {
+            if(loc.rank.value < 7){
+                if(getPiece(new Position(File.FromInteger(loc.file.value + 2), Rank.FromInteger(startPos.rank.value + 1))) == (-team * 3)))
+                    return true;
+            }
+            if(loc.rank.value > 0){
+                if(getPiece(new Position(File.FromInteger(loc.file.value + 2), Rank.FromInteger(startPos.rank.value - 1))) == (-team * 3)))
+                    return true;
+            }
+        }
+        if(loc.file.value > 1) {
+            // left 2
+            if(loc.rank.value < 7) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value - 2), Rank.FromInteger(loc.rank.value + 1)))  == (-team * 3))
+                    return true;
+            } // left 2 up 1
+            if(loc.rank.value > 0) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value - 2), Rank.FromInteger(loc.rank.value - 1)))  == (-team * 3))
+                    return true;
+            } // left 2 down 1
+        }
+        if(loc.rank.value < 6) {
+            // up 2
+            if(loc.file.value < 7) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value + 2)))  == (-team * 3))
+                    return true;
+            } // up 2 right 1
+            if(loc.file.value > 0) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value + 2)))  == (-team * 3))
+                    return true;
+            } // up 2 left 1
+        }
+        if(loc.rank.value > 1) {
+            // down 2
+            if(loc.file.value < 7) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value - 2))) == (-team * 3))
+                    return true
+             } // down 2 right 1
+            if(loc.file.value > 0) {
+                if(getPiece(new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value - 2))) == (-team * 3))
+                    return true
+             } // down 2 left 1
+        }
+
+        // checking threat from rook/queen:
+        while(x < 7) {
+            x++;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        x = loc.file.value;
+        y = loc.rank.value;
+        while(y < 7) {
+            y++;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        x = loc.file.value;
+        y = loc.rank.value;
+        while(x > 0) {
+            x--;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        x = loc.file.value;
+        y = loc.rank.value;
+        while(y < 7) {
+            y++;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+
+        //checking threat from bishop/queen:
+        x = loc.file.value;
+        y = loc.rank.value;
+        while(x < 7 && y < 7){
+            x++;
+            y++;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        while(x > 0 && y < 7){
+            x--;
+            y++;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        while(x < 7 && y > 0){
+            x++;
+            y--;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
+        while(x > 0 && y > 0){
+            x--;
+            y--;
+            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            int piece = getPiece(next);
+            if(piece == (-team * 2) || piece == (-team * 5)) {
+                return true;
+            }
+            if(piece != 0) {
+                break;
+            }
+        }
 
     }
 }
