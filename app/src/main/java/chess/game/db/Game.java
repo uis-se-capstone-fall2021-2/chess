@@ -8,7 +8,6 @@ import chess.ChessPiece;
 import chess.File;
 import chess.MoveIntent;
 import chess.MoveValidator;
-import chess.PlayerColor;
 import chess.Position;
 import chess.Rank;
 import chess.board.Board;
@@ -179,14 +178,10 @@ public class Game {
 
 
   public boolean move(long playerId, MoveIntent intent){
-    int moveCount = moves.size();
-    
-    PlayerColor playerColor = moveCount % 2 == 0 ? PlayerColor.WHITE: PlayerColor.BLACK;
-    
     if(MoveValidator.validateMove(intent, this.board, getMoveHistory())){
         moves.add(new Move(intent));
 
-        board.updateBoard(intent, playerColor.value);
+        board.updateBoard(intent);
         return true;
         
     } else {
