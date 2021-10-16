@@ -3,10 +3,14 @@ package chess.game.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import chess.MoveIntent;
 import chess.game.GameInfo;
@@ -16,10 +20,10 @@ import chess.game.service.IGameService;
 import chess.game.service.params.*;
 import chess.game.service.results.*;
 
-
 @RestController
 @RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins={"*"})
+@SecurityRequirement(name="chess-api")
 public class GameController {
 
   private final static long TEST_PLAYER_ID = 1;

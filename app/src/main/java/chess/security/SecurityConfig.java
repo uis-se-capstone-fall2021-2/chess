@@ -25,25 +25,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(HttpSecurity http) throws Exception {
     http
-      .authorizeRequests(r ->
-        r.antMatchers(
-          "/swagger-ui.html*",
+      .authorizeRequests()
+      .antMatchers(
+          "/swagger-ui/**",
           "/swagger-resources/**",
-          "/v2/api-docs/**",
+          "/v3/api-docs/**",
           "/webjars/**"
         ).permitAll()
-      )
-      .authorizeRequests()
-        .mvcMatchers("/api/v1/user").authenticated()
-        .mvcMatchers("/api/v1/games").authenticated()
-        .and().cors()
-        .and().oauth2ResourceServer().jwt();
+      .anyRequest().authenticated()
+      .and().cors()
+      .and().oauth2ResourceServer().jwt();
   }
 
   @Bean
   JwtDecoder jwtDecoder() {
-    NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder)
-    JwtDecoders.fromOidcIssuerLocation(issuer);
+    NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuer);
 
     OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
     OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);

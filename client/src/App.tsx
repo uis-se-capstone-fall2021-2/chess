@@ -1,3 +1,4 @@
+import {autobind} from 'core-decorators';
 import * as React from 'react';
 import * as axios from 'axios';
 import './App.css';
@@ -5,7 +6,13 @@ import {Auth0Provider, Auth0Context, Auth0ContextInterface, User} from '@auth0/a
 import {LoginButton} from './user/components/LoginButton';
 import {LogoutButton} from './user/components/LogoutButton';
 
-export default class App extends React.Component {
+@autobind
+export class App extends React.Component<{}, {token: string|null, subject: string|null}> {
+
+  public state = {
+    token: null,
+    subject: null
+  };
 
   public render(): React.ReactNode {
     return (
@@ -26,6 +33,8 @@ export default class App extends React.Component {
                 <div className='app-body'>
                   <pre>{JSON.stringify(user, null, 2)}</pre>
                   <button onClick={() => this.getUser(user)}>Get Token</button>
+                  {this.renderToken()}
+                  {this.renderSubject()}
                 </div>
               </div>
             )}
@@ -33,16 +42,47 @@ export default class App extends React.Component {
        
       </Auth0Provider>
     );
-  } 
+  }
+
+  private renderToken(): React.ReactNode {
+    if(!this.state.token) {
+      return null;
+    }
+    return (
+      <div>
+        <h4>Token</h4>
+        <pre>{this.state.token}</pre>
+        <button onClick={this.copyTokenToClipboard}>Copy</button>
+      </div>
+    );
+  }
+
+  private copyTokenToClipboard() {
+    navigator.clipboard.writeText(this.state.token ?? '');
+  }
+
+  private renderSubject(): React.ReactNode {
+    if(!this.state.subject) {
+      return null;
+    }
+    return (
+      <div>
+        <h4>Subject</h4>
+        <pre>{this.state.subject}</pre>
+      </div>
+    );
+  }
 
   private async getUser(user: Auth0ContextInterface<User>): Promise<void> {
     const token = await user.getAccessTokenSilently();
-    const response = axios.default.get('http://localhost:8080/api/v1/user/', {
+    this.setState({token});
+    const response = await axios.default.get('http://localhost:8080/api/v1/user/whoami', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log({response});
+    this.setState({subject: response.data});
+    
   }
 }
 
