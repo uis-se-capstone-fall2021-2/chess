@@ -135,8 +135,6 @@ public class Game {
 
   // determine if one of the players is in check
   public long playerInCheck() {
-    MoveValidator moveValidator = new MoveValidator();
-
     // check if white king is in check
     // first, get position of white king
     Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
@@ -149,8 +147,10 @@ public class Game {
         // get black piece
         if(board.getPiece(position) < 0){
           // if white king's location is possible move, then white king is in check
-          if(moveValidator.validateMove(new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation), board, null, PlayerColor.BLACK));
+          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation);
+          if(MoveValidator.validateMove(intent, board, getMoveHistory())) {
             return player1;
+          }
         }
       }
     }
@@ -167,8 +167,10 @@ public class Game {
         // get white piece
         if(board.getPiece(position) > 0){
           // if black king's location is a possible move, then black king is in check
-          if(moveValidator.validateMove(new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation), board, null, PlayerColor.WHITE));
+          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation);
+          if(MoveValidator.validateMove(intent, board, getMoveHistory())){
             return player2;
+          }
         }
       }
     }
@@ -177,14 +179,11 @@ public class Game {
 
 
   public boolean move(long playerId, MoveIntent intent){
-    MoveValidator validator = new MoveValidator();
-
     int moveCount = moves.size();
     
     PlayerColor playerColor = moveCount % 2 == 0 ? PlayerColor.WHITE: PlayerColor.BLACK;
     
-    // validate with MoveValidator
-    if(validator.validateMove(intent, this.board, getMoveHistory(), playerColor)){
+    if(MoveValidator.validateMove(intent, this.board, getMoveHistory())){
         moves.add(new Move(intent));
 
         board.updateBoard(intent, playerColor.value);
