@@ -1,6 +1,5 @@
 package chess.board;
 
-import chess.ChessPiece;
 import chess.MoveIntent;
 import chess.Position;
 
