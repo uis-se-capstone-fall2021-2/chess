@@ -1,6 +1,5 @@
 package chess.game.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.jwt.Jwt;
 
 import chess.MoveIntent;
 import chess.game.GameInfo;
@@ -38,12 +31,6 @@ public class GameController {
     this.gameService = gameService;
   }
 
-  
-  @GetMapping("/user")
-  public String getUser(Authentication authentication) {
-    Jwt token = (Jwt)authentication.getPrincipal();
-    return token.getSubject();
-  }
 
   @GetMapping("/games")
   public List<GameInfo> listAvailableGames() {

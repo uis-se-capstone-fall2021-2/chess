@@ -54,39 +54,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return jwtDecoder;
   }
 }
-
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.http.HttpStatus;
-// import
-// org.springframework.security.config.annotation.web.builders.HttpSecurity;
-// import
-// org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-// import org.springframework.web.server.ResponseStatusException;
-
-// @Configuration
-// public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-// @Override
-// protected void configure(HttpSecurity http) throws Exception {
-// http.cors().and().authorizeRequests(r ->
-// r.antMatchers("/swagger-ui.html*", "/swagger-resources/**",
-// "/v2/api-docs/**", "/webjars/**")
-// .permitAll()
-// .anyRequest().authenticated()
-// )
-// .exceptionHandling(e -> new
-// ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE))
-// .oauth2Client();
-// }
-
-// // @Bean
-// // CorsConfigurationSource corsConfigurationSource() {
-// // CorsConfiguration configuration = new CorsConfiguration();
-// // configuration.setAllowedOrigins(Arrays.asList("*"));
-// // configuration.setAllowedMethods(Arrays.asList("*"));
-// // UrlBasedCorsConfigurationSource source = new
-// UrlBasedCorsConfigurationSource();
-// // source.registerCorsConfiguration("/**", configuration);
-// // return source;
-// // }
-// }
