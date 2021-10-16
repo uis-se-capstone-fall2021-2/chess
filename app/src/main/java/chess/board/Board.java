@@ -35,6 +35,18 @@ public class Board implements IBoard {
         }
     }
 
+    public Board( int[] board ) {
+        this.board = board;
+    }
+
+    public Board copy() {
+        int[] newBoard = new int[board.length];
+        for(int i = 0; i < board.length; i++) {
+            newBoard[i] = board[i];
+        }
+        return new Board(newBoard);
+    }
+
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
