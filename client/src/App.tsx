@@ -7,11 +7,11 @@ import {LoginButton} from './user/components/LoginButton';
 import {LogoutButton} from './user/components/LogoutButton';
 
 @autobind
-export class App extends React.Component<{}, {token: string|null, subject: string|null}> {
+export class App extends React.Component<{}, {token: string|null, claims: any}> {
 
   public state = {
     token: null,
-    subject: null
+    claims: null
   };
 
   public render(): React.ReactNode {
@@ -62,13 +62,13 @@ export class App extends React.Component<{}, {token: string|null, subject: strin
   }
 
   private renderSubject(): React.ReactNode {
-    if(!this.state.subject) {
+    if(!this.state.claims) {
       return null;
     }
     return (
       <div>
         <h4>Subject</h4>
-        <pre>{this.state.subject}</pre>
+        <pre>{JSON.stringify(this.state.claims, null, 2)}</pre>
       </div>
     );
   }
@@ -76,12 +76,17 @@ export class App extends React.Component<{}, {token: string|null, subject: strin
   private async getUser(user: Auth0ContextInterface<User>): Promise<void> {
     const token = await user.getAccessTokenSilently();
     this.setState({token});
-    const response = await axios.default.get('http://localhost:8080/api/v1/user/whoami', {
+    const claims = await axios.default.get('http://localhost:8080/api/v1/user/whoami', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    this.setState({subject: response.data});
+    const userInfo = await axios.default.get(`${(claims.data as any).iss}userinfo`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    this.setState({claims: userInfo.data});
     
   }
 }

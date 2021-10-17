@@ -1,5 +1,7 @@
 package chess.user;
 
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 
 import org.springframework.security.core.Authentication;
@@ -20,9 +22,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class UserController {
   
   @GetMapping("/user/whoami")
-  public String getUser() {
+  public Map<String, Object> getUser() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    Jwt token = (Jwt)auth.getPrincipal();
-    return token.getSubject();
+    return ((Jwt)auth.getPrincipal()).getClaims();
+    // Jwt token = (Jwt)auth.getPrincipal();
+    // return token.getSubject();
   }
 }
