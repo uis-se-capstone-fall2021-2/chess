@@ -6,7 +6,7 @@ import java.util.List;
 import chess.board.Board;
 
 public class MoveValidator {
-    public static boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord) {
+    public static boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord, PlayerColor moveColor) {
         PlayerColor playerColor;
         Position startingPoint = intent.from;
         int piece = board.getPiece(startingPoint);
@@ -18,6 +18,12 @@ public class MoveValidator {
             // Attempted to move a piece that does not exist.
             return false;
         }
+
+        if(playerColor != moveColor){
+            // Player is trying to move opponents piece.
+            return false;
+        }
+
         List<MoveIntent> validMoves = getValidMoves(intent.chessPiece, intent.from, board, moveRecord, playerColor);
         for(MoveIntent move : validMoves){
             if(move.equals(intent)) {
