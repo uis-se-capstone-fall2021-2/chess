@@ -13,8 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import chess.user.db.User;
-import chess.user.db.Users;
+import chess.user.model.*;
 
 
 @Service

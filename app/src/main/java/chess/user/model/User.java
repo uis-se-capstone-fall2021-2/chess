@@ -1,9 +1,9 @@
-package chess.user.db;
+package chess.user.model;
 
 import javax.persistence.*;
 
 import chess.game.GameState;
-import chess.player.db.Player;
+import chess.player.model.Player;
 
 @Entity
 @DiscriminatorValue("User")

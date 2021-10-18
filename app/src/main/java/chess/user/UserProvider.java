@@ -1,14 +1,15 @@
 package chess.user;
 
+import jdk.jfr.Description;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import chess.user.db.User;
+import chess.user.model.User;
 import chess.user.service.UserService;
-import jdk.jfr.Description;
 
 @ControllerAdvice
 public class UserProvider {

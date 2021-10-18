@@ -1,4 +1,4 @@
-package chess.user.db;
+package chess.user.model;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package chess.player.db;
+package chess.player.model;
 
 import javax.persistence.*;
 
