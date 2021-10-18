@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import chess.PlayerColor;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
+import chess.game.db.*;
 import chess.game.service.params.*;
 import chess.game.service.results.*;
-
-import chess.game.db.*;
 
 @Service
 public class GameService implements IGameService {
