@@ -10,6 +10,7 @@ import chess.MoveIntent;
 import chess.MoveValidator;
 import chess.Position;
 import chess.Rank;
+import chess.PlayerColor;
 import chess.board.Board;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
@@ -131,7 +132,12 @@ public class Game {
   public long currentPlayer() {
     return getPlayers()[(int)moves.size() % 2];
   }
-
+  public PlayerColor currentPlayerColor() {
+    if(currentPlayer() == player1)
+      return PlayerColor.WHITE;
+    else
+      return PlayerColor.BLACK;
+  }
   // determine if one of the players is in check
   public long playerInCheck() {
     // check if white king is in check
@@ -147,7 +153,7 @@ public class Game {
         if(board.getPiece(position) < 0){
           // if white king's location is possible move, then white king is in check
           MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory())) {
+          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())) {
             return player1;
           }
         }
@@ -167,7 +173,7 @@ public class Game {
         if(board.getPiece(position) > 0){
           // if black king's location is a possible move, then black king is in check
           MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory())){
+          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
             return player2;
           }
         }
@@ -178,7 +184,7 @@ public class Game {
 
 
   public boolean move(long playerId, MoveIntent intent){
-    if(MoveValidator.validateMove(intent, this.board, getMoveHistory())){
+    if(MoveValidator.validateMove(intent, this.board, getMoveHistory(), currentPlayerColor())){
         moves.add(new Move(intent));
 
         board.updateBoard(intent);
