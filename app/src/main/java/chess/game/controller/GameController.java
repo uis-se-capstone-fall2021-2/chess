@@ -17,7 +17,6 @@ import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.controller.requests.CreateGameRequest;
 import chess.game.service.IGameService;
-import chess.game.service.params.*;
 import chess.game.service.results.*;
 
 @RestController
@@ -44,11 +43,10 @@ public class GameController {
   @PostMapping("/games")
   public GameInfo createGame(@RequestBody(required=true) CreateGameRequest req) {
     CreateGameResult result = gameService.createGame(
-      new CreateGameParams(
-        TEST_PLAYER_ID,
-        req.playerColor,
-        req.opponentId
-      ));
+      TEST_PLAYER_ID,
+      req.playerColor,
+      req.opponentId
+    );
     
     if(result.value != null) {
       return result.value;
@@ -66,8 +64,7 @@ public class GameController {
 
   @DeleteMapping("/games/{id}")
   public void deleteGame(@PathVariable(value="id", required=true) long gameId) {
-    DeleteGameResult result = gameService.deleteGame(
-      new DeleteGameParams(gameId, TEST_PLAYER_ID));
+    DeleteGameResult result = gameService.deleteGame(gameId, TEST_PLAYER_ID);
     
     switch(result) {
       case GAME_NOT_FOUND:
@@ -85,11 +82,7 @@ public class GameController {
 
   @PostMapping("/games/{id}/quit")
   public void quitGame(@PathVariable(value="id", required=true) long gameId) {
-    QuitGameResult result = gameService.quitGame(
-      new QuitGameParams(
-        gameId,
-        TEST_PLAYER_ID
-      ));
+    QuitGameResult result = gameService.quitGame(gameId, TEST_PLAYER_ID);
 
     switch(result) {
       case GAME_NOT_FOUND:
@@ -106,9 +99,7 @@ public class GameController {
 
   @GetMapping("/games/{id}")
   public GameState getGameState(@PathVariable(value="id", required=true) long gameId) {
-    GameStateResult result = gameService.getGameState(
-      new GetGameStateParams(gameId, TEST_PLAYER_ID)
-    );
+    GameStateResult result = gameService.getGameState(gameId, TEST_PLAYER_ID);
 
     if(result.value == null) {
       switch(result.code) {
@@ -130,11 +121,10 @@ public class GameController {
     @RequestBody(required=true) MoveIntent moveIntent
   ) {
     UpdateGameResult result = gameService.move(
-      new UpdateGameParams(
-        gameId,
-        TEST_PLAYER_ID,
-        moveIntent
-      ));
+      gameId,
+      TEST_PLAYER_ID,
+      moveIntent
+    );
 
     if(result.value == null) {
       switch(result.code) {
