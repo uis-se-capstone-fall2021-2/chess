@@ -42,7 +42,12 @@ gradle bootRun
 
 Interact with the data (app must be running, and since we use the H2 in-memory database for now, data will reset when app restarts)
 
-[Swagger WEB UI](http://localhost:8080/swagger-ui.html)
+[Swagger WEB UI](http://localhost:8080/swagger-ui)
+
+Authenticate by runnng the client app, logging in, and getting a token. Copy the token from the client app and paste into the Swagger UI in the top right corner.
+
+<img src="./docs/img/swagger_auth.png"/>
+
 
 ### Tests
 
