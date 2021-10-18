@@ -18,7 +18,6 @@ import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.controller.requests.CreateGameRequest;
 import chess.game.service.IGameService;
-import chess.game.service.params.*;
 import chess.game.service.results.*;
 import chess.user.model.User;
 
@@ -47,11 +46,10 @@ public class GameController {
     @RequestBody(required=true) CreateGameRequest req
   ) {
     CreateGameResult result = gameService.createGame(
-      new CreateGameParams(
-        user.getPlayerId(),
-        req.playerColor,
-        req.opponentId
-      ));
+      user.getPlayerId(),
+      req.playerColor,
+      req.opponentId
+    );
     
     if(result.value != null) {
       return result.value;
@@ -72,9 +70,7 @@ public class GameController {
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
   ) {
-    DeleteGameResult result = gameService.deleteGame(
-      new DeleteGameParams(gameId, user.getPlayerId())
-    );
+    DeleteGameResult result = gameService.deleteGame(gameId, user.getPlayerId());
     
     switch(result) {
       case GAME_NOT_FOUND:
@@ -95,11 +91,7 @@ public class GameController {
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
   ) {
-    QuitGameResult result = gameService.quitGame(
-      new QuitGameParams(
-        gameId,
-        user.getPlayerId()
-      ));
+    QuitGameResult result = gameService.quitGame(gameId, user.getPlayerId());
 
     switch(result) {
       case GAME_NOT_FOUND:
@@ -119,9 +111,7 @@ public class GameController {
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
   ) {
-    GameStateResult result = gameService.getGameState(
-      new GetGameStateParams(gameId, user.getPlayerId())
-    );
+    GameStateResult result = gameService.getGameState(gameId, user.getPlayerId());
 
     if(result.value == null) {
       switch(result.code) {
@@ -144,11 +134,10 @@ public class GameController {
     @RequestBody(required=true) MoveIntent moveIntent
   ) {
     UpdateGameResult result = gameService.move(
-      new UpdateGameParams(
-        gameId,
-        user.getPlayerId(),
-        moveIntent
-      ));
+      gameId,
+      user.getPlayerId(),
+      moveIntent
+    );
 
     if(result.value == null) {
       switch(result.code) {

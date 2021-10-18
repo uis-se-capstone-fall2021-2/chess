@@ -1,4 +1,4 @@
-package chess.game.db;
+package chess.game.model;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import chess.game.db.params.*;
 import chess.util.Repo;
+import chess.game.GameCompletionState;
 
 @Repository
 public class Games extends Repo {
@@ -37,10 +37,10 @@ public class Games extends Repo {
 	}
 
 	@Transactional
-	public Game createGame(CreateGameParams params) {
+	public Game createGame(long player1, long player2, long owner) {
 		Session session = getSession();
 
-		Game game = new Game(params.player1, params.player2, params.owner);
+		Game game = new Game(player1, player2, owner);
 
 		session.save(game);
 		return game;
@@ -54,11 +54,11 @@ public class Games extends Repo {
 	}
 
 	@Transactional
-	public void endGame(EndGameParams params) {
+	public void endGame(long gameId, long winner, GameCompletionState completionState) {
 		Session session = getSession();
-		Game game = session.get(Game.class, params.gameId);
-		game.setWinnner(params.winner);
-		game.setCompletionState(params.completionState);
+		Game game = session.get(Game.class, gameId);
+		game.setWinnner(winner);
+		game.setCompletionState(completionState);
 		session.saveOrUpdate(game);
 	}
 }
