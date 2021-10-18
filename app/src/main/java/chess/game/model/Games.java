@@ -1,4 +1,4 @@
-package chess.game.db;
+package chess.game.model;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -11,7 +11,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import chess.game.db.params.*;
+import chess.game.model.params.*;
 
 @Repository
 public class Games {

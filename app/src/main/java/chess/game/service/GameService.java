@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import chess.PlayerColor;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
+import chess.game.model.*;
 import chess.game.service.params.*;
 import chess.game.service.results.*;
-
-import chess.game.db.*;
 
 @Service
 public class GameService implements IGameService {
@@ -61,7 +60,7 @@ public class GameService implements IGameService {
       player2 = owner;
     }
     Game game = games.createGame(
-      new chess.game.db.params.CreateGameParams(
+      new chess.game.model.params.CreateGameParams(
         player1,
         player2,
         owner
@@ -100,7 +99,7 @@ public class GameService implements IGameService {
       : players[0];
 
     games.endGame(
-      new chess.game.db.params.EndGameParams(
+      new chess.game.model.params.EndGameParams(
         params.gameId,
         winner,
         GameCompletionState.TERMINATED

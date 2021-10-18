@@ -1,4 +1,4 @@
-package chess.game.db.params;
+package chess.game.model.params;
 
 public class CreateGameParams {
   public final long player1;

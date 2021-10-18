@@ -1,4 +1,4 @@
-package chess.game.db.params;
+package chess.game.model.params;
 
 import chess.game.GameCompletionState;
 
