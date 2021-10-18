@@ -12,13 +12,19 @@ import chess.player.db.Player;
   uniqueConstraints=@UniqueConstraint(columnNames="USER_ID")
 )
 public class User extends Player {
-  @Column(name="USER_ID")
+  public static class Fields {
+    public static final String USER_ID = "USER_ID";
+    public static final String USER_EMAIL = "USER_EMAIL";
+    public static final String USER_DISPLAY_NAME = "USER_DISPLAY_NAME";
+  }
+
+  @Column(name=Fields.USER_ID)
   private String userId;
 
-  @Column(name="USER_EMAIL")
+  @Column(name=Fields.USER_EMAIL)
   private String email;
 
-  @Column(name="USER_DISPLAY_NAME")
+  @Column(name=Fields.USER_DISPLAY_NAME)
   private String displayName;
 
   public User() {}
@@ -39,6 +45,10 @@ public class User extends Player {
 
   public String getDisplayName() {
     return displayName;
+  }
+
+  public void updateDisplayName(String displayName) {
+    this.displayName = displayName;
   }
 
   public void notify(GameState gameState) {
