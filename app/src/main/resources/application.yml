@@ -20,4 +20,7 @@ spring:
       enabled: true
 auth0:
   audience: chess-api
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
 
