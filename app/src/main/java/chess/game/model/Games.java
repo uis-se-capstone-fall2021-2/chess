@@ -1,27 +1,21 @@
 package chess.game.model;
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import chess.util.Repo;
 import chess.game.GameCompletionState;
 
 @Repository
-public class Games {
-
-	@PersistenceContext
-	private EntityManager entityManager;
-
-	private Session getSession() {
-		return entityManager.unwrap(Session.class);
-	}
+public class Games extends Repo {
 
 	public List<Game> listGamesForPlayer(long playerId) {
 		Session session = getSession();

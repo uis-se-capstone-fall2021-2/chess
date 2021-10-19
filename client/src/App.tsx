@@ -7,11 +7,12 @@ import {LoginButton} from './user/components/LoginButton';
 import {LogoutButton} from './user/components/LogoutButton';
 
 @autobind
-export class App extends React.Component<{}, {token: string|null, subject: string|null}> {
+export class App extends React.Component<{}, {token: string|null, userInfo: object|null}> {
 
   public state = {
     token: null,
-    subject: null
+    userInfo: null,
+    userName: null
   };
 
   public render(): React.ReactNode {
@@ -34,7 +35,7 @@ export class App extends React.Component<{}, {token: string|null, subject: strin
                   <pre>{JSON.stringify(user, null, 2)}</pre>
                   <button onClick={() => this.getUser(user)}>Get Token</button>
                   {this.renderToken()}
-                  {this.renderSubject()}
+                  {this.renderUser()}
                 </div>
               </div>
             )}
@@ -61,14 +62,14 @@ export class App extends React.Component<{}, {token: string|null, subject: strin
     navigator.clipboard.writeText(this.state.token ?? '');
   }
 
-  private renderSubject(): React.ReactNode {
-    if(!this.state.subject) {
+  private renderUser(): React.ReactNode {
+    if(!this.state.userInfo) {
       return null;
     }
     return (
       <div>
-        <h4>Subject</h4>
-        <pre>{this.state.subject}</pre>
+        <h4>{this.state.userName}</h4>
+        <pre>{JSON.stringify(this.state.userInfo, null, 2)}</pre>
       </div>
     );
   }
@@ -76,12 +77,16 @@ export class App extends React.Component<{}, {token: string|null, subject: strin
   private async getUser(user: Auth0ContextInterface<User>): Promise<void> {
     const token = await user.getAccessTokenSilently();
     this.setState({token});
-    const response = await axios.default.get('http://localhost:8080/api/v1/user/whoami', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    this.setState({subject: response.data});
+    try {
+      const {data: userInfo} = await axios.default.get('http://localhost:8080/api/v1/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      this.setState({userInfo});
+    } catch(e) {
+
+    }
     
   }
 }

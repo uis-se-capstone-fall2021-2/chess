@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import chess.MoveIntent;
@@ -18,14 +19,13 @@ import chess.game.GameState;
 import chess.game.controller.requests.CreateGameRequest;
 import chess.game.service.IGameService;
 import chess.game.service.results.*;
+import chess.user.model.User;
 
 @RestController
 @RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins={"*"})
 @SecurityRequirement(name="chess-api")
 public class GameController {
-
-  private final static long TEST_PLAYER_ID = 1;
 
   private final IGameService gameService;
 
@@ -36,14 +36,17 @@ public class GameController {
 
 
   @GetMapping("/games")
-  public List<GameInfo> listAvailableGames() {
-    return gameService.listAvailableGames(TEST_PLAYER_ID);
+  public List<GameInfo> listAvailableGames(@Parameter(hidden=true) User user) {
+    return gameService.listAvailableGames(user.getPlayerId());
   }
 
   @PostMapping("/games")
-  public GameInfo createGame(@RequestBody(required=true) CreateGameRequest req) {
+  public GameInfo createGame(
+    @Parameter(hidden=true) User user,
+    @RequestBody(required=true) CreateGameRequest req
+  ) {
     CreateGameResult result = gameService.createGame(
-      TEST_PLAYER_ID,
+      user.getPlayerId(),
       req.playerColor,
       req.opponentId
     );
@@ -63,8 +66,11 @@ public class GameController {
   }
 
   @DeleteMapping("/games/{id}")
-  public void deleteGame(@PathVariable(value="id", required=true) long gameId) {
-    DeleteGameResult result = gameService.deleteGame(gameId, TEST_PLAYER_ID);
+  public void deleteGame(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    DeleteGameResult result = gameService.deleteGame(gameId, user.getPlayerId());
     
     switch(result) {
       case GAME_NOT_FOUND:
@@ -81,8 +87,11 @@ public class GameController {
   }
 
   @PostMapping("/games/{id}/quit")
-  public void quitGame(@PathVariable(value="id", required=true) long gameId) {
-    QuitGameResult result = gameService.quitGame(gameId, TEST_PLAYER_ID);
+  public void quitGame(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    QuitGameResult result = gameService.quitGame(gameId, user.getPlayerId());
 
     switch(result) {
       case GAME_NOT_FOUND:
@@ -98,8 +107,11 @@ public class GameController {
   }
 
   @GetMapping("/games/{id}")
-  public GameState getGameState(@PathVariable(value="id", required=true) long gameId) {
-    GameStateResult result = gameService.getGameState(gameId, TEST_PLAYER_ID);
+  public GameState getGameState(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    GameStateResult result = gameService.getGameState(gameId, user.getPlayerId());
 
     if(result.value == null) {
       switch(result.code) {
@@ -117,12 +129,13 @@ public class GameController {
 
   @PatchMapping("/games/{id}")
   public GameState move(
+    @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId,
     @RequestBody(required=true) MoveIntent moveIntent
   ) {
     UpdateGameResult result = gameService.move(
       gameId,
-      TEST_PLAYER_ID,
+      user.getPlayerId(),
       moveIntent
     );
 
