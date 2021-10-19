@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import chess.user.model.*;
 
-
 @Service
 public class UserService {
 
