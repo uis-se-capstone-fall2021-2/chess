@@ -24,9 +24,7 @@ public class Users extends Repo {
       .where(
         cb.equal(user.get("userId"), userId));
     try {
-      final User result = session.createQuery(q).getSingleResult();
-
-      return result;
+      return session.createQuery(q).getSingleResult();
     } catch(Exception e) {
       return null;
     }
@@ -40,7 +38,11 @@ public class Users extends Repo {
     q.select(user)
       .where(
         cb.equal(user.get("displayName"), displayName));
-    return session.createQuery(q).getSingleResult();
+    try {
+      return session.createQuery(q).getSingleResult();
+    } catch(Exception e) {
+      return null;
+    }
   }
 
   public List<User> searchUsers(String displayName) {
