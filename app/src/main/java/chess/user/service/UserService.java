@@ -32,6 +32,10 @@ public class UserService {
     return users.getUserById(userId);
   }
 
+  public User getUserByDisplayName(String displayName) {
+    return users.getUserByDisplayName(displayName);
+  }
+
   public Auth0UserInfo fetchUserProfile(Jwt principal) throws Exception {
     HttpRequest req = HttpRequest.newBuilder()
         .GET()
@@ -46,10 +50,16 @@ public class UserService {
   public User provisionUser(Jwt principal) throws Exception {
     Auth0UserInfo userInfo = fetchUserProfile(principal);
 
+    int i = 0;
+    String displayName = userInfo.nickname;
+    while(users.getUserByDisplayName(displayName) != null) {
+      displayName = String.format("%s_%d", displayName, ++i);
+    }
+
     return users.createUser(
       userInfo.sub,
       userInfo.email,
-      userInfo.nickname
+      displayName
     );
   }
 }
