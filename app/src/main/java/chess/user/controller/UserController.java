@@ -19,12 +19,12 @@ import chess.user.controller.requests.UpdateDisplayNameRequest;
 import chess.user.model.User;
 
 @RestController
-@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins={"*"})
 @SecurityRequirement(name="chess-api")
 public class UserController {
   
-  @GetMapping("/user")
+  @GetMapping("/")
   public Map<String, Object> getUserInfo(@Parameter(hidden=true) User user) {
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("userId", user.getUserId());
@@ -34,11 +34,11 @@ public class UserController {
     return map;
   }
 
-  @PatchMapping("/user")
+  @PatchMapping("/")
   public void updateDisplayName(
     @Parameter(hidden=true) User user,
     @RequestBody(required=true) UpdateDisplayNameRequest req
   ) {
-    user.updateDisplayName(req.displayName);
+    user.setDisplayName(req.displayName);
   }
 }

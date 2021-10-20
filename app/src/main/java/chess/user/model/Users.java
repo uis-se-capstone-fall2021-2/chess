@@ -2,47 +2,31 @@ package chess.user.model;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 
 import org.springframework.stereotype.Repository;
 
-import chess.util.Repo;
+import chess.player.model.PlayerRepo;
 
 @Repository
-public class Users extends Repo {
-  public User getUserById(String userId) {
-    Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<User> q = cb.createQuery(User.class);
-    Root<User> user = q.from(User.class);
-    q.select(user)
-      .where(
-        cb.equal(user.get("userId"), userId));
-    try {
-      final User result = session.createQuery(q).getSingleResult();
-
-      return result;
-    } catch(Exception e) {
-      return null;
-    }
+public class Users extends PlayerRepo<User> {
+  public Users(EntityManager em) {
+    super(em, User.class);
   }
 
-  public List<User> findUsersByDisplayName(String displayName) {
-    Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<User> q = cb.createQuery(User.class);
-    Root<User> user = q.from(User.class);
-    q.select(user)
-      .where(
-        cb.like(user.get("displayName"), displayName));
-    final List<User> results = session.createQuery(q).getResultList();
+  public User getUserById(String userId) {
+    return super.findByKey("userId", userId);
+  }
 
-    return results; 
+  public User getUserByDisplayName(String displayName) {
+    return super.getPlayerByDisplayName(displayName);
+  }
+
+  public List<User> searchUsers(String displayName) {
+    return super.searchPlayers(displayName); 
   }
 
   @Transactional

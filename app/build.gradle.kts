@@ -4,6 +4,7 @@ plugins {
 	id("com.kncept.junit.reporter") version "2.1.0"
 	id("org.springframework.boot") version "2.5.4"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	id("io.freefair.lombok") version "6.2.0"
 	id("java")
 }
 

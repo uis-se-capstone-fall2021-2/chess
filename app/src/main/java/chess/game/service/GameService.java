@@ -10,8 +10,10 @@ import chess.MoveIntent;
 import chess.PlayerColor;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
+import chess.game.GameState;
 import chess.game.model.*;
-import chess.game.service.results.*;
+import chess.game.service.errorCodes.*;
+import chess.util.Result;
 
 @Service
 public class GameService implements IGameService {
@@ -36,10 +38,10 @@ public class GameService implements IGameService {
     return game.info();
   }
 
-  public CreateGameResult createGame(long playerId, PlayerColor playerColor, long opponentId) {
+  public Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId) {
 
     if(playerId == opponentId) {
-      return new CreateGameResult(CreateGameResult.Code.INVALID_OPPONENT);
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.INVALID_OPPONENT);
     }
     
 
@@ -61,31 +63,31 @@ public class GameService implements IGameService {
     }
     Game game = games.createGame(player1, player2, owner);
     // TODO: notify players
-    return new CreateGameResult(game.info());
+    return new Result<GameInfo, CreateGameErrorCode>(game.info());
   }
 
-  public DeleteGameResult deleteGame(long gameId, long playerId) {
+  public Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {
-      return DeleteGameResult.GAME_NOT_FOUND;
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_NOT_FOUND);
     } else if(game.getOwner() != playerId) {
-      return DeleteGameResult.UNAUTHORIZED;
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.UNAUTHORIZED);
     } else if(game.getCompletionState() == GameCompletionState.ACTIVE) {
-      return DeleteGameResult.GAME_ACTIVE;
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_ACTIVE);
     }
     games.deleteGame(gameId);
     // TODO: Notify players
-    return DeleteGameResult.OK;
+    return new Result<Void, DeleteGameErrorCode>();
   }
 
-  public QuitGameResult quitGame(long gameId, long playerId) {
+  public Result<Void, QuitGameErrorCode> quitGame(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {
-      return QuitGameResult.GAME_NOT_FOUND;
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(playerId)) {
-      return QuitGameResult.UNAUTHORIZED;
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.UNAUTHORIZED);
     } else if(game.getCompletionState() != GameCompletionState.ACTIVE) {
-      return QuitGameResult.ALREADY_COMPLETE;
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.ALREADY_COMPLETE);
     }
 
     long[] players = game.getPlayers();
@@ -96,36 +98,36 @@ public class GameService implements IGameService {
     games.endGame(gameId, winner, GameCompletionState.TERMINATED);
     
     // TODO: Notify players
-    return QuitGameResult.OK;
+    return new Result<Void, QuitGameErrorCode>();
   }
 
 
-  public GameStateResult getGameState(long gameId, long playerId) {
+  public Result<GameState, GameStateErrorCode> getGameState(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {
-      return new GameStateResult(GameStateResult.Code.GAME_NOT_FOUND);
+      return new Result<GameState, GameStateErrorCode>(GameStateErrorCode.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(playerId)) {
-      return new GameStateResult(GameStateResult.Code.UNAUTHORIZED);
+      return new Result<GameState, GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
     }
-    return new GameStateResult(game.getGameState());
+    return new Result<GameState, GameStateErrorCode>(game.getGameState());
   }
 
-  public UpdateGameResult move(long gameId, long playerId, MoveIntent moveIntent) {
+  public Result<GameState, UpdateGameErrorCode> move(long gameId, long playerId, MoveIntent moveIntent) {
     Game game = games.getGameById(gameId);
     if(game == null) {
-      return new UpdateGameResult(UpdateGameResult.Code.GAME_NOT_FOUND);
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(playerId)) {
-      return new UpdateGameResult(UpdateGameResult.Code.UNAUTHORIZED);
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.UNAUTHORIZED);
     } else if(game.currentPlayer() != playerId) {
-      return new UpdateGameResult(UpdateGameResult.Code.OUT_OF_TURN);
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.OUT_OF_TURN);
     }
 
     boolean success = game.move(playerId, moveIntent);
     if(success) {
       // TODO: Notify players
-      return new UpdateGameResult(game.getGameState());
+      return new Result<GameState, UpdateGameErrorCode>(game.getGameState());
     } else {
-      return new UpdateGameResult(UpdateGameResult.Code.ILLEGAL_MOVE);
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.ILLEGAL_MOVE);
     }
   }
   
