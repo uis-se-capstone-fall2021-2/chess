@@ -7,10 +7,7 @@ import chess.player.model.Player;
 
 @Entity
 @DiscriminatorValue("User")
-@Table(
-  name="Users",
-  uniqueConstraints=@UniqueConstraint(columnNames="USER_ID")
-)
+@Table(name="Users")
 public class User extends Player {
   public static class Fields {
     public static final String USER_ID = "USER_ID";
@@ -18,13 +15,13 @@ public class User extends Player {
     public static final String USER_DISPLAY_NAME = "USER_DISPLAY_NAME";
   }
 
-  @Column(name=Fields.USER_ID)
+  @Column(name=Fields.USER_ID, unique=true)
   private String userId;
 
   @Column(name=Fields.USER_EMAIL)
   private String email;
 
-  @Column(name=Fields.USER_DISPLAY_NAME)
+  @Column(name=Fields.USER_DISPLAY_NAME, unique=true)
   private String displayName;
 
   public User() {}

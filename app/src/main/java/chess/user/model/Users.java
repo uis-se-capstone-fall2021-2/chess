@@ -24,15 +24,28 @@ public class Users extends Repo {
       .where(
         cb.equal(user.get("userId"), userId));
     try {
-      final User result = session.createQuery(q).getSingleResult();
-
-      return result;
+      return session.createQuery(q).getSingleResult();
     } catch(Exception e) {
       return null;
     }
   }
 
-  public List<User> findUsersByDisplayName(String displayName) {
+  public User getUserByDisplayName(String displayName) {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<User> q = cb.createQuery(User.class);
+    Root<User> user = q.from(User.class);
+    q.select(user)
+      .where(
+        cb.equal(user.get("displayName"), displayName));
+    try {
+      return session.createQuery(q).getSingleResult();
+    } catch(Exception e) {
+      return null;
+    }
+  }
+
+  public List<User> searchUsers(String displayName) {
     Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<User> q = cb.createQuery(User.class);
