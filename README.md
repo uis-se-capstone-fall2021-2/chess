@@ -35,7 +35,7 @@ Install [**Gradle**](https://docs.gradle.org/current/userguide/installation.html
 ### Run Application
 
 ```
-gradle bootRun
+gradle bootRun --args="--spring.profiles.active=development"
 ```
 
 ### API Documentation
