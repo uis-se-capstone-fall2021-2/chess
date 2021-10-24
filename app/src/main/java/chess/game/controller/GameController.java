@@ -1,7 +1,5 @@
 package chess.game.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -31,11 +29,6 @@ public class GameController {
 
   @Autowired
   private final IGameService gameService;
-
-  @GetMapping("/games")
-  public List<GameInfo> listAvailableGames(@Parameter(hidden=true) User user) {
-    return gameService.listAvailableGames(user.getPlayerId());
-  }
 
   @PostMapping("/games")
   public GameInfo createGame(
