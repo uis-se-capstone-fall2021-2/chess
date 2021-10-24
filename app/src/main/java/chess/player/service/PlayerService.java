@@ -6,12 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import chess.game.GameCompletionState;
 import chess.game.GameInfo;
 import chess.game.model.Game;
 import chess.game.model.Games;
 import chess.player.model.Player;
 import chess.player.model.PlayerInfo;
+import chess.player.model.PlayerType;
 import chess.player.model.Players;
 import chess.player.service.errorCodes.GetPlayerInfoErrorCode;
 import chess.player.service.errorCodes.ListGamesErrorCode;
@@ -44,6 +44,9 @@ public class PlayerService {
     Player player = players.getPlayerById(playerId);
     if(player == null) {
       return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNKOWN_PLAYER);
+    } else if(player.getPlayerType() == PlayerType.AI.getPlayerType()) {
+      // TODO: in the future, allow admin to view AI games
+      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
     }
 
     List<GameInfo> activeGames = new ArrayList<GameInfo>();
@@ -58,6 +61,9 @@ public class PlayerService {
     Player player = players.getPlayerById(playerId);
     if(player == null) {
       return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNKOWN_PLAYER);
+    } else if(player.getPlayerType() == PlayerType.AI.getPlayerType()) {
+      // TODO: in the future, allow admin to view AI games
+      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
     }
 
     List<GameInfo> gameHistory = new ArrayList<GameInfo>();

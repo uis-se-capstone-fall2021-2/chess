@@ -9,5 +9,5 @@ public enum PlayerType {
   AI(Player.PlayerType.AI);
   
   @Getter
-  private final String PlayerType;
+  private final String playerType;
 }
