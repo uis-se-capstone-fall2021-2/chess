@@ -40,7 +40,6 @@ public class Games extends Repo<Game> {
 	@Transactional
 	public Game createGame(long player1, long player2, long owner) {
 		Session session = getSession();
-
 		Game game = new Game(player1, player2, owner);
 
 		session.save(game);
@@ -58,7 +57,7 @@ public class Games extends Repo<Game> {
 	public void endGame(long gameId, long winner, GameCompletionState completionState) {
 		Session session = getSession();
 		Game game = session.get(Game.class, gameId);
-		game.setWinnner(winner);
+		game.setWinner(winner);
 		game.setCompletionState(completionState);
 		session.saveOrUpdate(game);
 	}
