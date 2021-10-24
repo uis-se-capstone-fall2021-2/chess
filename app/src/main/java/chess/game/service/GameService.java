@@ -13,13 +13,18 @@ import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.model.*;
 import chess.game.service.errorCodes.*;
+import chess.player.model.Players;
 import chess.util.Result;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class GameService implements IGameService {
 
   @Autowired
-  Games games;
+  private final Games games;
+  @Autowired
+  private final Players players;
 
   public GameInfo getGameInfo(long gameId) {
     Game game = games.getGameById(gameId);
@@ -30,20 +35,16 @@ public class GameService implements IGameService {
   }
 
   public Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId) {
-
-    if(playerId == opponentId) {
+    if(players.getPlayerById(playerId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_PLAYER);
+    } else if(players.getPlayerById(opponentId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_OPPONENT);
+    } else if(playerId == opponentId) {
       return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.INVALID_OPPONENT);
     }
     
 
     long player1, player2, owner = playerId;
-   
-    /*
-    if(! both players exist in system) {
-      // TODO: check that both players exist
-      return new CreateGameResult(CreateGameResult.Code.UNKNOWN_OPPONENT);
-    }
-    */
 
     if(playerColor == PlayerColor.WHITE) {
       player1 = owner;
