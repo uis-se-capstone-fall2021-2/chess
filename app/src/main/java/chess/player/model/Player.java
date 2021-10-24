@@ -3,28 +3,33 @@ package chess.player.model;
 import javax.persistence.*;
 
 import chess.game.GameState;
-
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name="Players")
-@DiscriminatorColumn(name="PLAYER_TYPE")
+@DiscriminatorColumn(name="PLAYER_TYPE", discriminatorType=DiscriminatorType.STRING)
+@NoArgsConstructor
 public abstract class Player {
 
-  public static enum PlayerType {
-    User,
-    AI
+  public static class PlayerType {
+    public static final String User = "User";
+    public static final String AI = "AI";
+  }
+
+  public static class Fields {
+    public static final String PLAYER_ID = "PLAYER_ID";
   }
 
   @Id
-  @Column(name="PLAYER_ID")
+  @Column(name=Fields.PLAYER_ID)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Getter
   private long playerId;
 
-  public Player() {}
-
-  public long getPlayerId() {
-    return playerId;
+  @Transient
+  public String getPlayerType() {
+    return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }
 
   public abstract String getDisplayName();

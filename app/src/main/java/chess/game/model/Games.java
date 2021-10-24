@@ -2,6 +2,7 @@ package chess.game.model;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -15,7 +16,11 @@ import chess.util.Repo;
 import chess.game.GameCompletionState;
 
 @Repository
-public class Games extends Repo {
+public class Games extends Repo<Game> {
+
+	public Games(EntityManager em) {
+		super(em, Game.class);
+	}
 
 	public List<Game> listGamesForPlayer(long playerId) {
 		Session session = getSession();

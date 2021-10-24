@@ -23,7 +23,7 @@ import chess.user.model.User;
 import chess.user.service.UserService;
 
 @RestController
-@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins={"*"})
 @SecurityRequirement(name="chess-api")
 public class UserController {
@@ -31,7 +31,7 @@ public class UserController {
   @Autowired
   private UserService userService;
   
-  @GetMapping("/user")
+  @GetMapping("/")
   public Map<String, Object> getUserInfo(@Parameter(hidden=true) User user) {
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("userId", user.getUserId());
@@ -41,7 +41,7 @@ public class UserController {
     return map;
   }
 
-  @PatchMapping("/user")
+  @PatchMapping("/")
   public void updateDisplayName(
     @Parameter(hidden=true) User user,
     @RequestBody(required=true) UpdateDisplayNameRequest req
@@ -50,6 +50,6 @@ public class UserController {
     if(userService.getUserByDisplayName(displayName) != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already in use");
     }
-    user.updateDisplayName(req.displayName);
+    user.setDisplayName(req.displayName);
   }
 }

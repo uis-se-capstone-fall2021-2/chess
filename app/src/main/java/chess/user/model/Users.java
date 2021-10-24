@@ -2,60 +2,31 @@ package chess.user.model;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 
 import org.springframework.stereotype.Repository;
 
-import chess.util.Repo;
+import chess.player.model.PlayerRepo;
 
 @Repository
-public class Users extends Repo {
+public class Users extends PlayerRepo<User> {
+  public Users(EntityManager em) {
+    super(em, User.class);
+  }
+
   public User getUserById(String userId) {
-    Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<User> q = cb.createQuery(User.class);
-    Root<User> user = q.from(User.class);
-    q.select(user)
-      .where(
-        cb.equal(user.get("userId"), userId));
-    try {
-      return session.createQuery(q).getSingleResult();
-    } catch(Exception e) {
-      return null;
-    }
+    return super.findByKey("userId", userId);
   }
 
   public User getUserByDisplayName(String displayName) {
-    Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<User> q = cb.createQuery(User.class);
-    Root<User> user = q.from(User.class);
-    q.select(user)
-      .where(
-        cb.equal(user.get("displayName"), displayName));
-    try {
-      return session.createQuery(q).getSingleResult();
-    } catch(Exception e) {
-      return null;
-    }
+    return super.getPlayerByDisplayName(displayName);
   }
 
   public List<User> searchUsers(String displayName) {
-    Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<User> q = cb.createQuery(User.class);
-    Root<User> user = q.from(User.class);
-    q.select(user)
-      .where(
-        cb.like(user.get("displayName"), displayName));
-    final List<User> results = session.createQuery(q).getResultList();
-
-    return results; 
+    return super.searchPlayers(displayName); 
   }
 
   @Transactional
