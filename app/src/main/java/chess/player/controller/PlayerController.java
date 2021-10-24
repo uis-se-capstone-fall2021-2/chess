@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import lombok.AllArgsConstructor;
-
+import chess.game.GameInfo;
 import chess.player.model.PlayerInfo;
 import chess.player.service.PlayerService;
 import chess.player.service.errorCodes.GetPlayerInfoErrorCode;
+import chess.player.service.errorCodes.ListGamesErrorCode;
 import chess.util.Result;
 
 
@@ -51,8 +50,35 @@ public class PlayerController {
     }
   }
 
-  // @GetMapping("{id}/games")
-  // public List<GameInfo> getGameHistory(@PathVariable(value="id", required=true) long playerId) {
+  @GetMapping("{id}/games/active")
+  public List<GameInfo> getActiveGames(@PathVariable(value="id", required=true) long playerId) {
+    Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getActiveGamesForPlayer(playerId);
 
-  // }
+    if(result.code != null) {
+      switch(result.code) {
+        case UNKOWN_PLAYER:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return result.value;
+  }
+
+  @GetMapping("{id}/games/history")
+  public List<GameInfo> getGameHistory(@PathVariable(value="id", required=true) long playerId) {
+    Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getGameHistoryForPlayer(playerId);
+
+    if(result.code != null) {
+      switch(result.code) {
+        case UNKOWN_PLAYER:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return result.value;
+  }
 }

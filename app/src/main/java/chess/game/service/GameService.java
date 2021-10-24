@@ -21,15 +21,6 @@ public class GameService implements IGameService {
   @Autowired
   Games games;
 
-  public List<GameInfo> listAvailableGames(long playerId) {
-    List<GameInfo> infos = new ArrayList<GameInfo>();
-    List<Game> playerGames = games.listGamesForPlayer(playerId);
-    for(Game game: playerGames) {
-      infos.add(game.info());
-    }
-    return infos;
-  }
-
   public GameInfo getGameInfo(long gameId) {
     Game game = games.getGameById(gameId);
     if(game == null) {

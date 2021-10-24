@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import chess.util.Repo;
+import chess.util.persistence.Repo;
 
 
 public abstract class PlayerRepo<T extends Player> extends Repo<T> {
