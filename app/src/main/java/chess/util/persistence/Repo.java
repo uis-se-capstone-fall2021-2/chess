@@ -28,23 +28,14 @@ public class Repo<T> {
 
 	protected final Class<T> entityClass;
 
-  protected Query<T> simpleFilterQuery(OrFilter orFilter) {
-    return simpleFilterQuery(orFilter, new AndFilter());
-  }
-
-  protected Query<T> simpleFilterQuery(AndFilter andFilter) {
-    return simpleFilterQuery(new OrFilter(), andFilter);
-  }
-
-  protected Query<T> simpleFilterQuery(OrFilter orFilter, AndFilter andFilter) {
+  protected Query<T> simpleFilterQuery(Filter... filters) {
     Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<T> q = cb.createQuery(entityClass);
     Root<T> entity = q.from(entityClass);
-    PredicateBuilder<T> predicates = new PredicateBuilder<T>(cb, entity);
-    predicates.addOrFilter(orFilter);
-    predicates.addAndFilter(andFilter);
-    q.select(entity).where(predicates.toArray());
+    FilterBuilder<T> fb = new FilterBuilder<T>(cb, entity);
+    fb.addFilters(filters);
+    q.select(entity).where(fb.toArray());
     Query<T> query = session.createQuery(q);
     return query;
   }

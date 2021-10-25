@@ -1,9 +1,8 @@
 package chess.util.persistence;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class OrFilter extends HashMap<String, Object> {
+public class OrFilter extends Filter {
   public OrFilter() {
     super();
   }

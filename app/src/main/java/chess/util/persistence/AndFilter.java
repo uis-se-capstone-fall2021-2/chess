@@ -1,9 +1,8 @@
 package chess.util.persistence;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class AndFilter extends HashMap<String, Object> {
+public class AndFilter extends Filter {
   public AndFilter() {
     super();
   }

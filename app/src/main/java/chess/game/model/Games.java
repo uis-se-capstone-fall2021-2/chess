@@ -19,7 +19,7 @@ import chess.game.GameCompletionState;
 import chess.util.persistence.AndFilter;
 import chess.util.persistence.OrFilter;
 import chess.util.persistence.Repo;
-import chess.util.persistence.PredicateBuilder;
+import chess.util.persistence.FilterBuilder;
 
 @Repository
 public class Games extends Repo<Game> {
@@ -74,25 +74,16 @@ public class Games extends Repo<Game> {
 
 
 	public List<Game> getGameHistoryForPlayer(long playerId) {
-		Session session = getSession();
-    CriteriaBuilder cb = session.getCriteriaBuilder();
-    CriteriaQuery<Game> q = cb.createQuery(entityClass);
-    Root<Game> entity = q.from(entityClass);
-		PredicateBuilder<Game> predicates = new PredicateBuilder<Game>(cb, entity);
-		predicates.addOrFilter(
+		GameCompletionState[] nonActiveStates = {GameCompletionState.COMPLETE, GameCompletionState.TERMINATED};
+		Query<Game> query = super.simpleFilterQuery(
 			new OrFilter(Map.of(
 				"player1", playerId,
 				"player2", playerId
+			)),
+			new OrFilter(Map.of(
+				"completionState", nonActiveStates
 			))
 		);
-		predicates.add(
-			cb.or(
-				cb.equal(entity.get("completionState"), GameCompletionState.COMPLETE),
-				cb.equal(entity.get("completionState"), GameCompletionState.TERMINATED)
-			)
-		);
-		q.select(entity).where(predicates.toArray());
-    Query<Game> query = session.createQuery(q);
 		return query.getResultList();
 	}
 }
