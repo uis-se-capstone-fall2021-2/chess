@@ -38,19 +38,20 @@ public class MoveValidator {
         List<MoveIntent> validMoves = new ArrayList<MoveIntent>();
         List<Position> locationsToCheck = new ArrayList<Position>();
         int x,y;
-
+        x = startPos.file.value;
+        y = startPos.rank.value;
         switch(piece){
             case PAWN:
                 if(playerColor == PlayerColor.WHITE){
                     // white pawn
-                    if(startPos.rank.value < 7) {
-                        Position front = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value + 1));
+                    if(y < 7) {
+                        Position front = new Position(x, y + 1);
                         if(board.getPiece(front) == 0) {
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, front));
                         }
                         // if pawn is on its starting position
-                        if(startPos.rank.value == 1){
-                            Position doubleFront = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value + 2));
+                        if(y == 1){
+                            Position doubleFront = new Position(x, y + 2);
                             if(board.getPiece(front) == 0 && board.getPiece(doubleFront) == 0){
                                 validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
                             }
@@ -59,14 +60,14 @@ public class MoveValidator {
 
 
                     // CAPTURES
-                    if(startPos.file.value > 0) {
-                        Position leftCapture = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 1));
+                    if(x > 0) {
+                        Position leftCapture = new Position(x - 1, y + 1);
                         if(board.getPiece(leftCapture) < 0){
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
                         }
                     }
-                    if(startPos.file.value < 7) {
-                        Position rightCapture = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 1));
+                    if(x < 7) {
+                        Position rightCapture = new Position(x + 1, y + 1);
                         if(board.getPiece(rightCapture) < 0){
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
                         }
@@ -74,23 +75,23 @@ public class MoveValidator {
 
                     // EN PASSANT
                         // LEFT EN PASSANT
-                    if(startPos.file.value > 0 && startPos.rank.value == 4) {
-                        Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
-                        Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 2));
+                    if(x > 0 && y == 4) {
+                        Position left = new Position(x - 1, y);
+                        Position leftPrevious = new Position(x - 1, y + 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 1))));
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y + 1)));
                         }
                     }
                         // RIGHT EN PASSANT
-                    if(startPos.file.value < 7 && startPos.rank.value == 4) {
-                        Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
-                        Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 2));
+                    if(x < 7 && y == 4) {
+                        Position right = new Position(x + 1, y);
+                        Position rightPrevious = new Position(x + 1, y + 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 1))));
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y + 1)));
                         }
                     }
                         
@@ -98,28 +99,28 @@ public class MoveValidator {
 
                 } else {
                     // black pawn
-                    if(startPos.rank.value > 0) {
-                        Position front = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value - 1));
+                    if(y > 0) {
+                        Position front = new Position(x, y - 1);
                         if(board.getPiece(front) == 0) {
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, front));
                         }
                         // if pawn is on its starting position
-                        if(startPos.rank.value == 6){
-                            Position doubleFront = new Position(File.FromInteger(startPos.file.value), Rank.FromInteger(startPos.rank.value - 2));
+                        if(y == 6){
+                            Position doubleFront = new Position(x, y - 2);
                             if(board.getPiece(front) == 0 && board.getPiece(doubleFront) == 0){
                                 validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
                             }
                         }
                     }
                     // CAPTURES
-                    if(startPos.file.value > 0) {
-                        Position leftCapture = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 1));
+                    if(x > 0) {
+                        Position leftCapture = new Position(x - 1, y - 1);
                         if(board.getPiece(leftCapture) > 0){
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
                         }
                     }
-                    if(startPos.file.value < 7) {
-                        Position rightCapture = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 1));
+                    if(x < 7) {
+                        Position rightCapture = new Position(x + 1, y - 1);
                         if(board.getPiece(rightCapture) > 0){
                             validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
                         }
@@ -128,23 +129,23 @@ public class MoveValidator {
 
                     // EN PASSANT
                         // LEFT EN PASSANT
-                    if(startPos.file.value > 0 && startPos.rank.value == 3) {
-                        Position left = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value));
-                        Position leftPrevious = new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 2));
+                    if(x > 0 && y == 3) {
+                        Position left = new Position(x - 1, x);
+                        Position leftPrevious = new Position(x - 1, y - 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 1))));
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y - 1)));
                         }
                     }
                         // RIGHT EN PASSANT
-                    if(startPos.file.value < 7 && startPos.rank.value == 3) {
-                        Position right = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value));
-                        Position rightPrevious = new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 2));
+                    if(x < 7 && y == 3) {
+                        Position right = new Position(x + 1, x);
+                        Position rightPrevious = new Position(x + 1, y - 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
                             // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 1))));
+                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y - 1)));
                         }
                     }
 
@@ -152,33 +153,33 @@ public class MoveValidator {
                 break;
             case KNIGHT:
                 //a knight has 8 potential moves that it can make. Here we add these 8 potential moves to an array, if they exist on the game board
-                if(startPos.file.value < 6) {
+                if(x < 6) {
                     // right 2
-                    if(startPos.rank.value < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value + 2), Rank.FromInteger(startPos.rank.value + 1))); // right 2 up 1
-                    if(startPos.rank.value > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value + 2), Rank.FromInteger(startPos.rank.value - 1))); // right 2 down 1
+                    if(y < 7)
+                        locationsToCheck.add(new Position(x + 2, y + 1)); // right 2 up 1
+                    if(y > 0)
+                        locationsToCheck.add(new Position(x + 2, y - 1)); // right 2 down 1
                 }
-                if(startPos.file.value > 1) {
+                if(x > 1) {
                     // left 2
-                    if(startPos.rank.value < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value - 2), Rank.FromInteger(startPos.rank.value + 1))); // left 2 up 1
-                    if(startPos.rank.value > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value - 2), Rank.FromInteger(startPos.rank.value - 1))); // left 2 down 1
+                    if(y < 7)
+                        locationsToCheck.add(new Position(x - 2, y + 1)); // left 2 up 1
+                    if(y > 0)
+                        locationsToCheck.add(new Position(x - 2, y - 1)); // left 2 down 1
                 }
-                if(startPos.rank.value < 6) {
+                if(y < 6) {
                     // up 2
-                    if(startPos.file.value < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value + 2))); // up 2 right 1
-                    if(startPos.file.value > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value + 2))); // up 2 left 1
+                    if(x < 7)
+                        locationsToCheck.add(new Position(x + 1, y + 2)); // up 2 right 1
+                    if(x > 0)
+                        locationsToCheck.add(new Position(x - 1, y + 2)); // up 2 left 1
                 }
-                if(startPos.rank.value > 1) {
+                if(y > 1) {
                     // down 2
-                    if(startPos.file.value < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value + 1), Rank.FromInteger(startPos.rank.value - 2))); // down 2 right 1
-                    if(startPos.file.value > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(startPos.file.value - 1), Rank.FromInteger(startPos.rank.value - 2))); // down 2 left 1
+                    if(x < 7)
+                        locationsToCheck.add(new Position(x + 1, y - 2)); // down 2 right 1
+                    if(x > 0)
+                        locationsToCheck.add(new Position(x - 1, y - 2)); // down 2 left 1
                 }
                 if(playerColor == PlayerColor.WHITE) {
                     for(Position endPos : locationsToCheck){
@@ -205,7 +206,7 @@ public class MoveValidator {
                 while(x < 7 && y < 7){
                     x++;
                     y++;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -217,7 +218,7 @@ public class MoveValidator {
                 while(x > 0 && y < 7){
                     x--;
                     y++;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -229,7 +230,7 @@ public class MoveValidator {
                 while(x < 7 && y > 0){
                     x++;
                     y--;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -241,7 +242,7 @@ public class MoveValidator {
                 while(x > 0 && y > 0){
                     x--;
                     y--;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -268,7 +269,7 @@ public class MoveValidator {
                 // right
                 while(x < 7) {
                     x++;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -279,7 +280,7 @@ public class MoveValidator {
                 // left
                 while(x > 0) {
                     x--;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -290,7 +291,7 @@ public class MoveValidator {
                 // up
                 while(y < 7) {
                     y++;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -301,7 +302,7 @@ public class MoveValidator {
                 // down
                 while(y > 0) {
                     y--;
-                    Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+                    Position next = new Position(x, x);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -331,23 +332,23 @@ public class MoveValidator {
                 x = startPos.file.value;
                 y = startPos.rank.value;
                 if(x < 7) {
-                    locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y)));
+                    locationsToCheck.add(new Position(x + 1, y));
                     if(y < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y + 1)));
+                        locationsToCheck.add(new Position(x + 1, y + 1));
                     if (y > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(x + 1), Rank.FromInteger(y - 1)));
+                        locationsToCheck.add(new Position(x + 1, y - 1));
                 }
                 if(x > 0){
-                    locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y)));
+                    locationsToCheck.add(new Position(x - 1, y));
                     if(y < 7)
-                        locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y + 1)));
+                        locationsToCheck.add(new Position(x - 1, y + 1));
                     if (y > 0)
-                        locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y - 1)));
+                        locationsToCheck.add(new Position(x - 1, y - 1));
                 }
                 if(y > 0)
                     locationsToCheck.add(new Position(x,y - 1));
                 if(y < 7)
-                    locationsToCheck.add(new Position(File.FromInteger(x), Rank.FromInteger(y + 1)));
+                    locationsToCheck.add(new Position(x, y + 1));
 
                 // King wants to castle:
                 // white king king side castle
@@ -451,26 +452,26 @@ public class MoveValidator {
 
         if ( team == 1 ) {
             if(x > 0 && y < 7) {
-                Position leftCapture = new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value + 1));
+                Position leftCapture = new Position(x - 1, y + 1);
                 if(board.getPiece(leftCapture) == (-team)){
                     return true;
                 }
             }
             if(x < 7 && y < 7) {
-                Position rightCapture = new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value + 1));
+                Position rightCapture = new Position(x + 1, y + 1);
                 if(board.getPiece(rightCapture) == (-team)){
                     vreturn true;
                 }
             }
         } else {
             if(x > 0 && y > 0) {
-                Position leftCapture = new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value - 1));
+                Position leftCapture = new Position(x - 1, y - 1);
                 if(board.getPiece(leftCapture) == (-team)){
                     return true;
                 }
             }
             if(x < 7 && y > 0) {
-                Position rightCapture = new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value - 1));
+                Position rightCapture = new Position(x + 1, y - 1);
                 if(board.getPiece(rightCapture) == (-team)){
                     vreturn true;
                 }
@@ -480,46 +481,46 @@ public class MoveValidator {
 
 
         // check for knights:
-        if(loc.file.value < 6) {
-            if(loc.rank.value < 7){
-                if(getPiece(new Position(File.FromInteger(loc.file.value + 2), Rank.FromInteger(startPos.rank.value + 1))) == (-team * 3)))
+        if(x < 6) {
+            if(y < 7){
+                if(getPiece(new Position(x + 2, y + 1)) == (-team * 3)))
                     return true;
             }
-            if(loc.rank.value > 0){
-                if(getPiece(new Position(File.FromInteger(loc.file.value + 2), Rank.FromInteger(startPos.rank.value - 1))) == (-team * 3)))
+            if(y > 0){
+                if(getPiece(new Position(x + 2, y - 1)) == (-team * 3)))
                     return true;
             }
         }
-        if(loc.file.value > 1) {
+        if(x > 1) {
             // left 2
-            if(loc.rank.value < 7) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value - 2), Rank.FromInteger(loc.rank.value + 1)))  == (-team * 3))
+            if(y < 7) {
+                if(getPiece(new Position(x - 2, y + 1))  == (-team * 3))
                     return true;
             } // left 2 up 1
-            if(loc.rank.value > 0) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value - 2), Rank.FromInteger(loc.rank.value - 1)))  == (-team * 3))
+            if(y > 0) {
+                if(getPiece(new Position(x - 2, y - 1))  == (-team * 3))
                     return true;
             } // left 2 down 1
         }
-        if(loc.rank.value < 6) {
+        if(y < 6) {
             // up 2
-            if(loc.file.value < 7) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value + 2)))  == (-team * 3))
+            if(x < 7) {
+                if(getPiece(new Position(x + 1, y + 2))  == (-team * 3))
                     return true;
             } // up 2 right 1
-            if(loc.file.value > 0) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value + 2)))  == (-team * 3))
+            if(x > 0) {
+                if(getPiece(new Position(x - 1, y + 2))  == (-team * 3))
                     return true;
             } // up 2 left 1
         }
-        if(loc.rank.value > 1) {
+        if(y > 1) {
             // down 2
-            if(loc.file.value < 7) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value + 1), Rank.FromInteger(loc.rank.value - 2))) == (-team * 3))
+            if(x < 7) {
+                if(getPiece(new Position(x + 1, y - 2)) == (-team * 3))
                     return true
              } // down 2 right 1
-            if(loc.file.value > 0) {
-                if(getPiece(new Position(File.FromInteger(loc.file.value - 1), Rank.FromInteger(loc.rank.value - 2))) == (-team * 3))
+            if(x > 0) {
+                if(getPiece(new Position(x - 1, y - 2)) == (-team * 3))
                     return true
              } // down 2 left 1
         }
@@ -527,7 +528,7 @@ public class MoveValidator {
         // checking threat from rook/queen:
         while(x < 7) {
             x++;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -540,7 +541,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(y < 7) {
             y++;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -553,7 +554,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(x > 0) {
             x--;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -566,7 +567,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(y < 7) {
             y++;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -582,7 +583,7 @@ public class MoveValidator {
         while(x < 7 && y < 7){
             x++;
             y++;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -594,7 +595,7 @@ public class MoveValidator {
         while(x > 0 && y < 7){
             x--;
             y++;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -606,7 +607,7 @@ public class MoveValidator {
         while(x < 7 && y > 0){
             x++;
             y--;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -618,7 +619,7 @@ public class MoveValidator {
         while(x > 0 && y > 0){
             x--;
             y--;
-            Position next = new Position(File.FromInteger(x), Rank.FromInteger(y));
+            Position next = new Position(x, x);
             int piece = getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
