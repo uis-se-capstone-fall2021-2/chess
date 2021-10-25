@@ -10,12 +10,16 @@ import javax.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PredicateList<U> extends LinkedList<Predicate> {
+public class PredicateBuilder<U> extends LinkedList<Predicate> {
   private final CriteriaBuilder cb;
   private final Root<U> entity;
 
   public boolean add(Predicate predicate) {
     return super.add(predicate);
+  }
+
+  public Predicate[] toArray() {
+    return super.toArray(Predicate[]::new);
   }
 
   public void addOrFilter(OrFilter filter) {

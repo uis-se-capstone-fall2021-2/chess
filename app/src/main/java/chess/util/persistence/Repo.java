@@ -41,10 +41,10 @@ public class Repo<T> {
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<T> q = cb.createQuery(entityClass);
     Root<T> entity = q.from(entityClass);
-    PredicateList<T> predicates = new PredicateList<T>(cb, entity);
+    PredicateBuilder<T> predicates = new PredicateBuilder<T>(cb, entity);
     predicates.addOrFilter(orFilter);
     predicates.addAndFilter(andFilter);
-    q.select(entity).where(predicates.toArray(Predicate[]::new));
+    q.select(entity).where(predicates.toArray());
     Query<T> query = session.createQuery(q);
     return query;
   }
