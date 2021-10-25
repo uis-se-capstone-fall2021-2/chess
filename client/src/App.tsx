@@ -78,7 +78,7 @@ export class App extends React.Component<{}, {token: string|null, userInfo: obje
     const token = await user.getAccessTokenSilently();
     this.setState({token});
     try {
-      const {data: userInfo} = await axios.default.get('http://localhost:8080/api/v1/user/', {
+      const {data: userInfo} = await axios.default.get('http://localhost:8080/api/v1/user', {
         headers: {
           Authorization: `Bearer ${token}`
         }
