@@ -1,138 +1,132 @@
 package chess.game.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import chess.MoveIntent;
 import chess.PlayerColor;
 import chess.game.GameCompletionState;
 import chess.game.GameInfo;
-import chess.game.service.params.*;
-import chess.game.service.results.*;
-
-
+import chess.game.GameState;
+import chess.game.model.*;
+import chess.game.service.errorCodes.*;
+import chess.player.model.Player;
+import chess.player.model.Players;
+import chess.util.Result;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class GameService implements IGameService {
 
   @Autowired
-  chess.game.db.Games games;
-
-  public List<GameInfo> listAvailableGames(long playerId) {
-    List<GameInfo> infos = new ArrayList<GameInfo>();
-    List<chess.game.db.Game> playerGames = games.listGamesForPlayer(playerId);
-    for(chess.game.db.Game game: playerGames) {
-      infos.add(game.info());
-    }
-    return infos;
-  }
+  private final Games games;
+  @Autowired
+  private final Players players;
 
   public GameInfo getGameInfo(long gameId) {
-    chess.game.db.Game game = games.getGameById(gameId);
+    Game game = games.getGameById(gameId);
     if(game == null) {
       return null;
     }
     return game.info();
   }
 
-  public CreateGameResult createGame(CreateGameParams params) {
-
-    if(params.playerId == params.opponentId) {
-      return new CreateGameResult(CreateGameResult.Code.INVALID_OPPONENT);
+  public Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId) {
+    if(players.getPlayerById(playerId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_PLAYER);
+    } else if(players.getPlayerById(opponentId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_OPPONENT);
+    } else if(playerId == opponentId) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.INVALID_OPPONENT);
     }
     
+    long player1, player2, owner = playerId;
 
-    long player1, player2, owner = params.playerId;
-   
-    /*
-    if(! both players exist in system) {
-      // TODO: check that both players exist
-      return new CreateGameResult(CreateGameResult.Code.UNKNOWN_OPPONENT);
-    }
-    */
-
-    if(params.playerColor == PlayerColor.WHITE) {
+    if(playerColor == PlayerColor.WHITE) {
       player1 = owner;
-      player2 = params.opponentId;
+      player2 = opponentId;
     } else {
-      player1 = params.opponentId;
+      player1 = opponentId;
       player2 = owner;
     }
-    chess.game.db.Game game = games.createGame(
-      new chess.game.db.params.CreateGameParams(
-        player1,
-        player2,
-        owner
-      ));
-    // TODO: notify players
-    return new CreateGameResult(game.info());
+    Game game = games.createGame(player1, player2, owner);
+    notifyPlayers(game);
+
+    return new Result<GameInfo, CreateGameErrorCode>(game.info());
   }
 
-  public DeleteGameResult deleteGame(DeleteGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+  public Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId) {
+    Game game = games.getGameById(gameId);
     if(game == null) {
-      return DeleteGameResult.GAME_NOT_FOUND;
-    } else if(game.getOwner() != params.playerId) {
-      return DeleteGameResult.UNAUTHORIZED;
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_NOT_FOUND);
+    } else if(game.getOwner() != playerId) {
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.UNAUTHORIZED);
     } else if(game.getCompletionState() == GameCompletionState.ACTIVE) {
-      return DeleteGameResult.GAME_ACTIVE;
+      return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_ACTIVE);
     }
-    games.deleteGame(params.gameId);
-    // TODO: Notify players
-    return DeleteGameResult.OK;
+    games.deleteGame(gameId);
+    notifyPlayers(game);
+
+    return new Result<Void, DeleteGameErrorCode>();
   }
 
-  public QuitGameResult quitGame(QuitGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+  public Result<Void, QuitGameErrorCode> quitGame(long gameId, long playerId) {
+    Game game = games.getGameById(gameId);
     if(game == null) {
-      return QuitGameResult.GAME_NOT_FOUND;
-    } else if(!game.hasPlayer(params.playerId)) {
-      return QuitGameResult.UNAUTHORIZED;
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.GAME_NOT_FOUND);
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.UNAUTHORIZED);
     } else if(game.getCompletionState() != GameCompletionState.ACTIVE) {
-      return QuitGameResult.ALREADY_COMPLETE;
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.ALREADY_COMPLETE);
     }
 
     long[] players = game.getPlayers();
-    long winner = players[0] == params.playerId
+    long winner = players[0] == playerId
       ? players[1]
       : players[0];
 
-    games.endGame(
-      new chess.game.db.params.EndGameParams(
-        params.gameId,
-        winner,
-        GameCompletionState.TERMINATED
-      ));
-    
-    // TODO: Notify players
-    return QuitGameResult.OK;
+    games.endGame(gameId, winner, GameCompletionState.TERMINATED);
+    notifyPlayers(game);
+
+    return new Result<Void, QuitGameErrorCode>();
   }
 
 
-  public GameStateResult getGameState(GetGameStateParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+  public Result<GameState, GameStateErrorCode> getGameState(long gameId, long playerId) {
+    Game game = games.getGameById(gameId);
     if(game == null) {
-      return new GameStateResult(GameStateResult.Code.GAME_NOT_FOUND);
-    } else if(!game.hasPlayer(params.playerId)) {
-      return new GameStateResult(GameStateResult.Code.UNAUTHORIZED);
+      return new Result<GameState, GameStateErrorCode>(GameStateErrorCode.GAME_NOT_FOUND);
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<GameState, GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
     }
-    return new GameStateResult(game.getGameState());
+    return new Result<GameState, GameStateErrorCode>(game.getGameState());
   }
 
-  public UpdateGameResult move(UpdateGameParams params) {
-    chess.game.db.Game game = games.getGameById(params.gameId);
+  public Result<GameState, UpdateGameErrorCode> move(long gameId, long playerId, MoveIntent moveIntent) {
+    Game game = games.getGameById(gameId);
     if(game == null) {
-      return new UpdateGameResult(UpdateGameResult.Code.GAME_NOT_FOUND);
-    } else if(!game.hasPlayer(params.playerId)) {
-      return new UpdateGameResult(UpdateGameResult.Code.UNAUTHORIZED);
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.GAME_NOT_FOUND);
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.UNAUTHORIZED);
+    } else if(game.currentPlayer() != playerId) {
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.OUT_OF_TURN);
     }
 
-    game.move(params.playerId, params.moveIntent);
-    // TODO: Notify players
-    return new UpdateGameResult(game.getGameState());
+    boolean success = game.move(playerId, moveIntent);
+    if(success) {
+      notifyPlayers(game);
+      return new Result<GameState, UpdateGameErrorCode>(game.getGameState());
+    } else {
+      return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.ILLEGAL_MOVE);
+    }
   }
-  
+
+  private void notifyPlayers(Game game) {
+    GameState state = game.getGameState();
+    for(long playerId: game.getPlayers()) {
+      Player player = players.getPlayerById(playerId);
+      player.notify(state);
+    }
+  }
 }

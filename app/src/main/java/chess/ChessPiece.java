@@ -13,8 +13,11 @@ public enum ChessPiece {
         this.value = value;
     }
     public static ChessPiece FromInteger(int i) {
+        // allow negative integers as input
+        int input = Math.abs(i);
+        
         for(ChessPiece type : values()) {
-            if(type.value == i){
+            if(type.value == input){
                 return type;
             }
         }

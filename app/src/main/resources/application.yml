@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    username: sa
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # trailing slash is important!
+          issuer-uri: https://dev-tt4we0ft.us.auth0.com/
+  h2:
+    console:
+      enabled: true
+auth0:
+  audience: chess-api
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+webclient:
+  url:
+---
+spring:
+  config:
+    activate:
+      on-profile: development
+  datasource:
+    url: jdbc:h2:file:./database/developmentDb
+webclient:
+  url: http://localhost:3000
+
