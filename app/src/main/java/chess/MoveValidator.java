@@ -345,12 +345,70 @@ public class MoveValidator {
                         locationsToCheck.add(new Position(File.FromInteger(x - 1), Rank.FromInteger(y - 1)));
                 }
                 if(y > 0)
-                    locationsToCheck.add(new Position(File.FromInteger(x), Rank.FromInteger(y - 1)));
+                    locationsToCheck.add(new Position(x,y - 1));
                 if(y < 7)
                     locationsToCheck.add(new Position(File.FromInteger(x), Rank.FromInteger(y + 1)));
 
-                // TODO: Find out if castling is legal.
-
+                // King wants to castle:
+                // white king king side castle
+                if(x == 3 && y == 0 && board.getPiece(new Position(1, 0)) == 0 && board.getPiece(new Position(2, 0)) == 0){
+                    boolean legalMoveFlag = true;
+                    for(MoveIntent move : moveRecord){
+                        // if the king or the rook has ever moved, cannot castle
+                        if(move.from.equals(new Position(0,0)) || move.from.equals(new Position(0,3))) {
+                            legalMoveFlag = false;
+                        }
+                    }
+                    // cannot castle when a king has to pass thru threatened square, or is in check.
+                    if(positionUnderThreat(new Position(3, 0), PlayerColor.WHITE) || positionUnderThreat(new Position(2, 0), PlayerColor.WHITE)) {
+                        legalMoveFlag = false;
+                    }
+                    locationsToCheck.add(new Position(x - 2, y));
+                }
+                // white king queen side castle
+                if(x == 3 && y == 0 && board.getPiece(new Position(4, 0)) == 0 && board.getPiece(new Position(5, 0)) == 0){
+                    boolean legalMoveFlag = true;
+                    for(MoveIntent move : moveRecord){
+                        if(move.from.equals(new Position(0,6)) || move.from.equals(new Position(0,3))) {
+                            // if the king or the rook has ever moved, cannot castle
+                            legalMoveFlag = false;
+                        }
+                    }
+                    // cannot castle when a king has to pass thru threatened square, or is in check.
+                    if(positionUnderThreat(new Position(3, 0), PlayerColor.WHITE) || positionUnderThreat(new Position(4, 0), PlayerColor.WHITE)) {
+                        legalMoveFlag = false;
+                    }
+                    locationsToCheck.add(new Position(x + 2, y));
+                }
+                // black king side castle
+                if(x == 3 && y == 6 && board.getPiece(new Position(1,6)) == 0 && board.getPiece(new Position(2,6)) == 0){
+                    boolean legalMoveFlag = true;
+                    for(MoveIntent move : moveRecord){
+                        // if the king or the rook has ever moved, cannot castle
+                        if(move.from.equals(new Position(0, 6))  || move.from.equals(new Position(3, 6))) {
+                            legalMoveFlag = false;
+                        }
+                    }
+                    // cannot castle when a king has to pass thru threatened square, or is in check.
+                    if(positionUnderThreat(new Position(3, 6), PlayerColor.BLACK) || positionUnderThreat(new Position(2, 6), PlayerColor.BLACK)) {
+                        legalMoveFlag = false;
+                    }
+                    locationsToCheck.add(new Position(x - 2, y));
+                }
+                if(x == 3 && y == 6 && board.getPiece(new Position(4,6)) == 0 && board.getPiece(new Position(5,6)) == 0){
+                    boolean legalMoveFlag = true;
+                    for(MoveIntent move : moveRecord){
+                        // if the king or the rook has ever moved, cannot castle
+                        if(move.from.equals(new Position(6, 6))  || move.from.equals(new Position(3, 6))) {
+                            legalMoveFlag = false;
+                        }
+                    }
+                    // cannot castle when a king has to pass thru threatened square, or is in check.
+                    if(positionUnderThreat(new Position(3, 6), PlayerColor.BLACK) || positionUnderThreat(new Position(4, 6), PlayerColor.BLACK)) {
+                        legalMoveFlag = false;
+                    }
+                    locationsToCheck.add(new Position(x + 2, y));
+                }
 
                 for(Position endPos : locationsToCheck) {
                     if(playerColor == PlayerColor.WHITE) {
