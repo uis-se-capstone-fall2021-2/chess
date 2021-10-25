@@ -19,15 +19,25 @@ public class PredicateList<U> extends LinkedList<Predicate> {
   }
 
   public void addOrFilter(OrFilter filter) {
+    if(filter.size() == 0) {
+      return;
+    }
+
+    LinkedList<Predicate> predicates = new LinkedList<Predicate>();
     for(Map.Entry<String, Object> entry: filter.entrySet()) {
       String key = entry.getKey();
       Object value = entry.getValue();
       Predicate predicate = cb.equal(entity.get(key), value);
-      add(cb.or(predicate));
+      predicates.add(predicate);
     }
+    add(cb.or(predicates.toArray(Predicate[]::new)));
   }
 
   public void addAndFilter(AndFilter filter) {
+    if(filter.size() == 0) {
+      return;
+    }
+
     for(Map.Entry<String, Object> entry: filter.entrySet()) {
       String key = entry.getKey();
       Object value = entry.getValue();
