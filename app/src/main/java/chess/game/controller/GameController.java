@@ -29,7 +29,7 @@ public class GameController {
   @Autowired
   private final IGameService gameService;
 
-  @PostMapping("/")
+  @PostMapping()
   public GameInfo createGame(
     @Parameter(hidden=true) User user,
     @RequestBody(required=true) CreateGameRequest req

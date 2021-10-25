@@ -29,7 +29,7 @@ public class UserController {
   @Autowired
   private UserService userService;
   
-  @GetMapping("/")
+  @GetMapping()
   public Map<String, Object> getUserInfo(@Parameter(hidden=true) User user) {
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("userId", user.getUserId());
