@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +26,6 @@ import chess.util.Result;
 
 @RestController
 @RequestMapping(path = "/api/v1/players", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins={"*"})
 @SecurityRequirement(name="chess-api")
 @AllArgsConstructor
 public class PlayerController {
@@ -50,7 +48,7 @@ public class PlayerController {
     }
   }
 
-  @GetMapping("{id}/games/active")
+  @GetMapping("/{id}/games/active")
   public List<GameInfo> getActiveGames(@PathVariable(value="id", required=true) long playerId) {
     Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getActiveGamesForPlayer(playerId);
 
@@ -66,7 +64,7 @@ public class PlayerController {
     return result.value;
   }
 
-  @GetMapping("{id}/games/history")
+  @GetMapping("/{id}/games/history")
   public List<GameInfo> getGameHistory(@PathVariable(value="id", required=true) long playerId) {
     Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getGameHistoryForPlayer(playerId);
 

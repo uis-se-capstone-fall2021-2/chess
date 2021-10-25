@@ -23,4 +23,13 @@ auth0:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
+webclient:
+  url:
+---
+spring:
+  config:
+    activate:
+      on-profile: development
+webclient:
+  url: http://localhost:3000
 
