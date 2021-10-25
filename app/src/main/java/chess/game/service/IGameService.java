@@ -2,16 +2,19 @@ package chess.game.service;
 
 import java.util.List;
 
+import chess.MoveIntent;
+import chess.PlayerColor;
 import chess.game.GameInfo;
-import chess.game.service.params.*;
-import chess.game.service.results.*;
+import chess.game.GameState;
+import chess.game.service.errorCodes.*;
+import chess.util.Result;
 
 public interface IGameService {
   List<GameInfo> listAvailableGames(long playerId);
   GameInfo getGameInfo(long gameId);
-  CreateGameResult createGame(CreateGameParams params);
-  DeleteGameResult deleteGame(DeleteGameParams params);
-  QuitGameResult quitGame(QuitGameParams params);
-  GameStateResult getGameState(GetGameStateParams params);
-  UpdateGameResult move(UpdateGameParams params);
+  Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId);
+  Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId);
+  Result<Void, QuitGameErrorCode> quitGame(long gameId, long playerId);
+  Result<GameState, GameStateErrorCode> getGameState(long gameId, long playerId);
+  Result<GameState, UpdateGameErrorCode> move(long gameId, long playerId, MoveIntent moveIntent);
 }
