@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import chess.ChessPiece;
 import chess.File;
 import chess.MoveIntent;
@@ -16,20 +19,27 @@ import chess.game.GameCompletionState;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
+
 @Entity
 @Table(name="Games")
 public class Game {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
-  private long id;
+  @Getter
+  private long gameId;
   @Column
+  @Getter
   private long owner; // playerId
   @Column
+  @Getter
+  @Setter
   private long winner; // playerId
   @Column
+  @Getter
   private long player1; // playerId, player1 is white
   @Column
+  @Getter
   private long player2; // playerId, player2 is black
   @Column
   private GameCompletionState completionState;
@@ -63,20 +73,6 @@ public class Game {
     }
 
     return board = new Board(moveRecord);
-  }
-
-  public long getGameId() {
-    return id;
-  }
-  public long getOwner() {
-    return owner;
-  }
-
-  public long getWinner() {
-    return winner;
-  }
-  public void setWinnner(long playerId) {
-    winner = playerId;
   }
 
   public long[] getPlayers() {

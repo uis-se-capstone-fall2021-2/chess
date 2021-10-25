@@ -10,7 +10,6 @@ import chess.game.service.errorCodes.*;
 import chess.util.Result;
 
 public interface IGameService {
-  List<GameInfo> listAvailableGames(long playerId);
   GameInfo getGameInfo(long gameId);
   Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId);
   Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId);

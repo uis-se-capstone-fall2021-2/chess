@@ -1,6 +1,7 @@
 package chess.game.service.errorCodes;
 
 public enum CreateGameErrorCode {
-  INVALID_OPPONENT,
-  UNKNOWN_OPPONENT
+  UNKNOWN_PLAYER,
+  UNKNOWN_OPPONENT,
+  INVALID_OPPONENT
 }
