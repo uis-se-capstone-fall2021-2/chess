@@ -84,7 +84,7 @@ public class Board implements IBoard {
         if(MoveValidator.positionUnderThreat(bKing, -1)) return -1;
         if(MoveValidator.positionUnderThreat(wKing, 1)) return 1;
         return 0;
-        // CHECK bKing in check:
+
     }
 
 
