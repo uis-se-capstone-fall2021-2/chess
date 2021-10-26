@@ -460,7 +460,7 @@ public class MoveValidator {
             if(x < 7 && y < 7) {
                 Position rightCapture = new Position(x + 1, y + 1);
                 if(board.getPiece(rightCapture) == (-team)){
-                    vreturn true;
+                    return true;
                 }
             }
         } else {
@@ -473,7 +473,7 @@ public class MoveValidator {
             if(x < 7 && y > 0) {
                 Position rightCapture = new Position(x + 1, y - 1);
                 if(board.getPiece(rightCapture) == (-team)){
-                    vreturn true;
+                    return true;
                 }
             }
         }
@@ -483,11 +483,11 @@ public class MoveValidator {
         // check for knights:
         if(x < 6) {
             if(y < 7){
-                if(getPiece(new Position(x + 2, y + 1)) == (-team * 3)))
+                if(getPiece(new Position(x + 2, y + 1)) == (-team * 3))
                     return true;
             }
             if(y > 0){
-                if(getPiece(new Position(x + 2, y - 1)) == (-team * 3)))
+                if(getPiece(new Position(x + 2, y - 1)) == (-team * 3))
                     return true;
             }
         }
@@ -517,11 +517,11 @@ public class MoveValidator {
             // down 2
             if(x < 7) {
                 if(getPiece(new Position(x + 1, y - 2)) == (-team * 3))
-                    return true
+                    return true;
              } // down 2 right 1
             if(x > 0) {
                 if(getPiece(new Position(x - 1, y - 2)) == (-team * 3))
-                    return true
+                    return true;
              } // down 2 left 1
         }
 
