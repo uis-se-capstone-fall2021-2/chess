@@ -1,12 +1,12 @@
 import {Auth0Context, Auth0ContextInterface, User} from '@auth0/auth0-react';
-import {AppBar, Box, Button, Container, IconButton, Toolbar, Typography} from '@mui/material';
+import {AppBar, Box, Button, Container, IconButton, ThemeProvider, Toolbar, Typography} from '@mui/material';
 import {Menu as MenuIcon} from '@mui/icons-material';
 import * as axios from 'axios';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
 
 import {LogoutButton} from '../../user/components/LogoutButton';
-
+import {theme} from './theme';
 
 @autobind
 export class App extends React.Component<{}, {token: string|null, userInfo: object|null}> {
@@ -19,35 +19,37 @@ export class App extends React.Component<{}, {token: string|null, userInfo: obje
 
   public render(): React.ReactNode {
     return (
-      <Auth0Context.Consumer>
-        {(user: Auth0ContextInterface) => (
-          <Box>
-            <AppBar>
-              <Toolbar>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Chess
-                </Typography>
-                <LogoutButton/>
-              </Toolbar>
-            </AppBar>
-            <Container>
-              <pre>{JSON.stringify(user, null, 2)}</pre>
-              <Button onClick={() => this.getUser(user)}>Get Token</Button>
-              {this.renderToken()}
-              {this.renderUser()}
-            </Container>
-          </Box>
-        )}
-      </Auth0Context.Consumer>
+      <ThemeProvider theme={theme}>
+        <Auth0Context.Consumer>
+          {(user: Auth0ContextInterface) => (
+            <Box>
+              <AppBar>
+                <Toolbar>
+                  <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Chess
+                  </Typography>
+                  <LogoutButton/>
+                </Toolbar>
+              </AppBar>
+              <Container>
+                <pre>{JSON.stringify(user, null, 2)}</pre>
+                <Button onClick={() => this.getUser(user)}>Get Token</Button>
+                {this.renderToken()}
+                {this.renderUser()}
+              </Container>
+            </Box>
+          )}
+        </Auth0Context.Consumer>
+      </ThemeProvider>
     );
   }
 
