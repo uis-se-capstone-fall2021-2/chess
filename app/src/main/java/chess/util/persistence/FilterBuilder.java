@@ -1,5 +1,6 @@
 package chess.util.persistence;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -38,13 +39,9 @@ public class FilterBuilder<U> extends LinkedList<Predicate> {
       String key = entry.getKey();
       Object value = entry.getValue();
       if(value.getClass().isArray()) {
-        for(Object v: (Object[])value) {
-          Predicate predicate = cb.equal(entity.get(key), v);
-          predicates.add(predicate);
-        }
+        predicates.add(entity.get(key).in(Arrays.asList((Object[])value)));
       } else {
-        Predicate predicate = cb.equal(entity.get(key), value);
-        predicates.add(predicate);
+        predicates.add(cb.equal(entity.get(key), value));
       }
     }
     add(cb.or(predicates.toArray(Predicate[]::new)));
@@ -58,8 +55,11 @@ public class FilterBuilder<U> extends LinkedList<Predicate> {
     for(Map.Entry<String, Object> entry: filter.entrySet()) {
       String key = entry.getKey();
       Object value = entry.getValue();
-      Predicate predicate = cb.equal(entity.get(key), value);
-      add(cb.and(predicate));
+      if(value.getClass().isArray()) {
+        add(entity.get(key).in(Arrays.asList((Object[])value)));
+      } else {
+        add(cb.equal(entity.get(key), value));
+      }
     }
   }
 }
