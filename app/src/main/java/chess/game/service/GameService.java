@@ -1,8 +1,5 @@
 package chess.game.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,22 +10,19 @@ import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.model.*;
 import chess.game.service.errorCodes.*;
+import chess.player.model.Player;
+import chess.player.model.Players;
 import chess.util.Result;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class GameService implements IGameService {
 
   @Autowired
-  Games games;
-
-  public List<GameInfo> listAvailableGames(long playerId) {
-    List<GameInfo> infos = new ArrayList<GameInfo>();
-    List<Game> playerGames = games.listGamesForPlayer(playerId);
-    for(Game game: playerGames) {
-      infos.add(game.info());
-    }
-    return infos;
-  }
+  private final Games games;
+  @Autowired
+  private final Players players;
 
   public GameInfo getGameInfo(long gameId) {
     Game game = games.getGameById(gameId);
@@ -39,20 +33,15 @@ public class GameService implements IGameService {
   }
 
   public Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId) {
-
-    if(playerId == opponentId) {
+    if(players.getPlayerById(playerId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_PLAYER);
+    } else if(players.getPlayerById(opponentId) == null) {
+      return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_OPPONENT);
+    } else if(playerId == opponentId) {
       return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.INVALID_OPPONENT);
     }
     
-
     long player1, player2, owner = playerId;
-   
-    /*
-    if(! both players exist in system) {
-      // TODO: check that both players exist
-      return new CreateGameResult(CreateGameResult.Code.UNKNOWN_OPPONENT);
-    }
-    */
 
     if(playerColor == PlayerColor.WHITE) {
       player1 = owner;
@@ -62,7 +51,8 @@ public class GameService implements IGameService {
       player2 = owner;
     }
     Game game = games.createGame(player1, player2, owner);
-    // TODO: notify players
+    notifyPlayers(game);
+
     return new Result<GameInfo, CreateGameErrorCode>(game.info());
   }
 
@@ -76,7 +66,8 @@ public class GameService implements IGameService {
       return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_ACTIVE);
     }
     games.deleteGame(gameId);
-    // TODO: Notify players
+    notifyPlayers(game);
+
     return new Result<Void, DeleteGameErrorCode>();
   }
 
@@ -96,8 +87,8 @@ public class GameService implements IGameService {
       : players[0];
 
     games.endGame(gameId, winner, GameCompletionState.TERMINATED);
-    
-    // TODO: Notify players
+    notifyPlayers(game);
+
     return new Result<Void, QuitGameErrorCode>();
   }
 
@@ -124,11 +115,18 @@ public class GameService implements IGameService {
 
     boolean success = game.move(playerId, moveIntent);
     if(success) {
-      // TODO: Notify players
+      notifyPlayers(game);
       return new Result<GameState, UpdateGameErrorCode>(game.getGameState());
     } else {
       return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.ILLEGAL_MOVE);
     }
   }
-  
+
+  private void notifyPlayers(Game game) {
+    GameState state = game.getGameState();
+    for(long playerId: game.getPlayers()) {
+      Player player = players.getPlayerById(playerId);
+      player.notify(state);
+    }
+  }
 }
