@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  CssBaseline,
   Divider,
   Drawer,
   List,
@@ -14,7 +15,8 @@ import {
   MenuItem,
   ThemeProvider,
   Toolbar,
-  Typography} from '@mui/material';
+  Typography
+} from '@mui/material';
 import {
   AccountCircleOutlined as AccountCircleOutlinedIcon,
   Gradient as GradientIcon,
@@ -22,14 +24,22 @@ import {
   QueryStats as QueryStatsIcon
 } from '@mui/icons-material';
 import {autobind} from 'core-decorators';
-import * as React from 'react';
 import PopupState, {bindTrigger, bindMenu} from 'material-ui-popup-state';
+import * as React from 'react';
+import {__RouterContext as RouterContext} from 'react-router';
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
 
+import {User} from '../../user/User';
 import {UserProvider} from '../../user/UserProvider';
 import {theme} from './theme';
 
 import './style.css';
-import {User} from '../../user/User';
+
 
 @autobind
 export class App extends React.Component<{}, {
@@ -49,40 +59,82 @@ export class App extends React.Component<{}, {
           {(auth0User: Auth0ContextInterface) => (
             <UserProvider auth0userContext={auth0User}>
               {(appUser) => (
-                <Box className='app'>
-                  <AppBar position='fixed'>
-                    <Toolbar>
-                      <IconButton
-                        onClick={this.toggleMobileNavVisibility}
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{
-                          mr: 2,
-                          display: {
-                            sm: 'none'
-                          }
-                        }}
-                      >
-                        <MenuIcon />
-                      </IconButton>
-                      {this.appTitle}
-                      {this.userMenu({auth0User, appUser})}
-                    </Toolbar>
-                  </AppBar>
-                  <Box component='nav'>
-                    {this.mobileNavDrawer}
-                    {this.desktopNavDrawer}
+                <Router>
+                  <Box className='app' sx={{display: 'flex'}}>
+                    <CssBaseline/>
+                    <AppBar position='fixed'>
+                      <Toolbar>
+                        <IconButton
+                          onClick={this.toggleMobileNavVisibility}
+                          size="large"
+                          edge="start"
+                          color="inherit"
+                          aria-label="menu"
+                          sx={{
+                            mr: 2,
+                            display: {
+                              sm: 'none'
+                            }
+                          }}
+                        >
+                          <MenuIcon />
+                        </IconButton>
+                        {this.appTitle}
+                        {this.userMenu({auth0User, appUser})}
+                      </Toolbar>
+                    </AppBar>
+                    <Box component='nav' sx={{
+                      width: {
+                        sm: App.NAV_WIDTH
+                      },
+                      flexShrink: {
+                        sm: 0
+                      }
+                    }}>
+                      {this.mobileNavDrawer}
+                      {this.desktopNavDrawer}
+                    </Box>
+                    <Box
+                      component='main'
+                      sx={{
+                        backgroundColor: 'secondary.main',
+                        width: {sm: `calc(100% - ${App.NAV_WIDTH}px)`},
+                        ml: {sm: `${App.NAV_WIDTH}px`},
+                        p: 3
+                      }}
+                    > 
+                      <Toolbar/>
+                      <Switch>
+                        <Route exact path='/'>
+                          <div>Home</div>
+                        </Route>
+                        <Route path='/games'>
+                          <RouterContext.Consumer>
+                            {(ctx) => (
+                              <Switch>
+                                <Route exact path={`${ctx.match.path}/active`}>
+                                  <div>Active Games Here</div>
+                                </Route>
+                                <Route exact path={`${ctx.match.path}/history`}>
+                                  <div>Game History Here</div>
+                                </Route>
+                                <Route exact path={`${ctx.match.path}/:gameId`}>
+
+                                  <RouterContext.Consumer>
+                                    {(ctx) => (
+                                      <div>{`Chess Game id=${(ctx.match.params as any)?.gameId} here`}</div>
+                                    )}
+                                  </RouterContext.Consumer>
+                                </Route>
+                              </Switch>
+                            )}
+                          </RouterContext.Consumer>
+                          
+                        </Route>
+                      </Switch>
+                    </Box>
                   </Box>
-                  <Box
-                    component='main'
-                    sx={{
-                      backgroundColor: 'secondary.main'
-                    }}
-                  >
-                  </Box>
-                </Box>
+                </Router>
               )}
             </UserProvider>
           )}
@@ -99,16 +151,20 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
-            <ListItemIcon>
-              <GradientIcon sx={this.navSx}/>
-            </ListItemIcon>
-            <ListItemText primary='My Games'/>
+            <Link to="/games/active">
+              <ListItemIcon>
+                <GradientIcon sx={this.navSx}/>
+              </ListItemIcon>
+              <ListItemText primary='Active Games'/>
+            </Link>
           </ListItem>
           <ListItem button>
-            <ListItemIcon>
-              <QueryStatsIcon sx={this.navSx}/>
-            </ListItemIcon>
-            <ListItemText primary='Game History'/>
+            <Link to='/games/history'>
+              <ListItemIcon>
+                <QueryStatsIcon sx={this.navSx}/>
+              </ListItemIcon>
+              <ListItemText primary='Game History'/>
+            </Link>
           </ListItem>
         </List>
       </>

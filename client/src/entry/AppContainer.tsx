@@ -4,12 +4,15 @@ import {Box} from '@mui/system';
 import {App} from './App';
 import {LandingPage} from './LandingPage';
 
+import './style.css';
+
 export function AppContainer(): React.ReactElement {
   return (
     <Box sx={{
       display: 'flex',
       flex: '1 1 auto',
-      height: '100%'
+      height: '100%',
+      width: '100%'
     }}>
       <Auth0Provider
         domain='dev-tt4we0ft.us.auth0.com'

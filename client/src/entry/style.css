@@ -1,0 +1,6 @@
+body {
+  background-image: url(../img/knight-standoff.jpg);
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}

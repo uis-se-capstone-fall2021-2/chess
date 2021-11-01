@@ -12,7 +12,7 @@ export function LoginButton() {
         border: '1px solid #fff'
       }}
       onClick={() => loginWithRedirect()}>
-      Play
+      Login
     </Button>
   );
 };
