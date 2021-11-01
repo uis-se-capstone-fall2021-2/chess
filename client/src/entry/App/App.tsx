@@ -102,8 +102,14 @@ export class App extends React.Component<{}, {
                       component='main'
                       sx={{
                         backgroundColor: 'secondary.main',
-                        width: {sm: `calc(100% - ${App.NAV_WIDTH}px)`},
-                        ml: {sm: `${App.NAV_WIDTH}px`},
+                        width: {
+                          xs: '100%',
+                          sm: `calc(100% - ${App.NAV_WIDTH}px)`
+                        },
+                        ml: {
+                          xs: 0,
+                          sm: `${App.NAV_WIDTH}px`
+                        },
                         p: 3
                       }}
                     > 
