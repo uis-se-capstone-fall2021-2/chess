@@ -34,11 +34,15 @@ import {
   Link
 } from 'react-router-dom';
 
+import '../../player/PlayerService.impl';
+import '../../game/GameService.impl';
 import {User} from '../../user/User';
 import {UserProvider} from '../../user/UserProvider';
+import {ActiveGamesView} from '../../views/activeGames/ActiveGames';
 import {theme} from './theme';
 
 import './style.css';
+
 
 
 @autobind
@@ -48,11 +52,11 @@ export class App extends React.Component<{}, {
 
   private static readonly NAV_WIDTH: number = 240;
 
-  public state: App.State = {
+  public override state: App.State = {
     mobileNavOpen: false
   }
 
-  public render(): React.ReactNode {
+  public override render(): React.ReactNode {
     return (
       <ThemeProvider theme={theme}>
         <Auth0Context.Consumer>
@@ -113,7 +117,7 @@ export class App extends React.Component<{}, {
                             {(ctx) => (
                               <Switch>
                                 <Route exact path={`${ctx.match.path}/active`}>
-                                  <div>Active Games Here</div>
+                                  <ActiveGamesView/>
                                 </Route>
                                 <Route exact path={`${ctx.match.path}/history`}>
                                   <div>Game History Here</div>
