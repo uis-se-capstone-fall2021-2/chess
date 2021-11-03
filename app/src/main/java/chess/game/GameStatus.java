@@ -1,7 +1,7 @@
 package chess.game;
 
 
-public enum GameCompletionState {
+public enum GameStatus {
   PENDING,
   ACTIVE,
   COMPLETE,

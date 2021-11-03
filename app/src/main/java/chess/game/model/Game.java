@@ -16,7 +16,7 @@ import chess.Position;
 import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
@@ -60,7 +60,7 @@ public class Game {
   private long player2; // playerId, player2 is black
 
   @Column
-  private GameCompletionState completionState;
+  private GameStatus status;
 
   @Column
   @ElementCollection(targetClass=Move.class)
@@ -82,8 +82,7 @@ public class Game {
     this.player2 = player2;
     this.board = initializeBoard(moves);
     this.owner = owner;
-    // TODO: set to PENDING if vs. another User player and User has not accepted game (not implemented)
-    this.completionState = GameCompletionState.ACTIVE;
+    this.status = GameStatus.ACTIVE;
   }
 
   private Board initializeBoard(List<Move> moves) {
@@ -102,7 +101,7 @@ public class Game {
     if(createdAt == null) {
       createdAt = new Date();
     }
-    if(completedAt == null && completionState.compareTo(GameCompletionState.ACTIVE) > 0) {
+    if(completedAt == null && status.compareTo(GameStatus.ACTIVE) > 0) {
       completedAt = new Date();
     }
       
@@ -118,11 +117,11 @@ public class Game {
     );
   }
 
-  public GameCompletionState getCompletionState() {
-    return completionState;
+  public GameStatus getStatus() {
+    return status;
   }
-  public void setCompletionState(GameCompletionState state) {
-    completionState = state;
+  public void setCompletionState(GameStatus state) {
+    status = state;
   }
 
   public List<MoveIntent> getMoveHistory() {
@@ -141,7 +140,7 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      getCompletionState(),
+      getStatus(),
       getCreatedAt(),
       getUpdatedAt(),
       getCompletedAt()
@@ -157,7 +156,7 @@ public class Game {
       moves.size(),
       playerInCheck(),
       this.board,
-      getCompletionState()
+      getStatus()
     );
   }
 

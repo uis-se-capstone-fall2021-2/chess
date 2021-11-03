@@ -89,8 +89,8 @@ public class GameController {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        case ALREADY_COMPLETE:
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Game already completed");
+        case INACTIVE:
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot quit inactive game");
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }

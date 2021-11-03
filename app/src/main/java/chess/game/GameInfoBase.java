@@ -14,5 +14,5 @@ public class GameInfoBase {
     public final long winner; // playerId
     public final long[] players; // playerId, array of length 2, first player is white
     public final long moveCount;
-    public final GameCompletionState state;
+    public final GameStatus status;
 }

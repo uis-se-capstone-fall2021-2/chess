@@ -17,9 +17,9 @@ public class GameState extends GameInfoBase {
     long moveCount,
     long inCheck,
     Board board,
-    GameCompletionState completed
+    GameStatus status
   ) {
-    super(gameId, owner, winner, players, moveCount, completed);
+    super(gameId, owner, winner, players, moveCount, status);
     this.inCheck = inCheck;
     this.board = board;
   }

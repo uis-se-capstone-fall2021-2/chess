@@ -14,7 +14,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.util.persistence.AndFilter;
 import chess.util.persistence.OrFilter;
 import chess.util.persistence.Repo;
@@ -49,11 +49,11 @@ public class Games extends Repo<Game> {
 	}
 
 	@Transactional
-	public void endGame(long gameId, long winner, GameCompletionState completionState) {
+	public void endGame(long gameId, long winner, GameStatus status) {
 		Session session = getSession();
 		Game game = session.get(Game.class, gameId);
 		game.setWinner(winner);
-		game.setCompletionState(completionState);
+		game.setCompletionState(status);
 		session.saveOrUpdate(game);
 	}
 
@@ -64,7 +64,7 @@ public class Games extends Repo<Game> {
 				"player2", playerId
 			)),
 			new AndFilter(Map.of(
-				"completionState", GameCompletionState.ACTIVE
+				"status", GameStatus.ACTIVE
 			))
 		);
 
@@ -80,9 +80,9 @@ public class Games extends Repo<Game> {
 
 
 	public List<Game> getGameHistoryForPlayer(long playerId) {
-		GameCompletionState[] completedStates = {
-			GameCompletionState.COMPLETE,
-			GameCompletionState.TERMINATED
+		GameStatus[] completeStatuses = {
+			GameStatus.COMPLETE,
+			GameStatus.TERMINATED
 		};
 		Repo.CriteriaQueryConfigurer<Game> configurer = super.filterQueryFactory(
 			new OrFilter(Map.of(
@@ -90,7 +90,7 @@ public class Games extends Repo<Game> {
 			"player2", playerId
 			)),
 			new OrFilter(Map.of(
-				"completionState", completedStates
+				"status", completeStatuses
 			))
 		);
 
