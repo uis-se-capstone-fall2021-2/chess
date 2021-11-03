@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.query.Query;
@@ -15,11 +14,10 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.util.persistence.AndFilter;
 import chess.util.persistence.OrFilter;
 import chess.util.persistence.Repo;
-import chess.util.persistence.FilterBuilder;
 
 @Repository
 public class Games extends Repo<Game> {
@@ -51,39 +49,58 @@ public class Games extends Repo<Game> {
 	}
 
 	@Transactional
-	public void endGame(long gameId, long winner, GameCompletionState completionState) {
+	public void endGame(long gameId, long winner, GameStatus status) {
 		Session session = getSession();
 		Game game = session.get(Game.class, gameId);
 		game.setWinner(winner);
-		game.setCompletionState(completionState);
+		game.setCompletionState(status);
 		session.saveOrUpdate(game);
 	}
 
 	public List<Game> listActiveGamesForPlayer(long playerId) {
-		Query<Game> query = super.simpleFilterQuery(
+		Repo.CriteriaQueryConfigurer<Game> configurer =super.filterQueryFactory(
 			new OrFilter(Map.of(
 				"player1", playerId,
 				"player2", playerId
 			)),
 			new AndFilter(Map.of(
-				"completionState", GameCompletionState.ACTIVE
+				"status", GameStatus.ACTIVE
 			))
 		);
+
+		Query<Game> query = configurer.getCriteriaQuery(
+			(Root<Game> $,
+      CriteriaQuery<Game> q,
+      CriteriaBuilder cb) -> {
+				q.orderBy(cb.asc($.get("updatedAt")));
+			});
+
 		return query.getResultList();
 	}
 
 
 	public List<Game> getGameHistoryForPlayer(long playerId) {
-		GameCompletionState[] nonActiveStates = {GameCompletionState.COMPLETE, GameCompletionState.TERMINATED};
-		Query<Game> query = super.simpleFilterQuery(
+		GameStatus[] completeStatuses = {
+			GameStatus.COMPLETE,
+			GameStatus.TERMINATED
+		};
+		Repo.CriteriaQueryConfigurer<Game> configurer = super.filterQueryFactory(
 			new OrFilter(Map.of(
-				"player1", playerId,
-				"player2", playerId
+			"player1", playerId,
+			"player2", playerId
 			)),
 			new OrFilter(Map.of(
-				"completionState", nonActiveStates
+				"status", completeStatuses
 			))
 		);
+
+		Query<Game> query = configurer.getCriteriaQuery(
+			(Root<Game> $,
+      CriteriaQuery<Game> q,
+      CriteriaBuilder cb) -> {
+				q.orderBy(cb.asc($.get("completedAt")));
+			});
+
 		return query.getResultList();
 	}
 }
