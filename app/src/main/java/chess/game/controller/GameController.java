@@ -54,6 +54,45 @@ public class GameController {
     }
   }
 
+  @PostMapping("/{id}/invitation/accept")
+  public void acceptGameInvite(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    Result<Void, GameInviteResponseErrorCode> result = gameService.acceptGameInvite(gameId, user.getPlayerId());
+    handleProcessedGameInvitationResult(result);
+    return;
+  }
+
+  @PostMapping("/{id}/invitation/decline")
+  public void declineGameInvite(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    Result<Void, GameInviteResponseErrorCode> result = gameService.declineGameInvite(gameId, user.getPlayerId());
+    handleProcessedGameInvitationResult(result);
+    return;
+  }
+
+  private void handleProcessedGameInvitationResult(Result<Void, GameInviteResponseErrorCode> result) {
+    if(result.code != null) {
+      switch(result.code) {
+        case UNKNOWN_PLAYER:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        case OWN_GAME:
+          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cannot join own game");
+        case WRONG_STATE:
+          throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Game not joinable");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
   @DeleteMapping("/{id}")
   public void deleteGame(
     @Parameter(hidden=true) User user,

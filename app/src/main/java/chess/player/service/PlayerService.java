@@ -73,4 +73,21 @@ public class PlayerService {
     }
     return new Result<List<GameInfo> , ListGamesErrorCode>(gameHistory);
   }
+
+  public Result<List<GameInfo>, ListGamesErrorCode> getPendingGamesForPlayer(long playerId) {
+    Player player = players.getPlayerById(playerId);
+    if(player == null) {
+      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNKOWN_PLAYER);
+    } else if(player.getPlayerType() == PlayerType.AI.getPlayerType()) {
+      // TODO: in the future, allow admin to view AI games
+      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
+    }
+
+    List<GameInfo> pendingGames = new ArrayList<GameInfo>();
+    List<Game> playerGames = games.listPendingGamesForPlayer(playerId);
+    for(Game game: playerGames) {
+      pendingGames.add(game.info());
+    }
+    return new Result<List<GameInfo> , ListGamesErrorCode>(pendingGames);
+  }
 }

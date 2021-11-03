@@ -23,7 +23,6 @@ import chess.player.service.errorCodes.ListGamesErrorCode;
 import chess.util.Result;
 
 
-
 @RestController
 @RequestMapping(path = "/api/v1/players", produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name="chess-api")
