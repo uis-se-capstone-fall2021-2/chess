@@ -1,5 +1,6 @@
 package chess.game.model;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -28,21 +29,39 @@ public class Game {
   @Column
   @Getter
   private long gameId;
+
+  @Column
+  @Getter
+  private Date createdAt;
+
+  @Column
+  @Getter
+  private Date updatedAt;
+
+  @Column
+  @Getter
+  private Date completedAt;
+
   @Column
   @Getter
   private long owner; // playerId
+
   @Column
   @Getter
   @Setter
   private long winner; // playerId
+
   @Column
   @Getter
   private long player1; // playerId, player1 is white
+
   @Column
   @Getter
   private long player2; // playerId, player2 is black
+
   @Column
   private GameCompletionState completionState;
+
   @Column
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
@@ -63,6 +82,7 @@ public class Game {
     this.player2 = player2;
     this.board = initializeBoard(moves);
     this.owner = owner;
+    // TODO: set to PENDING if vs. another User player and User has not accepted game (not implemented)
     this.completionState = GameCompletionState.ACTIVE;
   }
 
@@ -73,6 +93,19 @@ public class Game {
     }
 
     return board = new Board(moveRecord);
+  }
+
+  @PreUpdate
+  @PrePersist
+  public void updateTimeStamps() {
+    updatedAt = new Date();
+    if(createdAt == null) {
+      createdAt = new Date();
+    }
+    if(completedAt == null && completionState.compareTo(GameCompletionState.ACTIVE) > 0) {
+      completedAt = new Date();
+    }
+      
   }
 
   public long[] getPlayers() {
@@ -108,7 +141,10 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      getCompletionState()
+      getCompletionState(),
+      getCreatedAt(),
+      getUpdatedAt(),
+      getCompletedAt()
     );
   }
 
@@ -119,7 +155,7 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      -1,
+      playerInCheck(),
       this.board,
       getCompletionState()
     );

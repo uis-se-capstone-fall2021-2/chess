@@ -3,10 +3,8 @@ package chess.util.persistence;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class Repo<T> {
 
+  public static interface QueryRefiner<T> {
+    void refineQuery(
+      Root<T> $,
+      CriteriaQuery<T> criteriaQuery,
+      CriteriaBuilder criteriaBuilder
+    );
+  }
+
+  public static interface CriteriaQueryConfigurer<T> {
+    Query<T> getCriteriaQuery(QueryRefiner<T> refiner);
+  }
+
 	@PersistenceContext
 	protected EntityManager entityManager;
 
@@ -28,15 +38,28 @@ public class Repo<T> {
 
 	protected final Class<T> entityClass;
 
-  protected Query<T> simpleFilterQuery(Filter... filters) {
+  protected CriteriaQueryConfigurer<T> filterQueryFactory(Filter ...filters) {
     Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<T> q = cb.createQuery(entityClass);
-    Root<T> entity = q.from(entityClass);
-    FilterBuilder<T> fb = new FilterBuilder<T>(cb, entity);
+    Root<T> $ = q.from(entityClass);
+    FilterBuilder<T> fb = new FilterBuilder<T>(cb, $);
     fb.addFilters(filters);
-    q.select(entity).where(fb.toArray());
-    Query<T> query = session.createQuery(q);
+    q.select($).where(fb.toArray());
+    return (QueryRefiner<T> refiner) -> {
+      refiner.refineQuery($, q, cb);
+      return session.createQuery(q);
+    };
+  }
+
+  protected Query<T> simpleFilterQuery(Filter... filters) {
+    CriteriaQueryConfigurer<T> configurer = filterQueryFactory(filters);
+    Query<T> query = configurer.getCriteriaQuery(
+      // noop
+      (Root<T> $,
+      CriteriaQuery<T> criteriaQuery,
+      CriteriaBuilder criteriaBuilder) -> {}
+    );
     return query;
   }
 
@@ -58,10 +81,10 @@ public class Repo<T> {
     Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<T> q = cb.createQuery(entityClass);
-    Root<T> entity = q.from(entityClass);
-    q.select(entity)
+    Root<T> $ = q.from(entityClass);
+    q.select($)
       .where(
-        cb.like(entity.get(key), value));
+        cb.like($.get(key), value));
     final List<T> results = session.createQuery(q).getResultList();
 
     return results;

@@ -2,7 +2,9 @@ package chess.game;
 
 
 public enum GameCompletionState {
-    ACTIVE,
-    COMPLETE,
-    TERMINATED
+  PENDING,
+  ACTIVE,
+  COMPLETE,
+  TERMINATED,
+  DECLINED;
 }

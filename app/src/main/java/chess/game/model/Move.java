@@ -1,5 +1,7 @@
 package chess.game.model;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 import chess.ChessPiece;
@@ -12,15 +14,25 @@ import chess.Rank;
 @Table(name="Moves")
 public class Move {
   @Id
-  private long id;
+  @Column
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long moveId;
+
+  @Column
+  private Date timestamp;
+
   @Column
   private ChessPiece chessPiece;
+
   @Column
   private Rank startRank;
+
   @Column
   private File startFile;
+
   @Column
   private Rank endRank;
+
   @Column
   private File endFile;
 
@@ -32,6 +44,13 @@ public class Move {
     this.startFile = intent.from.file;
     this.endRank = intent.to.rank;
     this.endFile = intent.to.file;
+  }
+
+  @PrePersist
+  public void updateTimeStamp() {
+    if(timestamp == null) {
+      timestamp = new Date();
+    }
   }
 
   public ChessPiece getChessPiece() {
