@@ -38,3 +38,6 @@ out/
 
 ### Secrets ###
 app/src/main/resources/secrets.yml
+
+###
+database/

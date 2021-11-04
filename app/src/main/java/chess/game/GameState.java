@@ -5,7 +5,7 @@ import chess.board.Board;
 /**
  * Information for Players during game 
  */
-public class GameState extends GameInfo {
+public class GameState extends GameInfoBase {
   public Board board = null;
 
   public final long inCheck; // playerId, null if no one in check
@@ -17,9 +17,9 @@ public class GameState extends GameInfo {
     long moveCount,
     long inCheck,
     Board board,
-    GameCompletionState completed
+    GameStatus status
   ) {
-    super(gameId, owner, winner, players, moveCount, completed);
+    super(gameId, owner, winner, players, moveCount, status);
     this.inCheck = inCheck;
     this.board = board;
   }

@@ -1,8 +1,12 @@
 package chess.game.model;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import chess.ChessPiece;
 import chess.File;
@@ -12,9 +16,10 @@ import chess.Position;
 import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
+
 
 @Entity
 @Table(name="Games")
@@ -22,17 +27,41 @@ public class Game {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
-  private long id;
+  @Getter
+  private long gameId;
+
   @Column
+  @Getter
+  private Date createdAt;
+
+  @Column
+  @Getter
+  private Date updatedAt;
+
+  @Column
+  @Getter
+  private Date completedAt;
+
+  @Column
+  @Getter
   private long owner; // playerId
+
   @Column
+  @Getter
+  @Setter
   private long winner; // playerId
+
   @Column
+  @Getter
   private long player1; // playerId, player1 is white
+
   @Column
+  @Getter
   private long player2; // playerId, player2 is black
+
   @Column
-  private GameCompletionState completionState;
+  private GameStatus status;
+
   @Column
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
@@ -53,7 +82,7 @@ public class Game {
     this.player2 = player2;
     this.board = initializeBoard(moves);
     this.owner = owner;
-    this.completionState = GameCompletionState.ACTIVE;
+    this.status = GameStatus.ACTIVE;
   }
 
   private Board initializeBoard(List<Move> moves) {
@@ -65,18 +94,17 @@ public class Game {
     return board = new Board(moveRecord);
   }
 
-  public long getGameId() {
-    return id;
-  }
-  public long getOwner() {
-    return owner;
-  }
-
-  public long getWinner() {
-    return winner;
-  }
-  public void setWinnner(long playerId) {
-    winner = playerId;
+  @PreUpdate
+  @PrePersist
+  public void updateTimeStamps() {
+    updatedAt = new Date();
+    if(createdAt == null) {
+      createdAt = new Date();
+    }
+    if(completedAt == null && status.compareTo(GameStatus.ACTIVE) > 0) {
+      completedAt = new Date();
+    }
+      
   }
 
   public long[] getPlayers() {
@@ -89,11 +117,11 @@ public class Game {
     );
   }
 
-  public GameCompletionState getCompletionState() {
-    return completionState;
+  public GameStatus getStatus() {
+    return status;
   }
-  public void setCompletionState(GameCompletionState state) {
-    completionState = state;
+  public void setCompletionState(GameStatus state) {
+    status = state;
   }
 
   public List<MoveIntent> getMoveHistory() {
@@ -112,7 +140,10 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      getCompletionState()
+      getStatus(),
+      getCreatedAt(),
+      getUpdatedAt(),
+      getCompletedAt()
     );
   }
 
@@ -123,9 +154,9 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      -1,
+      playerInCheck(),
       this.board,
-      getCompletionState()
+      getStatus()
     );
   }
 

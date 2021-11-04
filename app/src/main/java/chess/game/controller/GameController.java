@@ -1,7 +1,5 @@
 package chess.game.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -23,8 +21,7 @@ import chess.user.model.User;
 import chess.util.Result;
 
 @RestController
-@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins={"*"})
+@RequestMapping(path = "/api/v1/games", produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name="chess-api")
 @AllArgsConstructor
 public class GameController {
@@ -32,12 +29,7 @@ public class GameController {
   @Autowired
   private final IGameService gameService;
 
-  @GetMapping("/games")
-  public List<GameInfo> listAvailableGames(@Parameter(hidden=true) User user) {
-    return gameService.listAvailableGames(user.getPlayerId());
-  }
-
-  @PostMapping("/games")
+  @PostMapping()
   public GameInfo createGame(
     @Parameter(hidden=true) User user,
     @RequestBody(required=true) CreateGameRequest req
@@ -62,7 +54,7 @@ public class GameController {
     }
   }
 
-  @DeleteMapping("/games/{id}")
+  @DeleteMapping("/{id}")
   public void deleteGame(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
@@ -84,7 +76,7 @@ public class GameController {
     }
   }
 
-  @PostMapping("/games/{id}/quit")
+  @PostMapping("/{id}/quit")
   public void quitGame(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
@@ -97,15 +89,15 @@ public class GameController {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        case ALREADY_COMPLETE:
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Game already completed");
+        case INACTIVE:
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot quit inactive game");
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
   }
 
-  @GetMapping("/games/{id}")
+  @GetMapping("/{id}")
   public GameState getGameState(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
@@ -126,7 +118,7 @@ public class GameController {
     }
   }
 
-  @PatchMapping("/games/{id}")
+  @PatchMapping("/{id}")
   public GameState move(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId,
