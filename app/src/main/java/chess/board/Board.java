@@ -81,8 +81,8 @@ public class Board implements IBoard {
     public int inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
-        if(MoveValidator.positionUnderThreat(bKing, -1)) return -1;
-        if(MoveValidator.positionUnderThreat(wKing, 1)) return 1;
+        if(MoveValidator.positionUnderThreat(bKing, -1, this)) return -1;
+        if(MoveValidator.positionUnderThreat(wKing, 1, this)) return 1;
         return 0;
 
     }

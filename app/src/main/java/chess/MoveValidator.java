@@ -361,7 +361,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 0), PlayerColor.WHITE) || positionUnderThreat(new Position(2, 0), PlayerColor.WHITE)) {
+                    if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(2, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     locationsToCheck.add(new Position(x - 2, y));
@@ -376,7 +376,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 0), PlayerColor.WHITE) || positionUnderThreat(new Position(4, 0), PlayerColor.WHITE)) {
+                    if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(4, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     locationsToCheck.add(new Position(x + 2, y));
@@ -391,7 +391,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 6), PlayerColor.BLACK) || positionUnderThreat(new Position(2, 6), PlayerColor.BLACK)) {
+                    if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(2, 6), -1, board)) {
                         legalMoveFlag = false;
                     }
                     locationsToCheck.add(new Position(x - 2, y));
@@ -405,7 +405,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 6), PlayerColor.BLACK) || positionUnderThreat(new Position(4, 6), PlayerColor.BLACK)) {
+                    if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(4, 6), -1, board)) {
                         legalMoveFlag = false;
                     }
                     locationsToCheck.add(new Position(x + 2, y));
@@ -434,7 +434,7 @@ public class MoveValidator {
         ArrayList<MoveIntent> validMovesNotInCheck = new ArrayList<MoveIntent>();
         for(MoveIntent move : validMoves) {
             Board tempBoard = board.copy();
-            tempBoard.updateBoard(move, playerColor.value);
+            tempBoard.updateBoard(move);
             if(tempBoard.inCheck() != playerColor.value) {
                 validMovesNotInCheck.add(move);
             }
@@ -445,7 +445,7 @@ public class MoveValidator {
 
 
 
-    public static boolean positionUnderThreat(Position loc, int team) {
+    public static boolean positionUnderThreat(Position loc, int team, Board board) {
         int x = loc.file.value;
         int y = loc.rank.value;
         // check for pawns:
@@ -483,44 +483,44 @@ public class MoveValidator {
         // check for knights:
         if(x < 6) {
             if(y < 7){
-                if(getPiece(new Position(x + 2, y + 1)) == (-team * 3))
+                if(board.getPiece(new Position(x + 2, y + 1)) == (-team * 3))
                     return true;
             }
             if(y > 0){
-                if(getPiece(new Position(x + 2, y - 1)) == (-team * 3))
+                if(board.getPiece(new Position(x + 2, y - 1)) == (-team * 3))
                     return true;
             }
         }
         if(x > 1) {
             // left 2
             if(y < 7) {
-                if(getPiece(new Position(x - 2, y + 1))  == (-team * 3))
+                if(board.getPiece(new Position(x - 2, y + 1))  == (-team * 3))
                     return true;
             } // left 2 up 1
             if(y > 0) {
-                if(getPiece(new Position(x - 2, y - 1))  == (-team * 3))
+                if(board.getPiece(new Position(x - 2, y - 1))  == (-team * 3))
                     return true;
             } // left 2 down 1
         }
         if(y < 6) {
             // up 2
             if(x < 7) {
-                if(getPiece(new Position(x + 1, y + 2))  == (-team * 3))
+                if(board.getPiece(new Position(x + 1, y + 2))  == (-team * 3))
                     return true;
             } // up 2 right 1
             if(x > 0) {
-                if(getPiece(new Position(x - 1, y + 2))  == (-team * 3))
+                if(board.getPiece(new Position(x - 1, y + 2))  == (-team * 3))
                     return true;
             } // up 2 left 1
         }
         if(y > 1) {
             // down 2
             if(x < 7) {
-                if(getPiece(new Position(x + 1, y - 2)) == (-team * 3))
+                if(board.getPiece(new Position(x + 1, y - 2)) == (-team * 3))
                     return true;
              } // down 2 right 1
             if(x > 0) {
-                if(getPiece(new Position(x - 1, y - 2)) == (-team * 3))
+                if(board.getPiece(new Position(x - 1, y - 2)) == (-team * 3))
                     return true;
              } // down 2 left 1
         }
@@ -529,7 +529,7 @@ public class MoveValidator {
         while(x < 7) {
             x++;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -542,7 +542,7 @@ public class MoveValidator {
         while(y < 7) {
             y++;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -555,7 +555,7 @@ public class MoveValidator {
         while(x > 0) {
             x--;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -568,7 +568,7 @@ public class MoveValidator {
         while(y < 7) {
             y++;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -584,7 +584,7 @@ public class MoveValidator {
             x++;
             y++;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -596,7 +596,7 @@ public class MoveValidator {
             x--;
             y++;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -608,7 +608,7 @@ public class MoveValidator {
             x++;
             y--;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -620,7 +620,7 @@ public class MoveValidator {
             x--;
             y--;
             Position next = new Position(x, x);
-            int piece = getPiece(next);
+            int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
             }
@@ -628,6 +628,6 @@ public class MoveValidator {
                 break;
             }
         }
-
+        return false;
     }
 }
