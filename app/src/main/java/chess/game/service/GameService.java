@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import chess.MoveIntent;
 import chess.PlayerColor;
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
 import chess.game.model.*;
@@ -56,13 +56,56 @@ public class GameService implements IGameService {
     return new Result<GameInfo, CreateGameErrorCode>(game.info());
   }
 
+  private Result<Void, GameInviteResponseErrorCode> processInviteResponse(long gameId, long playerId) {
+    if(players.getPlayerById(playerId) == null) {
+      return new Result<Void, GameInviteResponseErrorCode>(GameInviteResponseErrorCode.UNKNOWN_PLAYER);
+    }
+
+    Game game = games.getGameById(gameId);
+    if(game == null) {
+      return new Result<Void, GameInviteResponseErrorCode>(GameInviteResponseErrorCode.GAME_NOT_FOUND);
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<Void, GameInviteResponseErrorCode>(GameInviteResponseErrorCode.UNAUTHORIZED);
+    } else if(game.getOwner() == playerId) {
+      return new Result<Void, GameInviteResponseErrorCode>(GameInviteResponseErrorCode.OWN_GAME);
+    } else if(game.getStatus() != GameStatus.PENDING) {
+      return new Result<Void, GameInviteResponseErrorCode>(GameInviteResponseErrorCode.WRONG_STATE);
+    }
+
+    return new Result<Void, GameInviteResponseErrorCode>();
+  }
+
+  public Result<Void, GameInviteResponseErrorCode> acceptGameInvite(long gameId, long playerId) {
+    Result<Void, GameInviteResponseErrorCode> result = processInviteResponse(gameId, playerId);
+
+    if(result.code == null) {
+      Game game = games.getGameById(gameId);
+      game.setStatus(GameStatus.ACTIVE);
+      notifyPlayers(game);
+    }
+
+    return result;
+  }
+
+  public Result<Void, GameInviteResponseErrorCode> declineGameInvite(long gameId, long playerId) {
+    Result<Void, GameInviteResponseErrorCode> result = processInviteResponse(gameId, playerId);
+
+    if(result.code == null) {
+      Game game = games.getGameById(gameId);
+      game.setStatus(GameStatus.DECLINED);
+      notifyPlayers(game);
+    }
+
+    return result;
+  }
+
   public Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {
       return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_NOT_FOUND);
     } else if(game.getOwner() != playerId) {
       return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.UNAUTHORIZED);
-    } else if(game.getCompletionState() == GameCompletionState.ACTIVE) {
+    } else if(game.getStatus() == GameStatus.ACTIVE) {
       return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_ACTIVE);
     }
     games.deleteGame(gameId);
@@ -77,8 +120,8 @@ public class GameService implements IGameService {
       return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(playerId)) {
       return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.UNAUTHORIZED);
-    } else if(game.getCompletionState() != GameCompletionState.ACTIVE) {
-      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.ALREADY_COMPLETE);
+    } else if(game.getStatus() != GameStatus.ACTIVE) {
+      return new Result<Void, QuitGameErrorCode>(QuitGameErrorCode.INACTIVE);
     }
 
     long[] players = game.getPlayers();
@@ -86,7 +129,7 @@ public class GameService implements IGameService {
       ? players[1]
       : players[0];
 
-    games.endGame(gameId, winner, GameCompletionState.TERMINATED);
+    games.endGame(gameId, winner, GameStatus.TERMINATED);
     notifyPlayers(game);
 
     return new Result<Void, QuitGameErrorCode>();

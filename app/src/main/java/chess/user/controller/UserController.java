@@ -2,6 +2,7 @@ package chess.user.controller;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,18 +17,25 @@ import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
+import lombok.AllArgsConstructor;
+import chess.game.GameInfo;
+import chess.player.service.PlayerService;
+import chess.player.service.errorCodes.ListGamesErrorCode;
 import chess.user.controller.requests.UpdateDisplayNameRequest;
 import chess.user.model.User;
 import chess.user.service.UserService;
+import chess.util.Result;
 
 @RestController
 @RequestMapping(path = "/api/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name="chess-api")
+@AllArgsConstructor
 public class UserController {
 
   @Autowired
-  private UserService userService;
+  private final UserService userService;
+  @Autowired
+  private final PlayerService playerService;
   
   @GetMapping()
   public Map<String, Object> getUserInfo(@Parameter(hidden=true) User user) {
@@ -49,5 +57,22 @@ public class UserController {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already in use");
     }
     user.setDisplayName(req.displayName);
+  }
+
+
+  @GetMapping("/games/pending")
+  public List<GameInfo> getPendingGames(@Parameter(hidden=true) User user) {
+    Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getPendingGamesForPlayer(user.getPlayerId());
+
+    if(result.code != null) {
+      switch(result.code) {
+        case UNKOWN_PLAYER:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return result.value;
   }
 }

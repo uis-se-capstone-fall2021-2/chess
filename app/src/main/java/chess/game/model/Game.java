@@ -1,5 +1,6 @@
 package chess.game.model;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import chess.Position;
 import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
-import chess.game.GameCompletionState;
+import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
@@ -28,21 +29,41 @@ public class Game {
   @Column
   @Getter
   private long gameId;
+
+  @Column
+  @Getter
+  private Date createdAt;
+
+  @Column
+  @Getter
+  private Date updatedAt;
+
+  @Column
+  @Getter
+  private Date completedAt;
+
   @Column
   @Getter
   private long owner; // playerId
+
   @Column
   @Getter
   @Setter
   private long winner; // playerId
+
   @Column
   @Getter
   private long player1; // playerId, player1 is white
+
   @Column
   @Getter
   private long player2; // playerId, player2 is black
+
   @Column
-  private GameCompletionState completionState;
+  @Getter
+  @Setter
+  private GameStatus status;
+
   @Column
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
@@ -63,7 +84,7 @@ public class Game {
     this.player2 = player2;
     this.board = initializeBoard(moves);
     this.owner = owner;
-    this.completionState = GameCompletionState.ACTIVE;
+    this.status = GameStatus.PENDING;
   }
 
   private Board initializeBoard(List<Move> moves) {
@@ -75,6 +96,19 @@ public class Game {
     return board = new Board(moveRecord);
   }
 
+  @PreUpdate
+  @PrePersist
+  public void updateTimeStamps() {
+    updatedAt = new Date();
+    if(createdAt == null) {
+      createdAt = new Date();
+    }
+    if(completedAt == null && status.compareTo(GameStatus.ACTIVE) > 0) {
+      completedAt = new Date();
+    }
+      
+  }
+
   public long[] getPlayers() {
     return new long[] {player1, player2};
   }
@@ -83,13 +117,6 @@ public class Game {
       player1 == playerId ||
       player2 == playerId
     );
-  }
-
-  public GameCompletionState getCompletionState() {
-    return completionState;
-  }
-  public void setCompletionState(GameCompletionState state) {
-    completionState = state;
   }
 
   public List<MoveIntent> getMoveHistory() {
@@ -108,7 +135,10 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      getCompletionState()
+      getStatus(),
+      getCreatedAt(),
+      getUpdatedAt(),
+      getCompletedAt()
     );
   }
 
@@ -119,9 +149,9 @@ public class Game {
       getWinner(),
       getPlayers(),
       moves.size(),
-      -1,
+      playerInCheck(),
       this.board,
-      getCompletionState()
+      getStatus()
     );
   }
 
