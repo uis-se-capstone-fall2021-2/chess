@@ -60,6 +60,8 @@ public class Game {
   private long player2; // playerId, player2 is black
 
   @Column
+  @Getter
+  @Setter
   private GameStatus status;
 
   @Column
@@ -82,7 +84,7 @@ public class Game {
     this.player2 = player2;
     this.board = initializeBoard(moves);
     this.owner = owner;
-    this.status = GameStatus.ACTIVE;
+    this.status = GameStatus.PENDING;
   }
 
   private Board initializeBoard(List<Move> moves) {
@@ -115,13 +117,6 @@ public class Game {
       player1 == playerId ||
       player2 == playerId
     );
-  }
-
-  public GameStatus getStatus() {
-    return status;
-  }
-  public void setCompletionState(GameStatus state) {
-    status = state;
   }
 
   public List<MoveIntent> getMoveHistory() {

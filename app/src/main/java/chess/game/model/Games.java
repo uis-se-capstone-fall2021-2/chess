@@ -48,13 +48,40 @@ public class Games extends Repo<Game> {
 		session.remove(game);
 	}
 
+	// TODO does this need to be on the DBO or can we just do it in GameService?
 	@Transactional
 	public void endGame(long gameId, long winner, GameStatus status) {
 		Session session = getSession();
 		Game game = session.get(Game.class, gameId);
 		game.setWinner(winner);
-		game.setCompletionState(status);
+		game.setStatus(status);
 		session.saveOrUpdate(game);
+	}
+
+	public List<Game> listPendingGamesForPlayer(long playerId) {
+		GameStatus[] statuses = {
+			GameStatus.PENDING,
+			GameStatus.DECLINED
+		};
+		Repo.CriteriaQueryConfigurer<Game> configurer = super.filterQueryFactory(
+			new OrFilter(Map.of(
+			"player1", playerId,
+			"player2", playerId
+			)),
+			new OrFilter(Map.of(
+				"status", statuses
+			))
+		);
+
+		Query<Game> query = configurer.getCriteriaQuery(
+			(Root<Game> $,
+      CriteriaQuery<Game> q,
+      CriteriaBuilder cb) -> {
+				q.orderBy(cb.asc($.get("createdAt")));
+				q.groupBy($.get("status"), $.get("gameId"));
+			});
+
+		return query.getResultList();
 	}
 
 	public List<Game> listActiveGamesForPlayer(long playerId) {
