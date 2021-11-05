@@ -35,8 +35,8 @@ public class MoveValidator {
 
     public static List<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board, List<MoveIntent> moveRecord, PlayerColor playerColor){
 
-        List<MoveIntent> validMoves = new ArrayList<MoveIntent>();
-        List<Position> locationsToCheck = new ArrayList<Position>();
+        List<MoveIntent> validMoves = new ArrayList<>();
+        List<Position> locationsToCheck = new ArrayList<>();
         int x,y;
         x = startPos.file.value;
         y = startPos.rank.value;
@@ -206,7 +206,7 @@ public class MoveValidator {
                 while(x < 7 && y < 7){
                     x++;
                     y++;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -218,7 +218,7 @@ public class MoveValidator {
                 while(x > 0 && y < 7){
                     x--;
                     y++;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -230,7 +230,7 @@ public class MoveValidator {
                 while(x < 7 && y > 0){
                     x++;
                     y--;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -242,7 +242,7 @@ public class MoveValidator {
                 while(x > 0 && y > 0){
                     x--;
                     y--;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -269,7 +269,7 @@ public class MoveValidator {
                 // right
                 while(x < 7) {
                     x++;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -280,7 +280,7 @@ public class MoveValidator {
                 // left
                 while(x > 0) {
                     x--;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -291,7 +291,7 @@ public class MoveValidator {
                 // up
                 while(y < 7) {
                     y++;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -302,7 +302,7 @@ public class MoveValidator {
                 // down
                 while(y > 0) {
                     y--;
-                    Position next = new Position(x, x);
+                    Position next = new Position(x, y);
                     locationsToCheck.add(next);
                     if(board.getPiece(next) != 0) {
                         break;
@@ -434,7 +434,7 @@ public class MoveValidator {
         
         }
 
-        ArrayList<MoveIntent> validMovesNotInCheck = new ArrayList<MoveIntent>();
+        ArrayList<MoveIntent> validMovesNotInCheck = new ArrayList<>();
         for(MoveIntent move : validMoves) {
             Board tempBoard = board.copy();
             tempBoard.updateBoard(move);
@@ -485,53 +485,45 @@ public class MoveValidator {
 
         // check for knights:
         if(x < 6) {
-            if(y < 7){
-                if(board.getPiece(new Position(x + 2, y + 1)) == (-team * 3))
-                    return true;
+            if(y < 7 && board.getPiece(new Position(x + 2, y + 1)) == (-team * 3)){
+                return true;
             }
-            if(y > 0){
-                if(board.getPiece(new Position(x + 2, y - 1)) == (-team * 3))
-                    return true;
+            if(y > 0 && board.getPiece(new Position(x + 2, y - 1)) == (-team * 3)){
+                return true;
             }
         }
         if(x > 1) {
             // left 2
-            if(y < 7) {
-                if(board.getPiece(new Position(x - 2, y + 1))  == (-team * 3))
-                    return true;
+            if(y < 7 && board.getPiece(new Position(x - 2, y + 1))  == (-team * 3)) {
+                return true;
             } // left 2 up 1
-            if(y > 0) {
-                if(board.getPiece(new Position(x - 2, y - 1))  == (-team * 3))
-                    return true;
+            if(y > 0 && board.getPiece(new Position(x - 2, y - 1))  == (-team * 3)) {
+                return true;
             } // left 2 down 1
         }
         if(y < 6) {
             // up 2
-            if(x < 7) {
-                if(board.getPiece(new Position(x + 1, y + 2))  == (-team * 3))
-                    return true;
+            if(x < 7 && board.getPiece(new Position(x + 1, y + 2))  == (-team * 3)) {
+                return true;
             } // up 2 right 1
-            if(x > 0) {
-                if(board.getPiece(new Position(x - 1, y + 2))  == (-team * 3))
-                    return true;
+            if(x > 0 && board.getPiece(new Position(x - 1, y + 2))  == (-team * 3)) {
+                return true;
             } // up 2 left 1
         }
         if(y > 1) {
             // down 2
-            if(x < 7) {
-                if(board.getPiece(new Position(x + 1, y - 2)) == (-team * 3))
-                    return true;
+            if(x < 7 && board.getPiece(new Position(x + 1, y - 2)) == (-team * 3)) {
+                return true;
              } // down 2 right 1
-            if(x > 0) {
-                if(board.getPiece(new Position(x - 1, y - 2)) == (-team * 3))
-                    return true;
+            if(x > 0 && board.getPiece(new Position(x - 1, y - 2)) == (-team * 3)) {
+                return true;
              } // down 2 left 1
         }
 
         // checking threat from rook/queen:
         while(x < 7) {
             x++;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -544,7 +536,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(y < 7) {
             y++;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -557,7 +549,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(x > 0) {
             x--;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -570,7 +562,7 @@ public class MoveValidator {
         y = loc.rank.value;
         while(y < 7) {
             y++;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -586,7 +578,7 @@ public class MoveValidator {
         while(x < 7 && y < 7){
             x++;
             y++;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -598,7 +590,7 @@ public class MoveValidator {
         while(x > 0 && y < 7){
             x--;
             y++;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -610,7 +602,7 @@ public class MoveValidator {
         while(x < 7 && y > 0){
             x++;
             y--;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
@@ -622,7 +614,7 @@ public class MoveValidator {
         while(x > 0 && y > 0){
             x--;
             y--;
-            Position next = new Position(x, x);
+            Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
                 return true;
