@@ -364,7 +364,8 @@ public class MoveValidator {
                     if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(2, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
-                    locationsToCheck.add(new Position(x - 2, y));
+                    if(legalMoveFlag)
+                        locationsToCheck.add(new Position(x - 2, y));
                 }
                 // white king queen side castle
                 if(x == 3 && y == 0 && board.getPiece(new Position(4, 0)) == 0 && board.getPiece(new Position(5, 0)) == 0){
@@ -379,7 +380,8 @@ public class MoveValidator {
                     if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(4, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
-                    locationsToCheck.add(new Position(x + 2, y));
+                    if(legalMoveFlag)
+                        locationsToCheck.add(new Position(x + 2, y));
                 }
                 // black king side castle
                 if(x == 3 && y == 6 && board.getPiece(new Position(1,6)) == 0 && board.getPiece(new Position(2,6)) == 0){
@@ -394,7 +396,8 @@ public class MoveValidator {
                     if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(2, 6), -1, board)) {
                         legalMoveFlag = false;
                     }
-                    locationsToCheck.add(new Position(x - 2, y));
+                    if(legalMoveFlag)
+                        locationsToCheck.add(new Position(x - 2, y));
                 }
                 if(x == 3 && y == 6 && board.getPiece(new Position(4,6)) == 0 && board.getPiece(new Position(5,6)) == 0){
                     boolean legalMoveFlag = true;
@@ -408,7 +411,8 @@ public class MoveValidator {
                     if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(4, 6), -1, board)) {
                         legalMoveFlag = false;
                     }
-                    locationsToCheck.add(new Position(x + 2, y));
+                    if(legalMoveFlag)
+                        locationsToCheck.add(new Position(x + 2, y));
                 }
 
                 for(Position endPos : locationsToCheck) {
@@ -429,7 +433,6 @@ public class MoveValidator {
                 throw new IllegalArgumentException("MoveValidator: Invalid piece type input");
         
         }
-        // TODO: Remove moves that result in check from validMoves
 
         ArrayList<MoveIntent> validMovesNotInCheck = new ArrayList<MoveIntent>();
         for(MoveIntent move : validMoves) {
