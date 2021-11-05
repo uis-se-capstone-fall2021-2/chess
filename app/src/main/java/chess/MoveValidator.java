@@ -130,7 +130,7 @@ public class MoveValidator {
                     // EN PASSANT
                         // LEFT EN PASSANT
                     if(x > 0 && y == 3) {
-                        Position left = new Position(x - 1, x);
+                        Position left = new Position(x - 1, y);
                         Position leftPrevious = new Position(x - 1, y - 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
@@ -140,7 +140,7 @@ public class MoveValidator {
                     }
                         // RIGHT EN PASSANT
                     if(x < 7 && y == 3) {
-                        Position right = new Position(x + 1, x);
+                        Position right = new Position(x + 1, y);
                         Position rightPrevious = new Position(x + 1, y - 2);
                         MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
                         if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
