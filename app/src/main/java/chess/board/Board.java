@@ -35,6 +35,18 @@ public class Board implements IBoard {
         }
     }
 
+    public Board( int[] board ) {
+        this.board = board;
+    }
+
+    public Board copy() {
+        int[] newBoard = new int[board.length];
+        for(int i = 0; i < board.length; i++) {
+            newBoard[i] = board[i];
+        }
+        return new Board(newBoard);
+    }
+
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
@@ -62,4 +74,18 @@ public class Board implements IBoard {
 
         return board;
     }
+    /*** inCheck return which player is in check, or a 0 if nobody is
+     * 
+     * @return int: -1, 0, or 1
+     */
+    public int inCheck() {
+        Position bKing = getPositionOf(-6);
+        Position wKing = getPositionOf(6);
+        if(MoveValidator.positionUnderThreat(bKing, -1, this)) return -1;
+        if(MoveValidator.positionUnderThreat(wKing, 1, this)) return 1;
+        return 0;
+
+    }
+
+
 }
