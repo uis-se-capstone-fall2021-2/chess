@@ -1,6 +1,7 @@
 import {autobind} from 'core-decorators';
 import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
+import {MoveIntent} from '../board/interfaces';
 
 import {GameId} from '../types';
 import {User} from "../user/User";
@@ -33,6 +34,12 @@ export class GameServiceImpl implements GameService {
     handler: Strongbus.EventHandler<GameStore.Events, T>
   ): Strongbus.Subscription {
       return this.games.on(event, handler);
+  }
+
+  public async move(gameId: GameId, intent: MoveIntent): Promise<GameState> {
+    const gameState = await this.resource.put<GameState>(`/${gameId}`, intent);
+    this.games.updateGameState(gameState);
+    return gameState;
   }
 
 }

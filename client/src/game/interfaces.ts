@@ -1,5 +1,6 @@
 import * as Strongbus from 'strongbus';
 import * as typedi from 'typedi';
+import {MoveIntent} from '../board/interfaces';
 
 import {GameId, PlayerId} from '../types';
 
@@ -39,7 +40,10 @@ export interface GameState extends GameDataBase, GameStateExtensions {}
 export interface GameData extends GameInfo, Partial<GameStateExtensions> {}
 
 
+
+
 export interface GameService {
+  move(gameId: GameId, intent: MoveIntent): Promise<GameState>;
   getGameData(gameId: GameId): GameData|null;
   fetchGameState(gameId: GameId): Promise<GameState>;
   on: Strongbus.Bus<GameStore.Events>['on'];
