@@ -1,6 +1,7 @@
 package chess.player.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +32,25 @@ public class PlayerService {
   @Autowired
   private final Games games;
 
+  public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(long[] playerIds) {
+    return new Result<PlayerInfo[], GetPlayerInfoErrorCode>(
+      players.getPlayers(playerIds)
+        .stream()
+        .map((Player player) -> player.info())
+        .toArray(PlayerInfo[]::new)
+    );
+  }
+
   public Result<PlayerInfo, GetPlayerInfoErrorCode> getPlayerInfo(long playerId) {
     Player player = players.getPlayerById(playerId);
     if(player == null) {
       return new Result<PlayerInfo, GetPlayerInfoErrorCode>(GetPlayerInfoErrorCode.NOT_FOUND);
     } else {
-      return new Result<PlayerInfo, GetPlayerInfoErrorCode>(new PlayerInfo(
-        player.getPlayerId(),
-        player.getDisplayName(),
-        player.getPlayerType()
-      ));
+      return new Result<PlayerInfo, GetPlayerInfoErrorCode>(player.info());
     }
   }
 
-  public Result<List<GameInfo>, ListGamesErrorCode> getGamesForPlayer(
+  public Result<GameInfo[], ListGamesErrorCode> getGamesForPlayer(
     long playerId,
     GameStatus[] status,
     OrderBy orderBy,
@@ -52,10 +58,10 @@ public class PlayerService {
   ) {
     Player player = players.getPlayerById(playerId);
     if(player == null) {
-      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNKOWN_PLAYER);
+      return new Result<GameInfo[], ListGamesErrorCode>(ListGamesErrorCode.UNKOWN_PLAYER);
     } else if(player.getPlayerType() == PlayerType.AI.getPlayerType()) {
       // TODO: in the future, allow admin to view
-      return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
+      return new Result<GameInfo[], ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
     }
     
     if(user.getPlayerId() != playerId) {
@@ -66,17 +72,17 @@ public class PlayerService {
         for(GameStatus s: status) {
           if(s == GameStatus.PENDING || s == GameStatus.DECLINED) {
             // TODO: allow admin to view
-            return new Result<List<GameInfo> , ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
+            return new Result<GameInfo[], ListGamesErrorCode>(ListGamesErrorCode.UNAUTHORIZED);
           }
         }
       }
     }
 
-    List<GameInfo> list = new ArrayList<GameInfo>();
-    List<Game> playerGames = games.listGamesForPlayer(playerId, status, orderBy);
-    for(Game game: playerGames) {
-      list.add(game.info());
-    }
-    return new Result<List<GameInfo> , ListGamesErrorCode>(list);
+    return new Result<GameInfo[], ListGamesErrorCode>(
+      games.listGamesForPlayer(playerId, status, orderBy)
+        .stream()
+        .map((Game game) -> game.info())
+        .toArray(GameInfo[]::new)
+    );
   }
 }

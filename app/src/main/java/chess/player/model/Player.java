@@ -32,6 +32,14 @@ public abstract class Player {
     return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }
 
+  public PlayerInfo info() {
+    return new PlayerInfo(
+      getPlayerId(),
+      getDisplayName(),
+      getPlayerType()
+    );
+  }
+
   public abstract String getDisplayName();
   public abstract void notify(GameState gameState);
 }

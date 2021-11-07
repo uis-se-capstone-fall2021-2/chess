@@ -37,6 +37,17 @@ public class PlayerController {
   @Autowired
   private final PlayerService playerService;
 
+  @GetMapping("/")
+  public PlayerInfo[] getPlayerInfo(@RequestParam(value="id", required=true) long[] playerIds) {
+    Result<PlayerInfo[], GetPlayerInfoErrorCode> result = playerService.getPlayerInfo(playerIds);
+
+    if(result.code != null) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return result.value;
+  }
+
   @GetMapping("/{id}")
   public PlayerInfo getPlayerInfo(@PathVariable(value="id", required=true) long playerId) {
     Result<PlayerInfo, GetPlayerInfoErrorCode> result = playerService.getPlayerInfo(playerId);
@@ -53,13 +64,13 @@ public class PlayerController {
   }
 
   @GetMapping("/{id}/games")
-  public List<GameInfo> getPendingGames(
+  public GameInfo[] getPendingGames(
     @PathVariable(value="id", required=true) long playerId,
     @RequestParam(value="status", required=false) GameStatus[] status,
     @RequestParam(value="orderBy", required=false) OrderBy orderBy,
     @Parameter(hidden=true) User user
   ) {
-    Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getGamesForPlayer(
+    Result<GameInfo[], ListGamesErrorCode> result = playerService.getGamesForPlayer(
       user.getPlayerId(),
       status == null ? new GameStatus[] {} : status,
       orderBy == null ? OrderBy.createdAt : orderBy,
