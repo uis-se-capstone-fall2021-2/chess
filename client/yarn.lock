@@ -6601,6 +6601,13 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+jaasync@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/jaasync/-/jaasync-0.9.3.tgz#bf28bee3ebb34976c487c57aeff6d3700fd6b37c"
+  integrity sha512-s+MSHRvMR7EHRl4UJ4VmrjXVmxMoL0mf7osFDviD5NWYA7/TGQvshoEm9c8/wJFbusRFVbAqfKYaJV4MfhGqEA==
+  dependencies:
+    core-decorators "^0.20.0"
+
 jest-changed-files@^26.6.2:
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-26.6.2.tgz#f6198479e1cc66f22f9ae1e22acaa0b429c042d0"

@@ -9,9 +9,9 @@ import {PlayerService} from '../../player/interfaces';
 import {User} from '../../user/User';
 
 @autobind
-export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> {
+export class MyGames extends React.Component<{}, MyGames.State> {
 
-  public override state: ActiveGamesView.State = {
+  public override state: MyGames.State = {
     games: null,
     error: null
   };
@@ -55,12 +55,12 @@ export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> 
         display: 'flex',
         height: '100%'
       }}>
-        <DataGrid rows={rows} columns={ActiveGamesView.columns}/>
+        <DataGrid rows={rows} columns={MyGames.columns}/>
       </Box>
     );
   }
 
-  private buildRow(gameInfo: GameInfo): ActiveGamesView.Row {
+  private buildRow(gameInfo: GameInfo): MyGames.Row {
     return {
       id: gameInfo.gameId,
       gameId: gameInfo.gameId,
@@ -85,7 +85,7 @@ export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> 
   }];
 }
 
-export namespace ActiveGamesView {
+export namespace MyGames {
   export interface State {
     games: GameInfo[]|null;
     error: Error|null;

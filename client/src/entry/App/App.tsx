@@ -34,12 +34,12 @@ import {
   Link
 } from 'react-router-dom';
 
+import '../../utils/resource/ResourceFactory.impl';
 import '../../player/PlayerService.impl';
 import '../../game/GameService.impl';
 import {User} from '../../user/User';
 import {UserProvider} from '../../user/UserProvider';
-import {ActiveGamesView} from '../../views/activeGames/ActiveGames';
-import {PendingGamesView} from '../../views/pendingGames/PendingGames';
+import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
 
 import './style.css';
@@ -125,14 +125,8 @@ export class App extends React.Component<{}, {
                           <RouterContext.Consumer>
                             {(ctx) => (
                               <Switch>
-                                <Route exact path={`${ctx.match.path}/active`}>
-                                  <ActiveGamesView/>
-                                </Route>
-                                <Route exact path={`${ctx.match.path}/pending`}>
-                                  <PendingGamesView/>
-                                </Route>
-                                <Route exact path={`${ctx.match.path}/history`}>
-                                  <div>Game History Here</div>
+                                <Route exact path={`${ctx.match.path}`}>
+                                  <MyGames/>
                                 </Route>
                                 <Route exact path={`${ctx.match.path}/:gameId`}>
 
@@ -167,29 +161,21 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
-            <Link to="/games/active">
+            <Link to="/games">
               <ListItemIcon>
                 <GradientIcon sx={this.navSx}/>
               </ListItemIcon>
-              <ListItemText primary='Active Games'/>
+              <ListItemText primary='My Games'/>
             </Link>
           </ListItem>
-          <ListItem button>
-            <Link to="/games/pending">
-              <ListItemIcon>
-                <GradientIcon sx={this.navSx}/>
-              </ListItemIcon>
-              <ListItemText primary='Pending Games'/>
-            </Link>
-          </ListItem>
-          <ListItem button>
+          {/* <ListItem button>
             <Link to='/games/history'>
               <ListItemIcon>
                 <QueryStatsIcon sx={this.navSx}/>
               </ListItemIcon>
               <ListItemText primary='Game History'/>
             </Link>
-          </ListItem>
+          </ListItem> */}
         </List>
       </>
     );
