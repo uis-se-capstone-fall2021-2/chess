@@ -1,3 +1,4 @@
+import {autobind} from 'core-decorators';
 import {Service, Inject} from 'typedi';
 import {Deferred} from 'jaasync';
 
@@ -9,6 +10,7 @@ import {Resource} from '../utils/resource/interfaces';
 
 
 @Service(PlayerService.Token)
+@autobind
 export class PlayerServiceImpl implements PlayerService {
   @Inject(User.Token)
   private readonly user: User;

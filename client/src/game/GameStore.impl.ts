@@ -1,3 +1,4 @@
+import {autobind} from 'core-decorators';
 import {isEqual, uniq} from 'lodash';
 import {Service} from 'typedi';
 import * as Strongbus from 'strongbus';
@@ -6,6 +7,7 @@ import {GameId} from '../types';
 import {GameData, GameInfo, GameState, GameStatus, GameStore} from './interfaces';
 
 @Service(GameStore.Token)
+@autobind
 export class GameStoreImpl implements GameStore {
   private readonly games = new Map<GameId, GameData>();
   private readonly bus = new Strongbus.Bus<GameStore.Events>();

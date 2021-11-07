@@ -1,5 +1,6 @@
 import {Box} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {Typography} from '@mui/material';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
 
@@ -36,6 +37,15 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
   
 
   public override render(): React.ReactNode {
+    const {games, error} = this.state;
+    if(error) {
+      return (
+        <Typography sx={{color: 'text.error'}}>
+          {error.message}
+        </Typography>
+      );
+    }
+
     const rows = this.state.games.map(this.buildRow);
     return (
       <Box sx={{

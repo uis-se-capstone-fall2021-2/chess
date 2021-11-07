@@ -1,3 +1,4 @@
+import {autobind} from 'core-decorators';
 import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
 
@@ -8,6 +9,7 @@ import {GameData, GameService, GameState, GameStore} from './interfaces';
 
 
 @Service(GameService.Token)
+@autobind
 export class GameServiceImpl implements GameService {
   @Inject(User.Token)
   private readonly user: User;
