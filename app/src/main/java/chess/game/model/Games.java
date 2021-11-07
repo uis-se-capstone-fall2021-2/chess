@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import chess.game.GameStatus;
-import chess.util.persistence.AndFilter;
 import chess.util.persistence.OrFilter;
+import chess.util.persistence.OrderBy;
 import chess.util.persistence.Repo;
 
 @Repository
@@ -58,18 +58,18 @@ public class Games extends Repo<Game> {
 		session.saveOrUpdate(game);
 	}
 
-	public List<Game> listPendingGamesForPlayer(long playerId) {
-		GameStatus[] statuses = {
-			GameStatus.PENDING,
-			GameStatus.DECLINED
-		};
+	public List<Game> listGamesForPlayer(
+		long playerId,
+		GameStatus[] status,
+		OrderBy orderBy
+	) {
 		Repo.CriteriaQueryConfigurer<Game> configurer = super.filterQueryFactory(
 			new OrFilter(Map.of(
 			"player1", playerId,
 			"player2", playerId
 			)),
 			new OrFilter(Map.of(
-				"status", statuses
+				"status", status
 			))
 		);
 
@@ -77,55 +77,8 @@ public class Games extends Repo<Game> {
 			(Root<Game> $,
       CriteriaQuery<Game> q,
       CriteriaBuilder cb) -> {
-				q.orderBy(cb.asc($.get("createdAt")));
+				q.orderBy(cb.asc($.get(orderBy.toString())));
 				q.groupBy($.get("status"), $.get("gameId"));
-			});
-
-		return query.getResultList();
-	}
-
-	public List<Game> listActiveGamesForPlayer(long playerId) {
-		Repo.CriteriaQueryConfigurer<Game> configurer =super.filterQueryFactory(
-			new OrFilter(Map.of(
-				"player1", playerId,
-				"player2", playerId
-			)),
-			new AndFilter(Map.of(
-				"status", GameStatus.ACTIVE
-			))
-		);
-
-		Query<Game> query = configurer.getCriteriaQuery(
-			(Root<Game> $,
-      CriteriaQuery<Game> q,
-      CriteriaBuilder cb) -> {
-				q.orderBy(cb.asc($.get("updatedAt")));
-			});
-
-		return query.getResultList();
-	}
-
-
-	public List<Game> getGameHistoryForPlayer(long playerId) {
-		GameStatus[] completeStatuses = {
-			GameStatus.COMPLETE,
-			GameStatus.TERMINATED
-		};
-		Repo.CriteriaQueryConfigurer<Game> configurer = super.filterQueryFactory(
-			new OrFilter(Map.of(
-			"player1", playerId,
-			"player2", playerId
-			)),
-			new OrFilter(Map.of(
-				"status", completeStatuses
-			))
-		);
-
-		Query<Game> query = configurer.getCriteriaQuery(
-			(Root<Game> $,
-      CriteriaQuery<Game> q,
-      CriteriaBuilder cb) -> {
-				q.orderBy(cb.asc($.get("completedAt")));
 			});
 
 		return query.getResultList();
