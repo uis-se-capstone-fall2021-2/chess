@@ -1,12 +1,20 @@
-import React from 'react';
+import 'reflect-metadata';
+import {Container} from 'typedi';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {App} from './App';
+import {AppContainer} from './entry/AppContainer';
 import reportWebVitals from './reportWebVitals';
+import {Tokens} from './di';
+
+// TODO: load this from environment
+Container.set(Tokens.API_HOST, 'http://localhost:8080');
+
+(window as any).di = Container;
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AppContainer />
   </React.StrictMode>,
   document.getElementById('root')
 );
