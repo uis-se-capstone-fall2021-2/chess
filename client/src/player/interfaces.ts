@@ -3,7 +3,8 @@ import * as typedi from 'typedi';
 import {GameInfo} from '../game/interfaces';
 
 export interface PlayerService {
-  getActiveGames(): Promise<GameInfo[]>;
+  getOwnActiveGames(): Promise<GameInfo[]>;
+  getOwnPendingGames(): Promise<GameInfo[]>;
 }
 
 export namespace PlayerService {

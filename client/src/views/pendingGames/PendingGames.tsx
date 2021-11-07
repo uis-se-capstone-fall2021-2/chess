@@ -9,9 +9,9 @@ import {PlayerService} from '../../player/interfaces';
 import {User} from '../../user/User';
 
 @autobind
-export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> {
+export class PendingGamesView extends React.Component<{}, PendingGamesView.State> {
 
-  public override state: ActiveGamesView.State = {
+  public override state: PendingGamesView.State = {
     games: null,
     error: null
   };
@@ -23,7 +23,7 @@ export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> 
 
   public override async componentDidMount(): Promise<void> {
     try {
-      const games = await this.playerService.getOwnActiveGames();
+      const games = await this.playerService.getOwnPendingGames();
       this.setState({games});
     } catch(e) {
       this.setState({error: e as Error});
@@ -55,12 +55,12 @@ export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> 
         display: 'flex',
         height: '100%'
       }}>
-        <DataGrid rows={rows} columns={ActiveGamesView.columns}/>
+        <DataGrid rows={rows} columns={PendingGamesView.columns}/>
       </Box>
     );
   }
 
-  private buildRow(gameInfo: GameInfo): ActiveGamesView.Row {
+  private buildRow(gameInfo: GameInfo): PendingGamesView.Row {
     return {
       id: gameInfo.gameId,
       gameId: gameInfo.gameId,
@@ -85,7 +85,7 @@ export class ActiveGamesView extends React.Component<{}, ActiveGamesView.State> 
   }];
 }
 
-export namespace ActiveGamesView {
+export namespace PendingGamesView {
   export interface State {
     games: GameInfo[]|null;
     error: Error|null;

@@ -14,8 +14,10 @@ export class PlayerServiceImpl implements PlayerService {
   @Inject(Tokens.API_HOST)
   private readonly apiHost: string;
 
-  public async getActiveGames(): Promise<GameInfo[]> {
-    const {data: result} = await axios.get<GameInfo[]>(`${this.apiHost}/api/v1/players/${this.user.playerId}/games/active`, {
+  public async getOwnActiveGames(): Promise<GameInfo[]> {
+    const resource: string = `/api/v1/players/${this.user.playerId}/games?status=ACTIVE&orderBy=updatedAt`;
+    const {data: result} = await axios.get<GameInfo[]>(
+      `${this.apiHost}${resource}`, {
       headers: {
         Authorization: `Bearer ${this.user.token}`
       }
@@ -29,7 +31,23 @@ export class PlayerServiceImpl implements PlayerService {
   }
 
   public async getGameHistory(playerId: number): Promise<GameInfo[]> {
-    const {data: result} = await axios.get<GameInfo[]>(`${this.apiHost}/api/v1/players/${playerId}/games/history`, {
+    const resource: string = `/api/v1/players/${playerId}/games?status=COMPLETE&status=TERMINATED&orderBy=completedAt`
+    const {data: result} = await axios.get<GameInfo[]>(
+      `${this.apiHost}${resource}`
+    , {
+      headers: {
+        Authorization: `Bearer ${this.user.token}`
+      }
+    });
+
+    return PlayerServiceImpl.normalizeGameInfoListResult(result);
+  }
+
+  public async getOwnPendingGames(): Promise<GameInfo[]> {
+    const resource: string = `/api/v1/players/${this.user.playerId}/games?status=PENDING&status=DECLINED&orderBy=createdAt`
+    const {data: result} = await axios.get<GameInfo[]>(
+      `${this.apiHost}${resource}`
+    , {
       headers: {
         Authorization: `Bearer ${this.user.token}`
       }

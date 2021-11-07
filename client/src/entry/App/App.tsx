@@ -39,6 +39,7 @@ import '../../game/GameService.impl';
 import {User} from '../../user/User';
 import {UserProvider} from '../../user/UserProvider';
 import {ActiveGamesView} from '../../views/activeGames/ActiveGames';
+import {PendingGamesView} from '../../views/pendingGames/PendingGames';
 import {theme} from './theme';
 
 import './style.css';
@@ -87,14 +88,16 @@ export class App extends React.Component<{}, {
                         {this.userMenu({auth0User, appUser})}
                       </Toolbar>
                     </AppBar>
-                    <Box component='nav' sx={{
-                      width: {
-                        sm: App.NAV_WIDTH
-                      },
-                      flexShrink: {
-                        sm: 0
-                      }
-                    }}>
+                    <Box
+                      component='nav'
+                      sx={{
+                        width: {
+                          sm: App.NAV_WIDTH
+                        },
+                        flexShrink: {
+                          sm: 0
+                        }
+                      }}>
                       {this.mobileNavDrawer}
                       {this.desktopNavDrawer}
                     </Box>
@@ -124,6 +127,9 @@ export class App extends React.Component<{}, {
                               <Switch>
                                 <Route exact path={`${ctx.match.path}/active`}>
                                   <ActiveGamesView/>
+                                </Route>
+                                <Route exact path={`${ctx.match.path}/pending`}>
+                                  <PendingGamesView/>
                                 </Route>
                                 <Route exact path={`${ctx.match.path}/history`}>
                                   <div>Game History Here</div>
@@ -166,6 +172,14 @@ export class App extends React.Component<{}, {
                 <GradientIcon sx={this.navSx}/>
               </ListItemIcon>
               <ListItemText primary='Active Games'/>
+            </Link>
+          </ListItem>
+          <ListItem button>
+            <Link to="/games/pending">
+              <ListItemIcon>
+                <GradientIcon sx={this.navSx}/>
+              </ListItemIcon>
+              <ListItemText primary='Pending Games'/>
             </Link>
           </ListItem>
           <ListItem button>
