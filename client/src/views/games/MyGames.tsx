@@ -1,7 +1,14 @@
-import {Box, Typography} from '@mui/material';
+import {Box, Tabs, Tab, Typography} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
+import {__RouterContext as RouterContext} from 'react-router';
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
 
 import {Inject} from '../../di';
 import {GameInfo} from '../../game/interfaces';
@@ -41,10 +48,32 @@ export class MyGames extends React.Component<{}, MyGames.State> {
       );
     } else if(games == null) {
       return <Typography component='h3' sx={{color: 'text.error'}}>Loading Games</Typography>;
-    } else if(games.length === 0) {
-      return <Typography component='h3' sx={{color: 'text.error'}}>No Active Games</Typography>;
+    // } else if(games.length === 0) {
+    //   return <Typography component='h3' sx={{color: 'text.error'}}>No Active Games</Typography>;
     } else {
-      return this.renderGrid(games); 
+      return (
+        <RouterContext.Consumer>
+          {(ctx) => (
+            <>
+              <Tabs value={ctx.location.pathname}>
+                <Tab label="Active Games" value="/games/active" component={Link} to="/games/active"/>
+                <Tab label="Pending Games" value="/games/pending" component={Link} to="/games/pending"/>
+                <Tab
+                  label="Game History"
+                  value="/games/history"
+                  component={Link}
+                  to='/games/history'
+                />
+              </Tabs>
+              <Switch>
+                <Route path='/games/active' render={() => this.renderGrid(games)} />
+                <Route path='/games/pending' render={() => <div>Pending Games</div>} />
+                <Route path='/games/history' render={() => <div>History</div>} />
+              </Switch>
+            </>
+          )}
+        </RouterContext.Consumer>
+      );
     }
   }
 

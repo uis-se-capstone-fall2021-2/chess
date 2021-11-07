@@ -122,24 +122,18 @@ export class App extends React.Component<{}, {
                           <div>Home</div>
                         </Route>
                         <Route path='/games'>
-                          <RouterContext.Consumer>
-                            {(ctx) => (
-                              <Switch>
-                                <Route exact path={`${ctx.match.path}`}>
-                                  <MyGames/>
-                                </Route>
-                                <Route exact path={`${ctx.match.path}/:gameId`}>
-
-                                  <RouterContext.Consumer>
-                                    {(ctx) => (
-                                      <div>{`Chess Game id=${(ctx.match.params as any)?.gameId} here`}</div>
-                                    )}
-                                  </RouterContext.Consumer>
-                                </Route>
-                              </Switch>
+                          {(ctx) => (
+                            <Switch>
+                              <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
+                                {(ctx) => (
+                                  <div>{`Chess Game id=${ctx.match?.params?.gameId} here`}</div>
+                                )}
+                              </Route>
+                              <Route>
+                                <MyGames/>
+                              </Route>
+                            </Switch>
                             )}
-                          </RouterContext.Consumer>
-                          
                         </Route>
                       </Switch>
                     </Box>
@@ -161,7 +155,7 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
-            <Link to="/games">
+            <Link to="/games/active">
               <ListItemIcon>
                 <GradientIcon sx={this.navSx}/>
               </ListItemIcon>
