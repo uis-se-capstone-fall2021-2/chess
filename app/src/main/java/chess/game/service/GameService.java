@@ -81,6 +81,7 @@ public class GameService implements IGameService {
     if(result.code == null) {
       Game game = games.getGameById(gameId);
       game.setStatus(GameStatus.ACTIVE);
+      games.saveGame(game);
       notifyPlayers(game);
     }
 
@@ -93,6 +94,7 @@ public class GameService implements IGameService {
     if(result.code == null) {
       Game game = games.getGameById(gameId);
       game.setStatus(GameStatus.DECLINED);
+      games.saveGame(game);
       notifyPlayers(game);
     }
 

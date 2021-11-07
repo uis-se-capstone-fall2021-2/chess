@@ -48,6 +48,12 @@ public class Games extends Repo<Game> {
 		session.remove(game);
 	}
 
+	@Transactional
+	public void saveGame(Game game) {
+		Session session = getSession();
+		session.update(game);
+	}
+
 	// TODO does this need to be on the DBO or can we just do it in GameService?
 	@Transactional
 	public void endGame(long gameId, long winner, GameStatus status) {
