@@ -1,7 +1,8 @@
 import {Service, Inject} from 'typedi';
 import {Deferred} from 'jaasync';
 
-import {GameInfo, GameStore} from '../game/interfaces';
+import {PlayerId} from '../types';
+import {GameData, GameInfo, GameStore} from '../game/interfaces';
 import {User} from "../user/User";
 import {Player, PlayerService} from './interfaces';
 import {Resource} from '../utils/resource/interfaces';
@@ -16,10 +17,10 @@ export class PlayerServiceImpl implements PlayerService {
   @Resource('/api/v1/players')
   private readonly resource: Resource;
 
-  private readonly players = new Map<number, Player>();
+  private readonly players = new Map<PlayerId, Player>();
   
-  private fetchQueue = new Map<number, Deferred<Player>>();
-  public async getPlayer(playerId: number): Promise<Player> {
+  private fetchQueue = new Map<PlayerId, Deferred<Player>>();
+  public async getPlayer(playerId: PlayerId): Promise<Player> {
     const player = this.players.get(playerId);
     if(player) {
       return player;
@@ -41,7 +42,7 @@ export class PlayerServiceImpl implements PlayerService {
 
   private async fetchPlayers(): Promise<void> {
     const queue = this.fetchQueue;
-    this.fetchQueue = new Map<number, Deferred<Player>>();
+    this.fetchQueue = new Map<PlayerId, Deferred<Player>>();
 
     const ids = [...queue.keys()];
     const players = await this.resource.get<Player[]>(`/?id=${ids.join(',')}`);
@@ -61,33 +62,33 @@ export class PlayerServiceImpl implements PlayerService {
     }
   }
 
-  public async getActiveGames(playerId: number): Promise<GameInfo[]> {
+  public async getActiveGames(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=ACTIVE&orderBy=updatedAt`);
     return this.normalizeGameInfoListResult(result);
   }
 
-  public async getOwnActiveGames(): Promise<GameInfo[]> {
+  public async getOwnActiveGames(): Promise<GameData[]> {
     return this.getActiveGames(this.user.playerId);
   }
 
-  public async getGameHistory(playerId: number): Promise<GameInfo[]> {
+  public async getGameHistory(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=COMPLETE,TERMINATED&orderBy=completedAt`)
     return this.normalizeGameInfoListResult(result);
   }
 
-  public async getOwnGameHistory(): Promise<GameInfo[]> {
+  public async getOwnGameHistory(): Promise<GameData[]> {
     return this.getGameHistory(this.user.playerId);
   }
 
-  public async getPendingGames(playerId: number): Promise<GameInfo[]> {
+  public async getPendingGames(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=PENDING,DECLINED&orderBy=createdAt`);
     return this.normalizeGameInfoListResult(result);
   }
 
-  public async getOwnPendingGames(): Promise<GameInfo[]> {
+  public async getOwnPendingGames(): Promise<GameData[]> {
     return this.getPendingGames(this.user.playerId);
   }
 

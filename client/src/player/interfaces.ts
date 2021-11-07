@@ -1,15 +1,20 @@
 import * as typedi from 'typedi';
 
-import {GameInfo} from '../game/interfaces';
+import {PlayerId} from '../types';
+import {GameData} from '../game/interfaces';
 
 export interface Player {
-  playerId: number;
+  playerId: PlayerId;
   displayName: string;
 }
 
 export interface PlayerService {
-  getOwnActiveGames(): Promise<GameInfo[]>;
-  getOwnPendingGames(): Promise<GameInfo[]>;
+  getActiveGames(playerId: PlayerId): Promise<GameData[]>;
+  getOwnActiveGames(): Promise<GameData[]>;
+  getPendingGames(playerId: PlayerId): Promise<GameData[]>;
+  getOwnPendingGames(): Promise<GameData[]>;
+  getGameHistory(playerId: PlayerId): Promise<GameData[]>;
+  getOwnGameHistory(): Promise<GameData[]>;
 }
 
 export namespace PlayerService {
