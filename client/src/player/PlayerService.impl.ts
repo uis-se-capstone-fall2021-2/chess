@@ -1,16 +1,18 @@
 import {Service, Inject} from 'typedi';
 import {Deferred} from 'jaasync';
 
-import {GameCompletionState, GameInfo} from '../game/interfaces';
+import {GameInfo, GameStore} from '../game/interfaces';
 import {User} from "../user/User";
 import {Player, PlayerService} from './interfaces';
-import {Resource, ResourceFactory} from '../utils/resource/interfaces';
+import {Resource} from '../utils/resource/interfaces';
 
 
 @Service(PlayerService.Token)
 export class PlayerServiceImpl implements PlayerService {
   @Inject(User.Token)
   private readonly user: User;
+  @Inject(GameStore.Token)
+  private readonly games: GameStore;
   @Resource('/api/v1/players')
   private readonly resource: Resource;
 
@@ -62,7 +64,7 @@ export class PlayerServiceImpl implements PlayerService {
   public async getActiveGames(playerId: number): Promise<GameInfo[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=ACTIVE&orderBy=updatedAt`);
-    return PlayerServiceImpl.normalizeGameInfoListResult(result);
+    return this.normalizeGameInfoListResult(result);
   }
 
   public async getOwnActiveGames(): Promise<GameInfo[]> {
@@ -72,7 +74,7 @@ export class PlayerServiceImpl implements PlayerService {
   public async getGameHistory(playerId: number): Promise<GameInfo[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=COMPLETE,TERMINATED&orderBy=completedAt`)
-    return PlayerServiceImpl.normalizeGameInfoListResult(result);
+    return this.normalizeGameInfoListResult(result);
   }
 
   public async getOwnGameHistory(): Promise<GameInfo[]> {
@@ -82,17 +84,14 @@ export class PlayerServiceImpl implements PlayerService {
   public async getPendingGames(playerId: number): Promise<GameInfo[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=PENDING,DECLINED&orderBy=createdAt`);
-    return PlayerServiceImpl.normalizeGameInfoListResult(result);
+    return this.normalizeGameInfoListResult(result);
   }
 
   public async getOwnPendingGames(): Promise<GameInfo[]> {
     return this.getPendingGames(this.user.playerId);
   }
 
-  private static normalizeGameInfoListResult(result: GameInfo[]): GameInfo[] {
-    return result.map(info => ({
-      ...info,
-      state: GameCompletionState[info.state]
-    }));
+  private normalizeGameInfoListResult(result: GameInfo[]): GameInfo[] {
+    return result.map(this.games.updateGameInfo);
   }
 }

@@ -5,8 +5,8 @@ import {autobind} from 'core-decorators';
 import * as React from 'react';
 import {Container} from 'typedi';
 
-import {Inject, Tokens} from '../../di';
-import {User} from '../User';
+import {Inject, Tokens} from '../../../di';
+import {User} from '../../User';
 
 import './style.css';
 

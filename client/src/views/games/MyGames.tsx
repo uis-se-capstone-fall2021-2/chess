@@ -4,7 +4,6 @@ import {autobind} from 'core-decorators';
 import * as React from 'react';
 import {__RouterContext as RouterContext} from 'react-router';
 import {
-  HashRouter as Router,
   Switch,
   Route,
   Link

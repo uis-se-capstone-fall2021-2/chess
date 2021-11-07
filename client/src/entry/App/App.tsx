@@ -20,13 +20,11 @@ import {
 import {
   AccountCircleOutlined as AccountCircleOutlinedIcon,
   Gradient as GradientIcon,
-  Menu as MenuIcon,
-  QueryStats as QueryStatsIcon
+  Menu as MenuIcon
 } from '@mui/icons-material';
 import {autobind} from 'core-decorators';
 import PopupState, {bindTrigger, bindMenu} from 'material-ui-popup-state';
 import * as React from 'react';
-import {__RouterContext as RouterContext} from 'react-router';
 import {
   HashRouter as Router,
   Switch,
@@ -37,12 +35,14 @@ import {
 import '../../utils/resource/ResourceFactory.impl';
 import '../../player/PlayerService.impl';
 import '../../game/GameService.impl';
+import '../../game/GameStore.impl';
 import {User} from '../../user/User';
-import {UserProvider} from '../../user/UserProvider';
+import {UserProvider} from '../../user/components/UserProvider';
 import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
 
 import './style.css';
+import {GameView} from '../../views/games/Game';
 
 
 
@@ -125,9 +125,7 @@ export class App extends React.Component<{}, {
                           {(ctx) => (
                             <Switch>
                               <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
-                                {(ctx) => (
-                                  <div>{`Chess Game id=${ctx.match?.params?.gameId} here`}</div>
-                                )}
+                                {(ctx) => (<GameView gameId={parseInt(ctx.match?.params?.gameId)}/>)}
                               </Route>
                               <Route>
                                 <MyGames/>

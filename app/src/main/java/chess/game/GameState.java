@@ -8,19 +8,19 @@ import chess.board.Board;
 public class GameState extends GameInfoBase {
   public Board board = null;
 
-  public final long inCheck; // playerId, null if no one in check
+  public final long playerInCheck; // playerId, null if no one in check
   public GameState(
     long gameId,
     long owner,
     long winner,
     long[] players,
     long moveCount,
-    long inCheck,
+    long playerInCheck,
     Board board,
     GameStatus status
   ) {
     super(gameId, owner, winner, players, moveCount, status);
-    this.inCheck = inCheck;
+    this.playerInCheck = playerInCheck;
     this.board = board;
   }
 }
