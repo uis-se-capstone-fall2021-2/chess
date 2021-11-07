@@ -1,7 +1,5 @@
 package chess.game;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 
 /**
