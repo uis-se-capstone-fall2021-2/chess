@@ -10,7 +10,6 @@
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "5.0.6",
     "@mui/x-data-grid": "^5.0.0-beta.6",
-    "@types/lodash": "^4.14.176",
     "axios": "^0.22.0",
     "core-decorators": "^0.20.0",
     "cra-template-typescript": "1.1.2",
@@ -30,6 +29,7 @@
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.2",
+    "@types/lodash": "^4.14.176",
     "react-scripts": "4.0.3",
     "typescript": "^4.4.3"
   },

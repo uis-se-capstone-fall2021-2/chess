@@ -1,3 +1,4 @@
+import {Chessboard} from 'react-chessboard';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
 
@@ -11,10 +12,9 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private readonly gameService: GameService;
 
   public override render(): React.ReactNode {
+    const {gameState} = this.props;
     return (
-      <pre>
-        {JSON.stringify(this.props.gameState, null, 2)}
-      </pre>
+      <Chessboard id={gameState.gameId}/>
     );
   }
 }
