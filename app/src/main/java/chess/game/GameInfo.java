@@ -2,21 +2,30 @@ package chess.game;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
 
 /**
  * A lightweight summary of a Game for display in a list view
  */
-@AllArgsConstructor
-public class GameInfo {
+public class GameInfo extends GameInfoBase {
 
-    public final long gameId;
-    public final long owner; // playerId
-    public final long winner; // playerId
-    public final long[] players; // playerId, array of length 2, first player is white
-    public final long moveCount;
-    public final GameStatus state;
     public final Date createdAt;
     public final Date updatedAt;
     public final Date completedAt;
+    
+    public GameInfo(
+        long gameId,
+        long owner, // playerId
+        long winner, // playerId, array of length 2, first player is white
+        long[] players,
+        long moveCount,
+        GameStatus status,
+        Date createdAt,
+        Date updatedAt,
+        Date completedAt
+    ) {
+        super(gameId, owner, winner, players, moveCount, status);
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.completedAt = completedAt;
+    }
 }

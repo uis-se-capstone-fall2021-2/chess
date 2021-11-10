@@ -1,0 +1,12 @@
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* background-image: url(../../img/knight-standoff.jpg);
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100%;
+  width: 100%; */
+}

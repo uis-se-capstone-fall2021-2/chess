@@ -58,21 +58,4 @@ public class UserController {
     }
     user.setDisplayName(req.displayName);
   }
-
-
-  @GetMapping("/games/pending")
-  public List<GameInfo> getPendingGames(@Parameter(hidden=true) User user) {
-    Result<List<GameInfo>, ListGamesErrorCode> result = playerService.getPendingGamesForPlayer(user.getPlayerId());
-
-    if(result.code != null) {
-      switch(result.code) {
-        case UNKOWN_PLAYER:
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
-        default:
-          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
-
-    return result.value;
-  }
 }

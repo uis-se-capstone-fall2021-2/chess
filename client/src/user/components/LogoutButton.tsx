@@ -1,12 +1,13 @@
 import * as React from "react";
 import {useAuth0} from "@auth0/auth0-react";
+import {Button} from '@mui/material';
 
 export function LogoutButton() {
   const {logout} = useAuth0();
 
   return (
-    <button onClick={() => logout({returnTo: window.location.origin})}>
+    <Button color='inherit' onClick={() => logout({returnTo: window.location.origin})}>
       Log Out
-    </button>
+    </Button>
   );
 };
