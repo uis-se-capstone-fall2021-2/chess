@@ -12,6 +12,10 @@ public class Position {
         this.file = File.FromInteger(x);
         this.rank = Rank.FromInteger(y);
     }
+    public Position(int index) {
+        this.file = File.FromInteger(index % 8);
+        this.rank = Rank.FromInteger(index / 8);
+    }
     public boolean equals(Position position){
         return ( rank == position.rank && file == position.file );
     }

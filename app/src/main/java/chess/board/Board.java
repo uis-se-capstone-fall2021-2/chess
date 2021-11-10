@@ -50,7 +50,6 @@ public class Board implements IBoard {
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
-
     public Position getPositionOf(int piece){
         Position position = null;
         for(int row = 0; row < 8; row++){

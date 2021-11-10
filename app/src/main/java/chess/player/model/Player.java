@@ -25,7 +25,7 @@ public abstract class Player {
   @Column(name=Fields.PLAYER_ID)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Getter
-  private long playerId;
+  protected long playerId;
 
   @Transient
   public String getPlayerType() {
