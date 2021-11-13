@@ -7,7 +7,7 @@ import chess.player.model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Entity
 @DiscriminatorValue(value=Player.PlayerType.User)
@@ -28,11 +28,6 @@ public class User extends Player {
   @Column(name=Fields.USER_EMAIL)
   @Getter
   private String email;
-
-  @Column(name=Fields.USER_DISPLAY_NAME, unique=true)
-  @Getter
-  @Setter
-  private String displayName;
 
   public void notify(GameState gameState) {
     return;
