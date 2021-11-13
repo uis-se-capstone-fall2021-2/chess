@@ -11,6 +11,7 @@ import {GameData, GameService, GameState, GameStore} from './interfaces';
 @Service(GameService.Token)
 @autobind
 export class GameServiceImpl implements GameService {
+  
   @Inject(User.Token)
   private readonly user: User;
   @Inject(GameStore.Token)
@@ -33,6 +34,21 @@ export class GameServiceImpl implements GameService {
     handler: Strongbus.EventHandler<GameStore.Events, T>
   ): Strongbus.Subscription {
       return this.games.on(event, handler);
+  }
+
+  public async quitGame(gameId: number): Promise<void> {
+    await this.resource.post(`/${gameId}/quit`, {});
+    this.fetchGameState(gameId);
+  }
+
+  public async acceptGameInvite(gameId: number): Promise<void> {
+    await this.resource.post(`/${gameId}/invitation/accept`, {});
+    this.fetchGameState(gameId);
+  }
+
+  public async declineGameInvite(gameId: number): Promise<void> {
+    await this.resource.post(`/${gameId}/invitation/decline`, {});
+    this.fetchGameState(gameId);
   }
 
 }

@@ -6,11 +6,14 @@ import * as React from 'react';
 
 
 import {Inject} from '../../../di';
-import {GameData} from '../../interfaces';
+import {GameData, GameStatus} from '../../interfaces';
 import {PlayerService} from '../../../player/interfaces';
-import {PlayerId} from '../../../types';
+import {GameId, PlayerId} from '../../../types';
 import {User} from '../../../user/User';
+import {GameActionsCell} from './GameActionsCell';
 import {PlayerCell} from './PlayerCell';
+import {GameLinkCell} from './GameLinkCell';
+
 
 @autobind
 export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
@@ -36,8 +39,6 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     }
   }
 
-  
-
   public override render(): React.ReactNode {
     const {games, error} = this.state;
     if(error) {
@@ -48,7 +49,7 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
       );
     }
 
-    const rows = this.state.games.map(this.buildRow);
+    const rows = games.map(this.buildRow);
     return (
       <Box sx={{
         display: 'flex',
@@ -65,24 +66,43 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
       gameId: gameData.gameId,
       ownerId: gameData.owner,
       opponentId: (gameData.players[0] === this.user.playerId) ? gameData.players[1] : gameData.players[0],
-      moveCount: gameData.moveCount
+      winnerId: (gameData.winner),
+      moveCount: gameData.moveCount,
+      actions: gameData.gameId,
+      createdAt: gameData.createdAt,
+      updatedAt: gameData.updatedAt,
+      gameStatus: gameData.status
     }
   }
 
   private static readonly columns: GridColDef[] = [{
     field: 'gameId',
-    headerName: 'Game ID'
-  }, {
-    field: 'ownerId',
-    headerName: 'Owner ID',
-    renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
+    headerName: 'Game ID',
+    renderCell: (params: GridRenderCellParams<GameId>) => (<GameLinkCell gameId={params.value}/>)
   }, {
     field: 'opponentId',
-    headerName: 'Opponent ID',
+    headerName: 'Opponent',
     renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
+  }, {
+    field: 'ownerId',
+    headerName: 'Owner',
+    renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
+  }, {
+    field: 'actions',
+    headerName: 'Actions',
+    renderCell: (params: GridRenderCellParams<GameId>) => (<GameActionsCell {...params}/>)
   }, {
     field: 'moveCount',
     headerName: 'Move Count'
+  }, {
+    field: 'updatedAt',
+    headerName: 'Last Updated'
+  }, {
+    field: 'createdAt',
+    headerName: 'Date Created'
+  }, {
+    field: 'gameStatus',
+    headerName: 'Status'
   }];
 }
 
@@ -93,10 +113,15 @@ export namespace GamesTable {
   }
 
   export interface Row {
-    id: number;
-    gameId: number;
-    ownerId: number;
-    opponentId: number;
+    id: GameId;
+    gameId: GameId;
+    ownerId: PlayerId;
+    opponentId: PlayerId;
+    winnerId: PlayerId;
     moveCount: number;
+    actions: GameId;
+    createdAt: Date;
+    updatedAt: Date;
+    gameStatus: GameStatus;
   }
 }

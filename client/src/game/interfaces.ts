@@ -42,6 +42,9 @@ export interface GameData extends GameInfo, Partial<GameStateExtensions> {}
 export interface GameService {
   getGame(gameId: GameId): GameData|null;
   fetchGameState(gameId: GameId): Promise<GameState>;
+  quitGame(gameId: GameId): Promise<void>;
+  acceptGameInvite(gameId: GameId): Promise<void>;
+  declineGameInvite(gameId: GameId): Promise<void>;
   on: Strongbus.Bus<GameStore.Events>['on'];
 }
 
