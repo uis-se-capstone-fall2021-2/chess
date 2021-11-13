@@ -3,7 +3,7 @@ import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
 
 import {GameId} from '../types';
-import {User} from "../user/User";
+import {User} from "../user/interfaces";
 import {Resource} from '../utils/resource/interfaces';
 import {GameData, GameService, GameState, GameStore} from './interfaces';
 

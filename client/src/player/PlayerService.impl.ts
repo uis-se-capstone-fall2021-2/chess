@@ -5,7 +5,7 @@ import {Deferred} from 'jaasync';
 
 import {PlayerId} from '../types';
 import {GameData, GameInfo, GameStore} from '../game/interfaces';
-import {User} from "../user/User";
+import {User} from "../user/interfaces";
 import {Player, PlayerService, PlayerStore} from './interfaces';
 import {Resource} from '../utils/resource/interfaces';
 

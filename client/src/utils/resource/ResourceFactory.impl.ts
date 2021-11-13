@@ -2,7 +2,7 @@ import {autobind} from 'core-decorators';
 import axios, {AxiosRequestConfig} from 'axios';
 import {Service, Inject} from 'typedi';
 
-import {User} from '../../user/User';
+import {User} from '../../user/interfaces';
 import {Tokens} from '../../di';
 import {Resource, ResourceFactory} from './interfaces';
 

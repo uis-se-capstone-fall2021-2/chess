@@ -19,7 +19,8 @@ import {
 } from '@mui/material';
 import {
   AccountCircleOutlined as AccountCircleOutlinedIcon,
-  Gradient as GradientIcon,
+  Add as AddIcon,
+  GridOn as GridOnIcon,
   Menu as MenuIcon
 } from '@mui/icons-material';
 import {autobind} from 'core-decorators';
@@ -37,7 +38,7 @@ import '../../player/PlayerService.impl';
 import '../../player/PlayerStore.impl';
 import '../../game/GameService.impl';
 import '../../game/GameStore.impl';
-import {User} from '../../user/User';
+import {User} from '../../user/interfaces';
 import {UserProvider} from '../../user/components/UserProvider';
 import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
@@ -154,21 +155,40 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
+            <Link to='/'>
+              <ListItemIcon>
+                <AddIcon sx={this.navSx}/>
+              </ListItemIcon>
+              <ListItemText primary='New Game'/>
+            </Link>
+          </ListItem>
+          <ListItem button>
             <Link to="/games/active">
               <ListItemIcon>
-                <GradientIcon sx={this.navSx}/>
+                <GridOnIcon sx={this.navSx}/>
               </ListItemIcon>
               <ListItemText primary='My Games'/>
             </Link>
           </ListItem>
-          {/* <ListItem button>
-            <Link to='/games/history'>
-              <ListItemIcon>
-                <QueryStatsIcon sx={this.navSx}/>
-              </ListItemIcon>
-              <ListItemText primary='Game History'/>
-            </Link>
-          </ListItem> */}
+          <Divider/>
+          <List sx={{paddingLeft: '60px'}}>
+            <ListItem button>
+              <Link to='/games/active'>
+                <ListItemText primary='Active'/>
+              </Link>
+            </ListItem>
+            <ListItem button>
+              <Link to='/games/pending'>
+                <ListItemText primary='Pending'/>
+              </Link>
+            </ListItem>
+            <ListItem button>
+              <Link to='/games/history'>
+                <ListItemText primary='History'/>
+              </Link>
+            </ListItem>
+          </List>
+          <Divider/>
         </List>
       </>
     );

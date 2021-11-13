@@ -10,7 +10,7 @@ import {Inject} from '../../../di';
 import {GameId} from '../../../types';
 import {GameProvider} from '../GameProvider';
 import {GameData, GameService, GameState, GameStatus} from '../../interfaces';
-import {User} from '../../../user/User';
+import {User} from '../../../user/interfaces';
 
 
 

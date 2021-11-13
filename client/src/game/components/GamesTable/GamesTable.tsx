@@ -9,7 +9,7 @@ import {Inject} from '../../../di';
 import {GameData, GameStatus} from '../../interfaces';
 import {PlayerService} from '../../../player/interfaces';
 import {GameId, PlayerId} from '../../../types';
-import {User} from '../../../user/User';
+import {User} from '../../../user/interfaces';
 import {GameActionsCell} from './GameActionsCell';
 import {PlayerCell} from './PlayerCell';
 import {GameLinkCell} from './GameLinkCell';
