@@ -38,7 +38,8 @@ public class PlayerController {
   private final PlayerService playerService;
 
   @GetMapping("/")
-  public PlayerInfo[] getPlayerInfo(@RequestParam(value="id", required=true) long[] playerIds) {
+  public PlayerInfo[] getPlayerInfo(@RequestParam(value="id", required=true) Long[] playerIds) {
+    System.out.printf("playerIds %d %d%n", playerIds[0], playerIds[1]);
     Result<PlayerInfo[], GetPlayerInfoErrorCode> result = playerService.getPlayerInfo(playerIds);
 
     if(result.code != null) {

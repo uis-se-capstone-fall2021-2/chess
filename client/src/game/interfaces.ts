@@ -40,7 +40,7 @@ export interface GameData extends GameInfo, Partial<GameStateExtensions> {}
 
 
 export interface GameService {
-  getGameData(gameId: GameId): GameData|null;
+  getGame(gameId: GameId): GameData|null;
   fetchGameState(gameId: GameId): Promise<GameState>;
   on: Strongbus.Bus<GameStore.Events>['on'];
 }
@@ -50,9 +50,9 @@ export namespace GameService {
 }
 
 export interface GameStore {
-  getGameData(gameId: GameId): GameData|null;
-  updateGameInfo(info: GameInfo): GameData;
-  updateGameState(state: GameState): GameData;
+  getGame(gameId: GameId): GameData|null;
+  upsertGameInfo(info: GameInfo): GameData;
+  upsertGameState(state: GameState): GameData;
   on: Strongbus.Bus<GameStore.Events>['on'];
 }
 
@@ -61,6 +61,6 @@ export namespace GameStore {
 
   export type Events = {
     GAME_ADDED: GameId;
-    [key: `GAME_UPDATED_${number}`]: (keyof GameData)[]
+    [key: `GAME_UPDATED_${GameId}`]: (keyof GameData)[]
   }
 }

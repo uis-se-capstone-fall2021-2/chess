@@ -18,13 +18,13 @@ export class GameServiceImpl implements GameService {
   @Resource('/api/v1/games')
   private readonly resource: Resource;
 
-  public getGameData(gameId: GameId): GameData|null {
-    return this.games.getGameData(gameId);
+  public getGame(gameId: GameId): GameData|null {
+    return this.games.getGame(gameId);
   }
 
   public async fetchGameState(gameId: GameId) {
     const gameState = await this.resource.get<GameState>(`/${gameId}`);
-    this.games.updateGameState(gameState);
+    this.games.upsertGameState(gameState);
     return gameState;
   }
 

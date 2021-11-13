@@ -1,5 +1,5 @@
 import {Box} from '@mui/material';
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 import {Typography} from '@mui/material';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
@@ -8,7 +8,9 @@ import * as React from 'react';
 import {Inject} from '../../../di';
 import {GameData} from '../../interfaces';
 import {PlayerService} from '../../../player/interfaces';
+import {PlayerId} from '../../../types';
 import {User} from '../../../user/User';
+import {PlayerCell} from './PlayerCell';
 
 @autobind
 export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
@@ -72,10 +74,12 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     headerName: 'Game ID'
   }, {
     field: 'ownerId',
-    headerName: 'Owner ID'
+    headerName: 'Owner ID',
+    renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
   }, {
     field: 'opponentId',
-    headerName: 'Opponent ID'
+    headerName: 'Opponent ID',
+    renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
   }, {
     field: 'moveCount',
     headerName: 'Move Count'

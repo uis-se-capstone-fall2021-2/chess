@@ -32,7 +32,7 @@ public class PlayerService {
   @Autowired
   private final Games games;
 
-  public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(long[] playerIds) {
+  public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(Long[] playerIds) {
     return new Result<PlayerInfo[], GetPlayerInfoErrorCode>(
       players.getPlayers(playerIds)
         .stream()

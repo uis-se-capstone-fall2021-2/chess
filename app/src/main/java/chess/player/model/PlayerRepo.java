@@ -20,7 +20,7 @@ public abstract class PlayerRepo<T extends Player> extends Repo<T> {
     return super.findByKey("playerId", playerId);
   }
 
-  public List<T> getPlayers(long[] playerIds) {
+  public List<T> getPlayers(Long[] playerIds) {
     Query<T> query = super.simpleFilterQuery(
       new OrFilter(Map.of(
         "playerId", playerIds

@@ -30,7 +30,7 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
   constructor(props: GameProvider.Props, context: any) {
     super(props, context);
     this.state = {
-      game: this.gameService.getGameData(props.gameId),
+      game: this.gameService.getGame(props.gameId),
       error: null
     };
   }
@@ -65,7 +65,7 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
       return;
     }
 
-    const gameData = this.gameService.getGameData(this.props.gameId);
+    const gameData = this.gameService.getGame(this.props.gameId);
     this.setState({
       error: null,
       game: gameData

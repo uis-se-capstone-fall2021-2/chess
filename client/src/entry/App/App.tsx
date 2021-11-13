@@ -34,6 +34,7 @@ import {
 
 import '../../utils/resource/ResourceFactory.impl';
 import '../../player/PlayerService.impl';
+import '../../player/PlayerStore.impl';
 import '../../game/GameService.impl';
 import '../../game/GameStore.impl';
 import {User} from '../../user/User';
