@@ -44,3 +44,4 @@ database/
 
 ### client
 node_modules
+client/.yarn/releases/yarn-stable-temp.cjs
