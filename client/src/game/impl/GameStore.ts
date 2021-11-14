@@ -38,6 +38,10 @@ export class GameStoreImpl implements GameStore {
       ...data,
       status: GameStatus[game.status]
     };
+
+    updated.createdAt = new Date(updated.createdAt);
+    updated.updatedAt = new Date(updated.updatedAt);
+    updated.completedAt = new Date(updated.completedAt);
     
     this.games.set(gameId, updated);
     if(added) {

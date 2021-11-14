@@ -7,11 +7,12 @@ import * as React from 'react';
 
 import {Inject} from '../../../di';
 import {GameData, GameId, GameStatus} from '../../interfaces';
-import {PlayerId, PlayerService} from '../../../player/interfaces';
+import {PlayerColor, PlayerId, PlayerService} from '../../../player/interfaces';
 import {User} from '../../../user/interfaces';
 import {GameActionsCell} from './GameActionsCell';
 import {PlayerCell} from './PlayerCell';
 import {GameLinkCell} from './GameLinkCell';
+import {DateCell} from './DateCell';
 
 
 @autobind
@@ -23,6 +24,7 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
   protected readonly playerService: PlayerService;
 
   protected abstract loadGames(): Promise<GameData[]>;
+  // protected abstract columns: GridColDef[];
 
   public override state: GamesTable.State = {
     games: [],
@@ -66,10 +68,12 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
       ownerId: gameData.owner,
       opponentId: (gameData.players[0] === this.user.playerId) ? gameData.players[1] : gameData.players[0],
       winnerId: (gameData.winner),
+      playerColor: (gameData.players[0] === this.user.playerId) ? PlayerColor.WHITE : PlayerColor.BLACK,
       moveCount: gameData.moveCount,
       actions: gameData.gameId,
       createdAt: gameData.createdAt,
       updatedAt: gameData.updatedAt,
+      completedAt: gameData.completedAt,
       gameStatus: gameData.status
     }
   }
@@ -94,11 +98,18 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     field: 'moveCount',
     headerName: 'Move Count'
   }, {
+    field: 'playerColor',
+    headerName: 'Player Color'
+  }, {
     field: 'updatedAt',
-    headerName: 'Last Updated'
+    width: 250,
+    headerName: 'Last Updated',
+    renderCell: DateCell
   }, {
     field: 'createdAt',
-    headerName: 'Date Created'
+    width: 250,
+    headerName: 'Date Created',
+    renderCell: DateCell
   }, {
     field: 'gameStatus',
     headerName: 'Status'
@@ -117,10 +128,12 @@ export namespace GamesTable {
     ownerId: PlayerId;
     opponentId: PlayerId;
     winnerId: PlayerId;
+    playerColor: PlayerColor;
     moveCount: number;
     actions: GameId;
     createdAt: Date;
     updatedAt: Date;
+    completedAt: Date;
     gameStatus: GameStatus;
   }
 }
