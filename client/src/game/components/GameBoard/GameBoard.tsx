@@ -31,7 +31,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private getChessboardPosition(): string {
     const gameState: GameState = this.state.pendingGameState ?? this.props.gameState;
-    // TODO: get Chessboard game state from our GameState model
+
     const board = gameState.board;
     var fen: string = "";
     for(var rank = 7; rank >= 0; rank--){
@@ -41,6 +41,48 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     fen = fen.substring(0, fen.length-1);
     return fen;
   } 
+
+  private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
+    // transform source, target, and piece into MoveIntent
+    const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
+    // TODO: calculate desired GameState from moveIntent
+    const pendingGameState: GameState = {gameId: this.props.gameState.gameId,
+                                        owner: this.props.gameState.owner,
+                                        winner: this.props.gameState.winner,
+                                        players: this.props.gameState.players,
+                                        moveCount: this.props.gameState.moveCount,
+                                        status: this.props.gameState.status,
+                                        playerInCheck: this.props.gameState.playerInCheck,
+                                        board: this.props.gameState.board};
+    this.setState({
+      error: null,
+      pendingGameState
+    });
+    this.handleMove(moveIntent);
+    return true;
+  }
+
+  private async handleMove(moveIntent: MoveIntent): Promise<void> {
+    const {gameId} = this.props.gameState;
+    try {
+      await this.gameService.move(gameId, moveIntent); 
+    } catch(e) {
+      this.setState({
+        error: e as Error
+      });
+    } finally {
+      this.setState({
+        pendingGameState: {gameId: this.props.gameState.gameId,
+                          owner: this.props.gameState.owner,
+                          winner: this.props.gameState.winner,
+                          players: this.props.gameState.players,
+                          moveCount: this.props.gameState.moveCount,
+                          status: this.props.gameState.status,
+                          playerInCheck: this.props.gameState.playerInCheck,
+                          board: this.props.gameState.board}
+      });
+    }
+  }
 
   private numToFenStr(piece: number): string {
 
@@ -91,34 +133,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
 
     return fen;
-  }
-
-  private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
-    // TODO: transform source, target, and piece into MoveIntent
-    const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
-    // TODO: calculate desired GameState from moveIntent
-    const pendingGameState: GameState = {} as any;
-    this.setState({
-      error: null,
-      pendingGameState
-    });
-    this.handleMove(moveIntent);
-    return true;
-  }
-
-  private async handleMove(moveIntent: MoveIntent): Promise<void> {
-    const {gameId} = this.props.gameState;
-    try {
-      await this.gameService.move(gameId, moveIntent); 
-    } catch(e) {
-      this.setState({
-        error: e as Error
-      });
-    } finally {
-      this.setState({
-        pendingGameState: null
-      });
-    }
   }
 
   private fileFromSquare(square: ChessboardLib.Square): File{

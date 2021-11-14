@@ -65,6 +65,16 @@ class ResourceImpl implements Resource {
     return data;
   }
 
+  public async patch<T>(path: string, body: object): Promise<T> {
+    const {data} = await axios.patch<T>(
+      `${this.apiHost}${this.apiPath}${path}`,
+      body as any,
+      this.config
+    );
+
+    return data;
+  }
+
   public async delete(path: string): Promise<void> {
     await axios.delete(
       `${this.apiHost}${this.apiPath}${path}`,
