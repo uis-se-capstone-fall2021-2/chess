@@ -2,7 +2,7 @@ import {Chessboard} from 'react-chessboard';
 import {autobind} from 'core-decorators';
 import * as React from 'react';
 
-import {ChessboardLib, MoveIntent, Position, ChessPiece} from '../../../board/interfaces';
+import {ChessboardLib, MoveIntent, Rank, File, Position, ChessPiece} from '../../../board/interfaces';
 import {Inject} from '../../../di';
 import {GameService, GameState} from '../../interfaces';
 
@@ -90,13 +90,12 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       fen = fen.concat(this.numToFenStr(piece));
     }
 
-    //console.log("rankNumToFenStr: " + fen);
     return fen;
   }
 
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // TODO: transform source, target, and piece into MoveIntent
-    const moveIntent: MoveIntent = {} as any;
+    const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
     // TODO: calculate desired GameState from moveIntent
     const pendingGameState: GameState = {} as any;
     this.setState({
@@ -105,18 +104,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     });
     this.handleMove(moveIntent);
     return true;
-  }
-
-  private toPosition(square: ChessboardLib.Square): Position{
-
-    const position: Position = {} as any;
-    return position;
-  }
-
-  private toChessPiece(piece: ChessboardLib.Piece): ChessPiece{
-
-    const chessPiece: ChessPiece = {} as any;
-    return chessPiece
   }
 
   private async handleMove(moveIntent: MoveIntent): Promise<void> {
@@ -132,6 +119,64 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
         pendingGameState: null
       });
     }
+  }
+
+  private fileFromSquare(square: ChessboardLib.Square): File{
+    if (square.charAt(0).localeCompare("a") == 0)
+      return File.A;
+    else if (square.charAt(0).localeCompare("b") == 0)
+      return File.B;
+    else if (square.charAt(0).localeCompare("c") == 0)
+      return File.C;
+    else if (square.charAt(0).localeCompare("d") == 0)
+      return File.D;
+    else if (square.charAt(0).localeCompare("e") == 0)
+      return File.E;
+    else if (square.charAt(0).localeCompare("f") == 0)
+      return File.F;
+    else if (square.charAt(0).localeCompare("g") == 0)
+      return File.G;
+    else if (square.charAt(0).localeCompare("h") == 0)
+      return File.H;
+  }
+
+  private rankFromSquare(square: ChessboardLib.Square): Rank{
+    if (square.charAt(1).localeCompare("1") == 0)
+      return Rank._1;
+    else if (square.charAt(1).localeCompare("2") == 0)
+      return Rank._2;
+    else if (square.charAt(1).localeCompare("3") == 0)
+      return Rank._3;
+    else if (square.charAt(1).localeCompare("4") == 0)
+      return Rank._4;
+    else if (square.charAt(1).localeCompare("5") == 0)
+      return Rank._5;
+    else if (square.charAt(1).localeCompare("6") == 0)
+      return Rank._6;
+    else if (square.charAt(1).localeCompare("7") == 0)
+      return Rank._7;
+    else if (square.charAt(1).localeCompare("8") == 0)
+      return Rank._8;
+  }
+
+  private toPosition(square: ChessboardLib.Square): Position{
+    const position: Position = {rank: this.rankFromSquare(square), file: this.fileFromSquare(square)};
+    return position;
+  }
+
+  private toChessPiece(piece: ChessboardLib.Piece): ChessPiece{
+    if (piece.charAt(1).localeCompare("P") == 0)
+      return ChessPiece.PAWN;
+    else if (piece.charAt(1).localeCompare("R") == 0)
+      return ChessPiece.ROOK;
+    else if (piece.charAt(1).localeCompare("N") == 0)
+      return ChessPiece.KNIGHT;
+    else if (piece.charAt(1).localeCompare("B") == 0)
+      return ChessPiece.BISHOP;
+    else if (piece.charAt(1).localeCompare("Q") == 0)
+      return ChessPiece.QUEEN;
+    else if (piece.charAt(1).localeCompare("K") == 0)
+      return ChessPiece.KING;
   }
 }
 
