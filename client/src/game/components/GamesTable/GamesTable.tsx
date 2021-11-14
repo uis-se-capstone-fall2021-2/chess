@@ -6,9 +6,8 @@ import * as React from 'react';
 
 
 import {Inject} from '../../../di';
-import {GameData, GameStatus} from '../../interfaces';
-import {PlayerService} from '../../../player/interfaces';
-import {GameId, PlayerId} from '../../../types';
+import {GameData, GameId, GameStatus} from '../../interfaces';
+import {PlayerId, PlayerService} from '../../../player/interfaces';
 import {User} from '../../../user/interfaces';
 import {GameActionsCell} from './GameActionsCell';
 import {PlayerCell} from './PlayerCell';

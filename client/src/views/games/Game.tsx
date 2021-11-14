@@ -6,8 +6,8 @@ import {DeclinedGame} from '../../game/components/DeclinedGame';
 
 import {GameProvider} from '../../game/components/GameProvider';
 import {PendingGame} from '../../game/components/PendingGame';
-import {GameData, GameState, GameStatus} from '../../game/interfaces';
-import {GameId} from '../../types';
+import {GameData, GameId, GameState, GameStatus} from '../../game/interfaces';
+
 
 @autobind
 export class GameView extends React.Component<GameView.Props, GameView.State> {

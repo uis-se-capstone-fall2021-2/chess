@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as Strongbus from 'strongbus';
 
 import {Inject} from '../../di';
-import {GameService, GameData, GameStatus} from '../interfaces';
+import {GameService, GameData, GameStatus, GameId} from '../interfaces';
 
 /**
  * @description container to abstract keeping game state up-to-date and providing it to child component tree
@@ -96,7 +96,7 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
 
 export namespace GameProvider {
   export interface Props {
-    gameId: number;
+    gameId: GameId;
     children: (game: GameData) => React.ReactNode;
   }
 

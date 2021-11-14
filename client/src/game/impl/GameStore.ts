@@ -3,8 +3,7 @@ import {keys, isEqual, uniq} from 'lodash';
 import {Service} from 'typedi';
 import * as Strongbus from 'strongbus';
 
-import {GameId} from '../types';
-import {GameData, GameInfo, GameState, GameStatus, GameStore} from './interfaces';
+import {GameData, GameId, GameInfo, GameState, GameStatus, GameStore} from '../interfaces';
 
 @Service(GameStore.Token)
 @autobind

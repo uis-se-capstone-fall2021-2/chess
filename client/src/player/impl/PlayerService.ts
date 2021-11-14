@@ -3,11 +3,10 @@ import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
 import {Deferred} from 'jaasync';
 
-import {PlayerId} from '../types';
-import {GameData, GameInfo, GameStore} from '../game/interfaces';
-import {User} from "../user/interfaces";
-import {Player, PlayerService, PlayerStore} from './interfaces';
-import {Resource} from '../utils/resource/interfaces';
+import {GameData, GameInfo, GameStore} from '../../game/interfaces';
+import {User} from "../../user/interfaces";
+import {Player, PlayerId, PlayerService, PlayerStore, PlayerType} from '../interfaces';
+import {Resource} from '../../utils/resource/interfaces';
 
 
 @Service(PlayerService.Token)
@@ -70,6 +69,21 @@ export class PlayerServiceImpl implements PlayerService {
       promise.reject();
     }
   }
+
+  public async searchPlayers(query: string, playerType: PlayerType): Promise<Player[]> {
+    const players = await this.resource.get<Player[]>(`/search?playerType=${playerType}&query=${query}`);
+    for(const player of players) {
+      const {playerId} = player;
+      this.players.upsertPlayer(player);
+      const promise = this.fetchQueue.get(playerId);
+      if(promise) {
+        promise.resolve(player);
+      }
+      this.fetchQueue.delete(playerId);
+    }
+    return players;
+  }
+
 
   public async getActiveGames(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(

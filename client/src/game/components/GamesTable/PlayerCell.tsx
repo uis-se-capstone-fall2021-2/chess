@@ -4,8 +4,7 @@ import * as Strongbus from 'strongbus';
 import * as React from 'react';
 
 import {Inject} from '../../../di';
-import {Player, PlayerService} from '../../../player/interfaces';
-import {PlayerId} from '../../../types';
+import {Player, PlayerId, PlayerService} from '../../../player/interfaces';
 
 @autobind
 export class PlayerCell extends React.Component<GridRenderCellParams<PlayerId>, PlayerCell.State> {

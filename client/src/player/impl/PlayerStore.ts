@@ -4,8 +4,7 @@ import * as Strongbus from 'strongbus';
 import {Service} from 'typedi';
 
 
-import {PlayerId} from '../types';
-import {PlayerStore, Player} from './interfaces';
+import {Player, PlayerId, PlayerStore} from '../interfaces';
 
 @Service(PlayerStore.Token)
 @autobind

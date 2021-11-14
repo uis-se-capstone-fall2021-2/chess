@@ -33,19 +33,21 @@ import {
   Link
 } from 'react-router-dom';
 
+
+import '../../player/impl/PlayerService';
+import '../../player/impl/PlayerStore';
+import '../../game/impl/GameService';
+import '../../game/impl/GameStore';
 import '../../utils/resource/ResourceFactory.impl';
-import '../../player/PlayerService.impl';
-import '../../player/PlayerStore.impl';
-import '../../game/GameService.impl';
-import '../../game/GameStore.impl';
+
 import {User} from '../../user/interfaces';
 import {UserProvider} from '../../user/components/UserProvider';
+import {Home} from '../../views/Home';
+import {GameView} from '../../views/games/Game';
 import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
 
 import './style.css';
-import {GameView} from '../../views/games/Game';
-
 
 
 @autobind
@@ -121,7 +123,7 @@ export class App extends React.Component<{}, {
                       <Toolbar/>
                       <Switch>
                         <Route exact path='/'>
-                          <div>Home</div>
+                          <Home/>
                         </Route>
                         <Route path='/games'>
                           {(ctx) => (

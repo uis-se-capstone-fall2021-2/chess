@@ -7,9 +7,8 @@ import {
 import * as React from 'react';
 
 import {Inject} from '../../../di';
-import {GameId} from '../../../types';
 import {GameProvider} from '../GameProvider';
-import {GameData, GameService, GameState, GameStatus} from '../../interfaces';
+import {GameData, GameId, GameService, GameState, GameStatus} from '../../interfaces';
 import {User} from '../../../user/interfaces';
 
 
