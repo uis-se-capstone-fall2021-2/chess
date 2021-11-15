@@ -1,9 +1,5 @@
 package chess.player.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +11,14 @@ import chess.game.model.Game;
 import chess.game.model.Games;
 import chess.player.model.Player;
 import chess.player.model.PlayerInfo;
+import chess.player.model.PlayerRepo;
 import chess.player.model.PlayerType;
 import chess.player.model.Players;
 import chess.player.service.errorCodes.GetPlayerInfoErrorCode;
 import chess.player.service.errorCodes.ListGamesErrorCode;
+import chess.player.service.errorCodes.SearchPlayersErrorCode;
 import chess.user.model.User;
+import chess.user.model.Users;
 import chess.util.Result;
 import chess.util.persistence.OrderBy;
 
@@ -30,9 +29,11 @@ public class PlayerService {
   @Autowired
   private final Players players;
   @Autowired
+  private final Users users;
+  @Autowired
   private final Games games;
 
-  public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(long[] playerIds) {
+  public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(Long[] playerIds) {
     return new Result<PlayerInfo[], GetPlayerInfoErrorCode>(
       players.getPlayers(playerIds)
         .stream()
@@ -48,6 +49,31 @@ public class PlayerService {
     } else {
       return new Result<PlayerInfo, GetPlayerInfoErrorCode>(player.info());
     }
+  }
+
+  public Result<PlayerInfo[], SearchPlayersErrorCode> searchPlayers(String query, String playerType) {
+
+    PlayerRepo<? extends Player> repo;
+    switch(playerType) {
+      case "ANY":
+        repo = players;
+        break;
+      case Player.PlayerType.User:
+        repo = users;
+        break;
+      case Player.PlayerType.AI:
+        // TODO: currently no ChessBot class extending Player
+        return new Result<PlayerInfo[], SearchPlayersErrorCode>(new PlayerInfo[] {});
+      default:
+        return new Result<PlayerInfo[], SearchPlayersErrorCode>(SearchPlayersErrorCode.INVALID_PLAYER_TYPE);
+    }
+  
+    return new Result<PlayerInfo[], SearchPlayersErrorCode>(
+      players.searchPlayers(query)
+        .stream()
+        .map((Player player) -> player.info())
+        .toArray(PlayerInfo[]::new)
+    );
   }
 
   public Result<GameInfo[], ListGamesErrorCode> getGamesForPlayer(

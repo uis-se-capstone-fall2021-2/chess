@@ -12,6 +12,7 @@ public interface IGameService {
   Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId);
   Result<Void, GameInviteResponseErrorCode> acceptGameInvite(long gameId, long playerId);
   Result<Void, GameInviteResponseErrorCode> declineGameInvite(long gameId, long playerId);
+  Result<Void, CancelGameInviteErrorCode> cancelGameInvite(long gameId, long playerId);
   Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId);
   Result<Void, QuitGameErrorCode> quitGame(long gameId, long playerId);
   Result<GameState, GameStateErrorCode> getGameState(long gameId, long playerId);
