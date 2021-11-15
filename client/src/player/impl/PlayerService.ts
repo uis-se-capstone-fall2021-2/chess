@@ -1,12 +1,12 @@
 import {autobind} from 'core-decorators';
+import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
 import {Deferred} from 'jaasync';
 
-import {PlayerId} from '../types';
-import {GameData, GameInfo, GameStore} from '../game/interfaces';
-import {User} from "../user/User";
-import {Player, PlayerService} from './interfaces';
-import {Resource} from '../utils/resource/interfaces';
+import {GameData, GameInfo, GameStore} from '../../game/interfaces';
+import {User} from "../../user/interfaces";
+import {Player, PlayerId, PlayerService, PlayerStore, PlayerType} from '../interfaces';
+import {Resource} from '../../utils/resource/interfaces';
 
 
 @Service(PlayerService.Token)
@@ -16,18 +16,24 @@ export class PlayerServiceImpl implements PlayerService {
   private readonly user: User;
   @Inject(GameStore.Token)
   private readonly games: GameStore;
+  @Inject(PlayerStore.Token)
+  private readonly players: PlayerStore;
   @Resource('/api/v1/players')
   private readonly resource: Resource;
 
-  private readonly players = new Map<PlayerId, Player>();
+  public on<T extends Strongbus.Listenable<Strongbus.EventKeys<PlayerStore.Events>>>(
+    event: T,
+    handler: Strongbus.EventHandler<PlayerStore.Events, T>
+  ): Strongbus.Subscription {
+      return this.players.on(event, handler);
+  }
+
+  public getPlayer(playerId: PlayerId): Player {
+    return this.players.getPlayer(playerId);
+  }
   
   private fetchQueue = new Map<PlayerId, Deferred<Player>>();
-  public async getPlayer(playerId: PlayerId): Promise<Player> {
-    const player = this.players.get(playerId);
-    if(player) {
-      return player;
-    }
-
+  public async fetchPlayer(playerId: PlayerId): Promise<Player> {
     const scheduleFetch = this.fetchQueue.size === 0;
     let promise: Deferred<Player>|undefined = this.fetchQueue.get(playerId);
     if(!promise) {
@@ -51,7 +57,7 @@ export class PlayerServiceImpl implements PlayerService {
 
     for(const player of players) {
       const {playerId} = player;
-      this.players.set(playerId, player);
+      this.players.upsertPlayer(player);
       const promise = queue.get(playerId);
       if(promise) {
         promise.resolve(player);
@@ -64,10 +70,25 @@ export class PlayerServiceImpl implements PlayerService {
     }
   }
 
+  public async searchPlayers(query: string, playerType: PlayerType): Promise<Player[]> {
+    const players = await this.resource.get<Player[]>(`/search?playerType=${playerType}&query=${query}`);
+    for(const player of players) {
+      const {playerId} = player;
+      this.players.upsertPlayer(player);
+      const promise = this.fetchQueue.get(playerId);
+      if(promise) {
+        promise.resolve(player);
+      }
+      this.fetchQueue.delete(playerId);
+    }
+    return players;
+  }
+
+
   public async getActiveGames(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=ACTIVE&orderBy=updatedAt`);
-    return this.normalizeGameInfoListResult(result);
+    return this.localizeGameInfoResult(result);
   }
 
   public async getOwnActiveGames(): Promise<GameData[]> {
@@ -77,7 +98,7 @@ export class PlayerServiceImpl implements PlayerService {
   public async getGameHistory(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=COMPLETE,TERMINATED&orderBy=completedAt`)
-    return this.normalizeGameInfoListResult(result);
+    return this.localizeGameInfoResult(result);
   }
 
   public async getOwnGameHistory(): Promise<GameData[]> {
@@ -87,14 +108,14 @@ export class PlayerServiceImpl implements PlayerService {
   public async getPendingGames(playerId: PlayerId): Promise<GameData[]> {
     const result = await this.resource.get<GameInfo[]>(
       `/${playerId}/games?status=PENDING,DECLINED&orderBy=createdAt`);
-    return this.normalizeGameInfoListResult(result);
+    return this.localizeGameInfoResult(result);
   }
 
   public async getOwnPendingGames(): Promise<GameData[]> {
     return this.getPendingGames(this.user.playerId);
   }
 
-  private normalizeGameInfoListResult(result: GameInfo[]): GameInfo[] {
-    return result.map(this.games.updateGameInfo);
+  private localizeGameInfoResult(result: GameInfo[]): GameInfo[] {
+    return result.map(this.games.upsertGameInfo);
   }
 }
