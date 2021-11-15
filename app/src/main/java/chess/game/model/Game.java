@@ -65,6 +65,7 @@ public class Game {
   private GameStatus status;
 
   @Column
+  @OneToMany(cascade=CascadeType.ALL)
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
