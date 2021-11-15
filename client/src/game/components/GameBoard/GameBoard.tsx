@@ -33,6 +33,9 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     const gameState: GameState = this.state.pendingGameState ?? this.props.gameState;
 
     const board = gameState.board;
+    if(!board) {
+      debugger;
+    }
     var fen: string = "";
     for(var rank = 7; rank >= 0; rank--){
       fen = fen.concat(this.rankNumToFenStr(rank, board));
@@ -86,18 +89,18 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private numToFenStr(piece: number): string {
 
-    if (Math.abs(piece) == 1)
-      return piece == -1 ? "p" : "P";
-    else if (Math.abs(piece) == 2)
-      return piece == -2 ? "r" : "R";
-    else if (Math.abs(piece) == 3)
-      return piece == -3 ? "n" : "N";
-    else if (Math.abs(piece) == 4)
-      return piece == -4 ? "b" : "B";
-    else if (Math.abs(piece) == 5)
-      return piece == -5 ? "q" : "Q";
-    else if (Math.abs(piece) == 6)
-      return piece == -6 ? "k" : "K";
+    if (Math.abs(piece) === 1)
+      return piece === -1 ? "p" : "P";
+    else if (Math.abs(piece) === 2)
+      return piece === -2 ? "r" : "R";
+    else if (Math.abs(piece) === 3)
+      return piece === -3 ? "n" : "N";
+    else if (Math.abs(piece) === 4)
+      return piece === -4 ? "b" : "B";
+    else if (Math.abs(piece) === 5)
+      return piece === -5 ? "q" : "Q";
+    else if (Math.abs(piece) === 6)
+      return piece === -6 ? "k" : "K";
   }
 
   private rankNumToFenStr(rank: number, board: number[]): string{
@@ -108,9 +111,9 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     for(var file = 0; file < 7; file++){
       var piece: number = board[rank * 8 + file];
  
-      if(piece == 0){
+      if(piece === 0){
         emptyCount++;
-        if(board[rank * 8 + (file+1)] == 0)
+        if(board[rank * 8 + (file+1)] === 0)
           continue;
         else{
           fen = fen.concat(emptyCount.toString());
@@ -124,7 +127,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
     // check last file
     var piece: number = board[rank * 8 + file];
-    if (piece == 0) {
+    if (piece === 0) {
       emptyCount++;
       fen = fen.concat(emptyCount.toString());
     }
@@ -136,40 +139,40 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private fileFromSquare(square: ChessboardLib.Square): File{
-    if (square.charAt(0).localeCompare("a") == 0)
+    if (square.charAt(0).localeCompare("a") === 0)
       return File.A;
-    else if (square.charAt(0).localeCompare("b") == 0)
+    else if (square.charAt(0).localeCompare("b") === 0)
       return File.B;
-    else if (square.charAt(0).localeCompare("c") == 0)
+    else if (square.charAt(0).localeCompare("c") === 0)
       return File.C;
-    else if (square.charAt(0).localeCompare("d") == 0)
+    else if (square.charAt(0).localeCompare("d") === 0)
       return File.D;
-    else if (square.charAt(0).localeCompare("e") == 0)
+    else if (square.charAt(0).localeCompare("e") === 0)
       return File.E;
-    else if (square.charAt(0).localeCompare("f") == 0)
+    else if (square.charAt(0).localeCompare("f") === 0)
       return File.F;
-    else if (square.charAt(0).localeCompare("g") == 0)
+    else if (square.charAt(0).localeCompare("g") === 0)
       return File.G;
-    else if (square.charAt(0).localeCompare("h") == 0)
+    else if (square.charAt(0).localeCompare("h") === 0)
       return File.H;
   }
 
   private rankFromSquare(square: ChessboardLib.Square): Rank{
-    if (square.charAt(1).localeCompare("1") == 0)
+    if (square.charAt(1).localeCompare("1") === 0)
       return Rank._1;
-    else if (square.charAt(1).localeCompare("2") == 0)
+    else if (square.charAt(1).localeCompare("2") === 0)
       return Rank._2;
-    else if (square.charAt(1).localeCompare("3") == 0)
+    else if (square.charAt(1).localeCompare("3") === 0)
       return Rank._3;
-    else if (square.charAt(1).localeCompare("4") == 0)
+    else if (square.charAt(1).localeCompare("4") === 0)
       return Rank._4;
-    else if (square.charAt(1).localeCompare("5") == 0)
+    else if (square.charAt(1).localeCompare("5") === 0)
       return Rank._5;
-    else if (square.charAt(1).localeCompare("6") == 0)
+    else if (square.charAt(1).localeCompare("6") === 0)
       return Rank._6;
-    else if (square.charAt(1).localeCompare("7") == 0)
+    else if (square.charAt(1).localeCompare("7") === 0)
       return Rank._7;
-    else if (square.charAt(1).localeCompare("8") == 0)
+    else if (square.charAt(1).localeCompare("8") === 0)
       return Rank._8;
   }
 
@@ -179,17 +182,17 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private toChessPiece(piece: ChessboardLib.Piece): ChessPiece{
-    if (piece.charAt(1).localeCompare("P") == 0)
+    if (piece.charAt(1).localeCompare("P") === 0)
       return ChessPiece.PAWN;
-    else if (piece.charAt(1).localeCompare("R") == 0)
+    else if (piece.charAt(1).localeCompare("R") === 0)
       return ChessPiece.ROOK;
-    else if (piece.charAt(1).localeCompare("N") == 0)
+    else if (piece.charAt(1).localeCompare("N") === 0)
       return ChessPiece.KNIGHT;
-    else if (piece.charAt(1).localeCompare("B") == 0)
+    else if (piece.charAt(1).localeCompare("B") === 0)
       return ChessPiece.BISHOP;
-    else if (piece.charAt(1).localeCompare("Q") == 0)
+    else if (piece.charAt(1).localeCompare("Q") === 0)
       return ChessPiece.QUEEN;
-    else if (piece.charAt(1).localeCompare("K") == 0)
+    else if (piece.charAt(1).localeCompare("K") === 0)
       return ChessPiece.KING;
   }
 }
