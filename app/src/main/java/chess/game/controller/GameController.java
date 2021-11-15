@@ -80,13 +80,34 @@ public class GameController {
         case UNKNOWN_PLAYER:
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown player");
         case GAME_NOT_FOUND:
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown Game");
         case UNAUTHORIZED:
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         case OWN_GAME:
           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cannot join own game");
         case WRONG_STATE:
           throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Game not joinable");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @PostMapping("/{id}/invitation/cancel")
+  public void cancelGameInvite(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    Result<Void, CancelGameInviteErrorCode> result = gameService.cancelGameInvite(gameId, user.getPlayerId());
+
+    if(result.code != null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown Game");
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        case INVALID_STATUS:
+          throw new ResponseStatusException(HttpStatus.CONFLICT, "Game not in pending state");
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -106,9 +127,9 @@ public class GameController {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
           // only owner can delete game
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         case GAME_ACTIVE:
-          throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Cannot delete an active game");
+          throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete an active game");
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -127,9 +148,9 @@ public class GameController {
         case GAME_NOT_FOUND:
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         case INACTIVE:
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot quit inactive game");
+          throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot quit inactive game");
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -148,7 +169,7 @@ public class GameController {
         case GAME_NOT_FOUND:
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -174,9 +195,9 @@ public class GameController {
         case GAME_NOT_FOUND:
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         case OUT_OF_TURN:
-          throw new ResponseStatusException(HttpStatus.LOCKED, "Cannot move out of turn");
+          throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot move out of turn");
         case ILLEGAL_MOVE:
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal move");
         default:

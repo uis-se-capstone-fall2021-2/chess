@@ -23,24 +23,33 @@ export class GameProvider extends React.Component<GameProvider.Props> {
 @autobind
 class GameProviderInner extends React.Component<GameProvider.Props, GameProvider.State> {
   private __mounted: boolean = false;
-  private gameUpdates: Strongbus.Subscription|null;
+  private gameSubscription: Strongbus.Subscription;
   @Inject(GameService.Token)
   private readonly gameService: GameService;
 
   constructor(props: GameProvider.Props, context: any) {
     super(props, context);
+
     this.state = {
       game: this.gameService.getGame(props.gameId),
-      error: null
+      error: null,
+      gameRemoved: false
     };
   }
 
   public override async componentDidMount() {
-    const {gameId} = this.props;
     this.__mounted = true;
-    this.gameUpdates = this.gameService.on(`GAME_UPDATED_${gameId}`, this.receiveGameData);
+ 
+    const {gameId} = this.props;
+    this.gameSubscription = this.gameService.on([
+      `GAME_UPDATED_${gameId}`,
+      `GAME_REMOVED_${gameId}`
+    ], this.updateGame);
+
+
     while(
       this.__mounted &&
+      !this.state.gameRemoved &&
       ![GameStatus.DECLINED, GameStatus.COMPLETE, GameStatus.TERMINATED].includes(this.state.game?.status)
     ) {
       try {
@@ -55,25 +64,25 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
   }
 
   public override componentWillUnmount() {
-    this.gameUpdates?.unsubscribe();
-    this.gameUpdates = null;
+    this.gameSubscription?.();
     this.__mounted = false;
   }
 
-  private receiveGameData(): void {
+  private updateGame(): void {
     if(!this.__mounted) {
       return;
     }
 
-    const gameData = this.gameService.getGame(this.props.gameId);
-    this.setState({
+    const game = this.gameService.getGame(this.props.gameId);
+    this.setState((prevState) => ({
       error: null,
-      game: gameData
-    });
+      game,
+      gameRemoved: Boolean(prevState.game) && !game
+    }));
   }
 
   public override render(): React.ReactNode {
-    const {error, game} = this.state;
+    const {error, game, gameRemoved} = this.state;
 
     if(error) {
       return (
@@ -82,11 +91,15 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
         </Typography>
       );
     } else if(!game) {
-      return (
-        <Typography>
-          {`Loading Game ${this.props.gameId}`}
-        </Typography>
-      );
+      if(gameRemoved) {
+        return null;
+      } else {
+        return (
+          <Typography>
+            {`Loading Game ${this.props.gameId}`}
+          </Typography>
+        );
+      }
     } else {
       return this.props.children(game);
     }
@@ -103,5 +116,6 @@ export namespace GameProvider {
   export interface State {
     game: GameData|null;
     error: Error|null;
+    gameRemoved: boolean;
   }
 }

@@ -9,10 +9,10 @@ import {Inject} from '../../../di';
 import {GameData, GameId, GameStatus} from '../../interfaces';
 import {PlayerColor, PlayerId, PlayerService} from '../../../player/interfaces';
 import {User} from '../../../user/interfaces';
-import {GameActionsCell} from './GameActionsCell';
-import {PlayerCell} from './PlayerCell';
-import {GameLinkCell} from './GameLinkCell';
-import {DateCell} from './DateCell';
+import {GameActionsCell} from './cells/GameActionsCell';
+import {PlayerCell} from './cells/PlayerCell';
+import {GameLinkCell} from './cells/GameLinkCell';
+import {DateCell} from './cells/DateCell';
 
 
 @autobind

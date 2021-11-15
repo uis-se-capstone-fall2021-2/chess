@@ -8,13 +8,14 @@ import {GameId} from './GameId';
 import {GameStore} from './GameStore';
 
 export interface GameService {
+  on: Strongbus.Bus<GameStore.Events>['on'];
   getGame(gameId: GameId): GameData|null;
   fetchGameState(gameId: GameId): Promise<GameState>;
   createGame(params: {opponent: Player, playerColor: PlayerColor}): Promise<GameState>;
   quitGame(gameId: GameId): Promise<void>;
   acceptGameInvite(gameId: GameId): Promise<void>;
   declineGameInvite(gameId: GameId): Promise<void>;
-  on: Strongbus.Bus<GameStore.Events>['on'];
+  cancelGameInvite(gameId: GameId): Promise<void>;
 }
 
 export namespace GameService {

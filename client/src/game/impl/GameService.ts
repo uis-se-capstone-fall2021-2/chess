@@ -58,4 +58,8 @@ export class GameServiceImpl implements GameService {
     this.fetchGameState(gameId);
   }
 
+  public async cancelGameInvite(gameId: number): Promise<void> {
+    await this.resource.post(`/${gameId}/invitation/cancel`, {});
+    this.games.removeGame(gameId);
+  }
 }

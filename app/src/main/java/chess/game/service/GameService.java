@@ -101,6 +101,23 @@ public class GameService implements IGameService {
     return result;
   }
 
+  public Result<Void, CancelGameInviteErrorCode> cancelGameInvite(long gameId, long playerId) {
+    Game game = games.getGameById(gameId);
+    if(game == null) {
+      return new Result<Void, CancelGameInviteErrorCode>(CancelGameInviteErrorCode.GAME_NOT_FOUND);
+    } else if(game.getOwner() != playerId) {
+      return new Result<Void, CancelGameInviteErrorCode>(CancelGameInviteErrorCode.UNAUTHORIZED);
+    } else if(game.getStatus() != GameStatus.PENDING) {
+      return new Result<Void, CancelGameInviteErrorCode>(CancelGameInviteErrorCode.INVALID_STATUS);
+    }
+
+    games.deleteGame(gameId);
+    notifyPlayers(game);
+
+    return new Result<Void, CancelGameInviteErrorCode>();
+  }
+    
+
   public Result<Void, DeleteGameErrorCode> deleteGame(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {

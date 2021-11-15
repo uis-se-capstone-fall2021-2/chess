@@ -24,6 +24,12 @@ export class GameStoreImpl implements GameStore {
     return this.upsertGameData(state as any);
   }
 
+  public removeGame(gameId: GameId): void {
+    this.games.delete(gameId);
+    this.bus.emit('GAME_REMOVED', gameId);
+    this.bus.emit(`GAME_REMOVED_${gameId}`, void(0));
+  }
+
   private upsertGameData(data: GameData): GameData {
     let added: boolean = false;
     const {gameId} = data;

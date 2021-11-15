@@ -5,10 +5,11 @@ import {GameData, GameInfo, GameState} from './Game';
 import {GameId} from './GameId';
 
 export interface GameStore {
+  on: Strongbus.Bus<GameStore.Events>['on'];
   getGame(gameId: GameId): GameData|null;
   upsertGameInfo(info: GameInfo): GameData;
   upsertGameState(state: GameState): GameData;
-  on: Strongbus.Bus<GameStore.Events>['on'];
+  removeGame(gameId: GameId): void
 }
 
 export namespace GameStore {
@@ -16,6 +17,8 @@ export namespace GameStore {
 
   export type Events = {
     GAME_ADDED: GameId;
-    [key: `GAME_UPDATED_${GameId}`]: (keyof GameData)[]
+    [key: `GAME_UPDATED_${GameId}`]: (keyof GameData)[];
+    GAME_REMOVED: GameId;
+    [key: `GAME_REMOVED_${GameId}`]: void;
   }
 }
