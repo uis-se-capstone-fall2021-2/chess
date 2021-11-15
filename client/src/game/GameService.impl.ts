@@ -37,7 +37,7 @@ export class GameServiceImpl implements GameService {
   }
 
   public async move(gameId: GameId, intent: MoveIntent): Promise<GameState> {
-    const gameState = await this.resource.patch<GameState>(`/${gameId}`, intent);
+    const gameState = await this.resource.post<GameState>(`/${gameId}/move`, intent);
     this.games.updateGameState(gameState);
     return gameState;
   }
