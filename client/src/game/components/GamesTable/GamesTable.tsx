@@ -56,7 +56,12 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
         display: 'flex',
         height: '100%'
       }}>
-        <DataGrid rows={rows} columns={GamesTable.columns}/>
+        <Box sx={{flexGrow: 1}}>
+          <DataGrid
+            rows={rows}
+            columns={GamesTable.columns}
+            density='compact'/>
+        </Box>
       </Box>
     );
   }
@@ -81,38 +86,57 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
   private static readonly columns: GridColDef[] = [{
     field: 'gameId',
     headerName: 'Game ID',
+    headerAlign: 'center',
+    align: 'center',
     renderCell: (params: GridRenderCellParams<GameId>) => (<GameLinkCell gameId={params.value}/>)
   }, {
     field: 'opponentId',
     headerName: 'Opponent',
+    headerAlign: 'center',
+    align: 'center',
     renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
   }, {
     field: 'ownerId',
     headerName: 'Owner',
+    headerAlign: 'center',
+    align: 'center',
     renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
   }, {
     field: 'actions',
     headerName: 'Actions',
+    headerAlign: 'center',
+    align: 'center',
+    width: 150,
     renderCell: (params: GridRenderCellParams<GameId>) => (<GameActionsCell {...params}/>)
   }, {
     field: 'moveCount',
-    headerName: 'Move Count'
+    headerName: 'Move Count',
+    headerAlign: 'center',
+    align: 'right'
   }, {
     field: 'playerColor',
-    headerName: 'Player Color'
+    headerName: 'Player Color',
+    headerAlign: 'center',
+    align: 'center'
   }, {
     field: 'updatedAt',
     width: 250,
     headerName: 'Last Updated',
+    headerAlign: 'center',
+    align: 'center',
     renderCell: DateCell
   }, {
     field: 'createdAt',
     width: 250,
     headerName: 'Date Created',
+    headerAlign: 'center',
+    align: 'center',
     renderCell: DateCell
   }, {
     field: 'gameStatus',
-    headerName: 'Status'
+    headerName: 'Status',
+    headerAlign: 'center',
+    align: 'center'
   }];
 }
 

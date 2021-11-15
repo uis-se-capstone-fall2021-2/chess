@@ -1,5 +1,5 @@
 import {autobind} from 'core-decorators';
-import {keys, isEqual, uniq} from 'lodash';
+import {keys, isEqual, uniq, update} from 'lodash';
 import {Service} from 'typedi';
 import * as Strongbus from 'strongbus';
 
@@ -41,10 +41,10 @@ export class GameStoreImpl implements GameStore {
 
     const updated: GameData = {
       ...game,
-      ...data,
-      status: GameStatus[game.status]
+      ...data
     };
 
+    updated.status = GameStatus[updated.status];
     updated.createdAt = new Date(updated.createdAt);
     updated.updatedAt = new Date(updated.updatedAt);
     updated.completedAt = new Date(updated.completedAt);

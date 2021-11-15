@@ -111,8 +111,11 @@ public class GameService implements IGameService {
       return new Result<Void, CancelGameInviteErrorCode>(CancelGameInviteErrorCode.INVALID_STATUS);
     }
 
-    games.deleteGame(gameId);
+
+    game.setStatus(GameStatus.TERMINATED);
+    games.saveGame(game);
     notifyPlayers(game);
+    games.deleteGame(gameId);
 
     return new Result<Void, CancelGameInviteErrorCode>();
   }
@@ -127,8 +130,11 @@ public class GameService implements IGameService {
     } else if(game.getStatus() == GameStatus.ACTIVE) {
       return new Result<Void, DeleteGameErrorCode>(DeleteGameErrorCode.GAME_ACTIVE);
     }
-    games.deleteGame(gameId);
+    
+    game.setStatus(GameStatus.TERMINATED);
+    games.saveGame(game);
     notifyPlayers(game);
+    games.deleteGame(gameId);
 
     return new Result<Void, DeleteGameErrorCode>();
   }
@@ -176,6 +182,7 @@ public class GameService implements IGameService {
     }
 
     boolean success = game.move(playerId, moveIntent);
+    games.saveGame(game);
     if(success) {
       notifyPlayers(game);
       return new Result<GameState, UpdateGameErrorCode>(game.getGameState());

@@ -1,6 +1,5 @@
 import {autobind} from 'core-decorators';
 import {sleep} from 'jaasync';
-import {Typography} from '@mui/material';
 import * as React from 'react';
 import * as Strongbus from 'strongbus';
 
@@ -32,8 +31,7 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
 
     this.state = {
       game: this.gameService.getGame(props.gameId),
-      error: null,
-      gameRemoved: false
+      error: null
     };
   }
 
@@ -49,7 +47,6 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
 
     while(
       this.__mounted &&
-      !this.state.gameRemoved &&
       ![GameStatus.DECLINED, GameStatus.COMPLETE, GameStatus.TERMINATED].includes(this.state.game?.status)
     ) {
       try {
@@ -74,34 +71,22 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
     }
 
     const game = this.gameService.getGame(this.props.gameId);
-    this.setState((prevState) => ({
+    this.setState({
       error: null,
-      game,
-      gameRemoved: Boolean(prevState.game) && !game
-    }));
+      game
+    });
   }
 
   public override render(): React.ReactNode {
-    const {error, game, gameRemoved} = this.state;
+    const {children, errorRenderer} = this.props;
+    const {error, game} = this.state;
 
-    if(error) {
-      return (
-        <Typography sx={{color: 'error.main'}}>
-          {error.message}
-        </Typography>
-      );
+    if(error && errorRenderer) {
+      return errorRenderer(error.message);
     } else if(!game) {
-      if(gameRemoved) {
-        return null;
-      } else {
-        return (
-          <Typography>
-            {`Loading Game ${this.props.gameId}`}
-          </Typography>
-        );
-      }
+      return null;
     } else {
-      return this.props.children(game);
+      return children(game);
     }
   }
 
@@ -111,11 +96,11 @@ export namespace GameProvider {
   export interface Props {
     gameId: GameId;
     children: (game: GameData) => React.ReactNode;
+    errorRenderer?: (message: string) => React.ReactNode;
   }
 
   export interface State {
     game: GameData|null;
     error: Error|null;
-    gameRemoved: boolean;
   }
 }

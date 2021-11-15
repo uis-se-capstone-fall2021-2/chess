@@ -1,19 +1,23 @@
 
 import * as React from 'react';
-import {Button, ButtonGroup, Tooltip} from '@mui/material';
+import {Button, Tooltip} from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
   HighlightOff as HighlightOffIcon
 } from '@mui/icons-material';
 
 import {User} from '../../../../user/interfaces';
-import {GameData, GameId, GameService} from '../../../interfaces';
+import {GameData, GameId, GameService, GameStatus} from '../../../interfaces';
 
 
 export function PendingGameActionsCell (props: PendingGameActionsCell.Props): React.ReactElement {
   const {game, gameService, user, onGameAccepted} = props;
 
-  const {gameId, owner} = game;
+  const {gameId, owner, status} = game;
+
+  if(status !== GameStatus.PENDING) {
+    return null;
+  }
 
   if(owner === user.playerId) {
     const cancelInvitation = () => {
@@ -37,7 +41,7 @@ export function PendingGameActionsCell (props: PendingGameActionsCell.Props): Re
     const declineGameInvite = () => gameService.declineGameInvite(gameId);
 
     return (
-      <ButtonGroup variant='contained'>
+      <>
         <Tooltip title='Accept Invite'>
           <Button onClick={acceptGameInvite}>
             <CheckCircleIcon/>
@@ -48,7 +52,7 @@ export function PendingGameActionsCell (props: PendingGameActionsCell.Props): Re
             <HighlightOffIcon/>
           </Button>
         </Tooltip>
-      </ButtonGroup>
+      </>
     );
   }
 }
