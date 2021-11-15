@@ -17,6 +17,7 @@
     "lodash": "^4.17.21",
     "material-ui-popup-state": "^2.0.0",
     "react": "^17.0.2",
+    "react-chessboard": "^0.0.16",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0",
     "reflect-metadata": "^0.1.13",
@@ -26,10 +27,10 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/lodash": "^4.14.176",
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.2",
-    "@types/lodash": "^4.14.176",
     "react-scripts": "4.0.3",
     "typescript": "^4.4.3"
   },
