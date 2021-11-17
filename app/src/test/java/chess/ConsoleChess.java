@@ -1,5 +1,6 @@
 package chess;
 
+import chess.game.GameStatus;
 import chess.game.model.Game;
 import chess.ai.Beginner;
 import chess.board.Board;
@@ -19,8 +20,9 @@ public class ConsoleChess {
 
         while(true) {
 
-            if(game.getWinner() != 0){
-
+            if(game.getStatus() == GameStatus.COMPLETE) {
+                System.out.println("Game has ended: Winning PlayerID: " + game.getWinner());
+                break;
             }
 
             drawChessBoard(game);

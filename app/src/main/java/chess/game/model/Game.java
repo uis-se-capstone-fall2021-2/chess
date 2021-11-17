@@ -227,15 +227,13 @@ public class Game {
             //Player who last moved has won
             winner = (currentPlayerColor() == PlayerColor.BLACK) ? getPlayer1() : getPlayer2();
             status = GameStatus.COMPLETE;
-            completedAt = new Date(System.currentTimeMillis());
           } else {
             // game has ended in a stalemate, no moves yet player is not in check.
             status = GameStatus.COMPLETE;
             winner = -1;
-            completedAt = new Date(System.currentTimeMillis());
           }
         }
-
+        updateTimeStamps();
         return true;
         
     } else {
