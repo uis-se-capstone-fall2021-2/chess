@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chess.board.Board;
+import chess.game.GameState;
 
 public class MoveValidator {
     public static boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord, PlayerColor moveColor) {
@@ -445,6 +446,20 @@ public class MoveValidator {
         return validMovesNotInCheck;
 
     }
+
+    public static List<MoveIntent> getAllValidMoves(GameState state, List<MoveIntent> moveHistory, PlayerColor team) {
+        List<MoveIntent> validMoves = new ArrayList<>();
+        Board board = state.board;
+        for(int i = 0; i < board.board.length; i++) {
+            int piece = board.board[i];
+            // if piece is mine
+            if(piece != 0 && piece / Math.abs(piece) == team.value) {
+                validMoves.addAll(MoveValidator.getValidMoves(ChessPiece.FromInteger(piece), new Position(i), board, moveHistory, team));
+            }
+        }
+        return validMoves;
+    }
+
 
 
 

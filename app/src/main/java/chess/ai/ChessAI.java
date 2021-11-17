@@ -15,7 +15,7 @@ import chess.game.GameState;
 import chess.player.model.Player;
 
 public abstract class ChessAI extends Player {
-    public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
+    public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory, PlayerColor team);
 
     @Override
     public String getDisplayName() {
@@ -26,23 +26,6 @@ public abstract class ChessAI extends Player {
     public void notify(GameState gameState) {
         //TODO: does notify need to do anything for AI?
     }
-
-    // moveValidator has a function to get all moves for a specific piece, this uses that function
-    // to get all possible moves for all positions.
-    protected List<MoveIntent> getAllValidMoves(GameState state, List<MoveIntent> moveHistory) {
-        List<MoveIntent> validMoves = new ArrayList<>();
-        Board board = state.board;
-        PlayerColor team = (state.players[0] == this.playerId) ? PlayerColor.WHITE : PlayerColor.BLACK;
-        for(int i = 0; i < board.board.length; i++) {
-            int piece = board.board[i];
-            // if piece is mine
-            if(piece / Math.abs(piece) == team.value) {
-                validMoves.addAll(MoveValidator.getValidMoves(ChessPiece.FromInteger(piece), new Position(i), board, moveHistory, team));
-            }
-        }
-        return validMoves;
-    }
-
     // returns simple piece values
     protected double getPieceValue(int piece) {
         int team = piece / Math.abs(piece);

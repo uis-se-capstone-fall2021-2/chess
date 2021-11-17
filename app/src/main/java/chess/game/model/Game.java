@@ -69,6 +69,7 @@ public class Game {
   private List<Move> moves = new ArrayList<Move>();
 
   @Transient
+  @Getter
   private Board board = new Board();
 
   public Game() {
@@ -214,6 +215,10 @@ public class Game {
         moves.add(new Move(intent));
 
         board.updateBoard(intent);
+
+        //if opponent no longer has any valid moves, && their king is in check, the game in won.
+
+
         return true;
         
     } else {
