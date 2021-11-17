@@ -49,7 +49,7 @@ public class Game {
   @Column
   @Getter
   @Setter
-  private long winner; // playerId
+  private long winner; // playerId | -1 if stalemate?
 
   @Column
   @Getter
@@ -216,8 +216,25 @@ public class Game {
 
         board.updateBoard(intent);
 
-        //if opponent no longer has any valid moves, && their king is in check, the game in won.
+        // TODO: check if the move was a castle, and move the rook as well in those cases
 
+
+        updatedAt = new Date(System.currentTimeMillis());
+
+        //if opponent no longer has any valid moves, && their king is in check, the game in won.
+        if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
+          if(board.inCheck() != 0 ) {
+            //Player who last moved has won
+            winner = (currentPlayerColor() == PlayerColor.BLACK) ? getPlayer1() : getPlayer2();
+            status = GameStatus.COMPLETE;
+            completedAt = new Date(System.currentTimeMillis());
+          } else {
+            // game has ended in a stalemate, no moves yet player is not in check.
+            status = GameStatus.COMPLETE;
+            winner = -1;
+            completedAt = new Date(System.currentTimeMillis());
+          }
+        }
 
         return true;
         
