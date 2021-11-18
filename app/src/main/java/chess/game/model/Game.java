@@ -218,6 +218,7 @@ public class Game {
 
         // TODO: check if the move was a castle, and move the rook as well in those cases
 
+        // TODO: check if the move was an en passant, and remove the captured pawn in that case.
 
         updatedAt = new Date(System.currentTimeMillis());
 

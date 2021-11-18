@@ -41,7 +41,7 @@ public class ConsoleChess {
             game.move(1, aiMove);
             System.out.println("AI has moved");
         }
-        
+        scan.close();
     }
 
     public static MoveIntent stringToMoveIntent(String input, Board board){

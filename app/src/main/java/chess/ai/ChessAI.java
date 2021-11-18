@@ -5,11 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import chess.ChessPiece;
 import chess.MoveIntent;
-import chess.MoveValidator;
 import chess.PlayerColor;
-import chess.Position;
 import chess.board.Board;
 import chess.game.GameState;
 import chess.player.model.Player;
