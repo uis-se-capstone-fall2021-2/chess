@@ -220,8 +220,6 @@ public class Game {
 
         // TODO: check if the move was an en passant, and remove the captured pawn in that case.
 
-        updatedAt = new Date(System.currentTimeMillis());
-
         //if opponent no longer has any valid moves, && their king is in check, the game in won.
         if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
           if(board.inCheck() != 0 ) {
