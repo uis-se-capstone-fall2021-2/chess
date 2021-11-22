@@ -77,7 +77,17 @@ public class Board implements IBoard {
             int opposingPawnRank = (piece > 0) ? intent.to.rank.value - 1 : intent.to.rank.value + 1;
             board[opposingPawnRank * 8 + intent.to.file.value] = 0;
         }
-
+        if(intent.chessPiece == ChessPiece.KING && (Math.abs(intent.to.file.value - intent.from.file.value) == 2)) {
+            if(intent.to.file.value - intent.from.file.value == 2){
+                // kingside castle
+                board[intent.to.rank.value * 8 + 7] = 0;
+                board[toIndex - 1] = (piece > 0) ? 2 : -2;
+            } else {
+                // queenside castle
+                board[intent.to.rank.value * 8] = 0;
+                board[toIndex + 1] = (piece > 0) ? 2 : -2;
+            }
+        }
 
         board[fromIndex] = 0;
         board[toIndex] = piece;
@@ -91,8 +101,17 @@ public class Board implements IBoard {
     public int inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
-        if(MoveValidator.positionUnderThreat(bKing, -1, this)) return -1;
-        if(MoveValidator.positionUnderThreat(wKing, 1, this)) return 1;
+        if(MoveValidator.positionUnderThreat(bKing, -1, this)) {
+            System.out.println("Black king is in check.");
+            return -1;
+
+        }      
+        if(MoveValidator.positionUnderThreat(wKing, 1, this)) {
+            System.out.println("White king is in check.");
+            return 1;
+        }
+            
+
         return 0;
 
     }
