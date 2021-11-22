@@ -47,10 +47,14 @@ public class ConsoleChess {
     public static MoveIntent stringToMoveIntent(String input, Board board){
         String from = input.split(" ")[0];
         String to = input.split(" ")[1];
+        ChessPiece promotion = ChessPiece.NONE;
+        if(input.split(" ").length == 3){
+            promotion = ChessPiece.QUEEN;
+        }
         Position posTo = stringToPosition(to);
         Position posFrom = stringToPosition(from);
         ChessPiece type = ChessPiece.FromInteger(board.getPiece(posFrom));
-        return new MoveIntent(type, posFrom, posTo);
+        return new MoveIntent(type, posFrom, posTo, promotion);
 
     }
 

@@ -72,6 +72,12 @@ public class Board implements IBoard {
             // maintain piece's team:
             piece = (piece > 0) ? intent.promotion.value : -intent.promotion.value;
         }
+        // En Passant
+        if(intent.chessPiece == ChessPiece.PAWN && (intent.from.file != intent.to.file) && getPiece(intent.to) == 0){
+            int opposingPawnRank = (piece > 0) ? intent.to.rank.value - 1 : intent.to.rank.value + 1;
+            board[opposingPawnRank * 8 + intent.to.file.value] = 0;
+        }
+
 
         board[fromIndex] = 0;
         board[toIndex] = piece;
