@@ -34,6 +34,10 @@ public class ConsoleChess {
                 System.out.println("INVALID MOVE");
                 continue;
             }
+            if(game.getStatus() == GameStatus.COMPLETE) {
+                System.out.println("Game has ended: Winning PlayerID: " + game.getWinner());
+                break;
+            }
             System.out.println(game.currentPlayer());
             drawChessBoard(game);
             System.out.println(game.currentPlayerColor() + " to move ");

@@ -102,12 +102,10 @@ public class Board implements IBoard {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
         if(MoveValidator.positionUnderThreat(bKing, -1, this)) {
-            System.out.println("Black king is in check.");
             return -1;
 
         }      
         if(MoveValidator.positionUnderThreat(wKing, 1, this)) {
-            System.out.println("White king is in check.");
             return 1;
         }
             

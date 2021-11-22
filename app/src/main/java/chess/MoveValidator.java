@@ -370,10 +370,119 @@ public class MoveValidator {
                 }
                 break;
             case QUEEN:
-                // reuse bishop and rook switches and combine the results of those calls.
-                List<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
-                validMoves = getValidMoves(ChessPiece.BISHOP, startPos, board, moveRecord, playerColor);
-                validMoves.addAll(horizontalMoves);
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // right
+            while(x < 7) {
+                x++;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // left
+            while(x > 0) {
+                x--;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // up
+            while(y < 7) {
+                y++;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // down
+            while(y > 0) {
+                y--;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // Direction : Up & right
+            while(x < 7 && y < 7){
+                x++;
+                y++;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // Direction : Up & left
+            while(x > 0 && y < 7){
+                x--;
+                y++;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // Direction : down & right
+            while(x < 7 && y > 0){
+                x++;
+                y--;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+            x = startPos.file.value;
+            y = startPos.rank.value;
+            // Direction : down & left
+            while(x > 0 && y > 0){
+                x--;
+                y--;
+                Position next = new Position(x, y);
+                locationsToCheck.add(next);
+                if(board.getPiece(next) != 0) {
+                    break;
+                }
+            }
+
+            for(Position endPos : locationsToCheck) {
+                if(playerColor == PlayerColor.WHITE) {
+                    if(board.getPiece(endPos) <= 0) {
+                        // make a new moveIntent for it
+                        validMoves.add(new MoveIntent(piece, startPos, endPos));
+                    }
+                } else {
+                    if(board.getPiece(endPos) >= 0) {
+                        // make a new moveIntent for it
+                        validMoves.add(new MoveIntent(piece, startPos, endPos));
+                    }
+                }
+            }
+            
+            
+            
+            // // reuse bishop and rook switches and combine the results of those calls.
+                // List<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
+                // validMoves = getValidMoves(ChessPiece.BISHOP, startPos, board, moveRecord, playerColor);
+                // validMoves.addAll(horizontalMoves);
                 break;
             case KING:
                 x = startPos.file.value;
@@ -403,7 +512,7 @@ public class MoveValidator {
                     boolean legalMoveFlag = true;
                     for(MoveIntent move : moveRecord){
                         // if the king or the rook has ever moved, cannot castle
-                        if(move.from.equals(new Position(0,0)) || move.from.equals(new Position(0,3))) {
+                        if(move.from.equals(new Position(0,0)) || move.from.equals(new Position(3,0))) {
                             legalMoveFlag = false;
                         }
                     }
@@ -415,10 +524,10 @@ public class MoveValidator {
                         locationsToCheck.add(new Position(x - 2, y));
                 }
                 // white king queen side castle
-                if(x == 3 && y == 0 && board.getPiece(new Position(4, 0)) == 0 && board.getPiece(new Position(5, 0)) == 0){
+                if(x == 3 && y == 0 && board.getPiece(new Position(4, 0)) == 0 && board.getPiece(new Position(5, 0)) == 0 && board.getPiece(new Position(6, 0)) == 0){
                     boolean legalMoveFlag = true;
                     for(MoveIntent move : moveRecord){
-                        if(move.from.equals(new Position(0,6)) || move.from.equals(new Position(0,3))) {
+                        if(move.from.equals(new Position(7,0)) || move.from.equals(new Position(3,0))) {
                             // if the king or the rook has ever moved, cannot castle
                             legalMoveFlag = false;
                         }
@@ -641,43 +750,49 @@ public class MoveValidator {
             y++;
             Position next = new Position(x, y);
             int piece = board.getPiece(next);
-            if(piece == (-team * 2) || piece == (-team * 5)) {
+            if(piece == (-team * 4) || piece == (-team * 5)) {
                 return true;
             }
             if(piece != 0) {
                 break;
             }
         }
+        x = loc.file.value;
+        y = loc.rank.value;
         while(x > 0 && y < 7){
             x--;
             y++;
             Position next = new Position(x, y);
             int piece = board.getPiece(next);
-            if(piece == (-team * 2) || piece == (-team * 5)) {
+            if(piece == (-team * 4) || piece == (-team * 5)) {
                 return true;
             }
             if(piece != 0) {
                 break;
             }
         }
+        x = loc.file.value;
+        y = loc.rank.value;
         while(x < 7 && y > 0){
             x++;
             y--;
             Position next = new Position(x, y);
             int piece = board.getPiece(next);
-            if(piece == (-team * 2) || piece == (-team * 5)) {
+            if(piece == (-team * 4) || piece == (-team * 5)) {
                 return true;
             }
             if(piece != 0) {
                 break;
             }
         }
+        x = loc.file.value;
+        y = loc.rank.value;
         while(x > 0 && y > 0){
             x--;
             y--;
             Position next = new Position(x, y);
             int piece = board.getPiece(next);
-            if(piece == (-team * 2) || piece == (-team * 5)) {
+            if(piece == (-team * 4) || piece == (-team * 5)) {
                 return true;
             }
             if(piece != 0) {
