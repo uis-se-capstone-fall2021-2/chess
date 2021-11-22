@@ -1,0 +1,7 @@
+export enum GameStatus {
+  PENDING = 'PENDING',
+  DECLINED = 'DECLINED',
+  ACTIVE = 'ACTIVE',
+  COMPLETE = 'COMPLETE',
+  TERMINATED = 'TERMINATED'
+}
