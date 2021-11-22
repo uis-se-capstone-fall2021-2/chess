@@ -23,6 +23,7 @@ import chess.player.model.PlayerInfo;
 import chess.player.service.PlayerService;
 import chess.player.service.errorCodes.GetPlayerInfoErrorCode;
 import chess.player.service.errorCodes.ListGamesErrorCode;
+import chess.player.service.errorCodes.SearchPlayersErrorCode;
 import chess.user.model.User;
 import chess.util.Result;
 import chess.util.persistence.OrderBy;
@@ -38,7 +39,7 @@ public class PlayerController {
   private final PlayerService playerService;
 
   @GetMapping("/")
-  public PlayerInfo[] getPlayerInfo(@RequestParam(value="id", required=true) long[] playerIds) {
+  public PlayerInfo[] getPlayerInfo(@RequestParam(value="id", required=true) Long[] playerIds) {
     Result<PlayerInfo[], GetPlayerInfoErrorCode> result = playerService.getPlayerInfo(playerIds);
 
     if(result.code != null) {
@@ -61,6 +62,25 @@ public class PlayerController {
     } else {
       return result.value;
     }
+  }
+
+  @GetMapping("/search")
+  public PlayerInfo[] searchPlayers(
+    @RequestParam(value="playerType", required=true) String playerType,
+    @RequestParam(value="query", required=true) String query
+  ) {
+    Result<PlayerInfo[], SearchPlayersErrorCode> result = playerService.searchPlayers(query, playerType);
+
+    if(result.code != null) {
+      switch(result.code) {
+        case INVALID_PLAYER_TYPE:
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player type");
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return result.value;
   }
 
   @GetMapping("/{id}/games")

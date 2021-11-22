@@ -68,6 +68,11 @@ public class Board implements IBoard {
         int toIndex = intent.to.rank.value * 8 + intent.to.file.value;
         int piece = getPiece(intent.from);
 
+        if(intent.promotion != ChessPiece.NONE){
+            // maintain piece's team:
+            piece = (piece > 0) ? intent.promotion.value : -intent.promotion.value;
+        }
+
         board[fromIndex] = 0;
         board[toIndex] = piece;
 

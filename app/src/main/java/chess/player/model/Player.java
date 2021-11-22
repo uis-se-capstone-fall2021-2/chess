@@ -4,7 +4,10 @@ import javax.persistence.*;
 
 import chess.game.GameState;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name="Players")
@@ -19,6 +22,7 @@ public abstract class Player {
 
   public static class Fields {
     public static final String PLAYER_ID = "PLAYER_ID";
+    public static final String PLAYER_DISPLAY_NAME = "PLAYER_DISPLAY_NAME";
   }
 
   @Id
@@ -26,6 +30,11 @@ public abstract class Player {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Getter
   protected long playerId;
+
+  @Column(name=Fields.PLAYER_DISPLAY_NAME)
+  @Getter
+  @Setter
+  private String displayName;
 
   @Transient
   public String getPlayerType() {
@@ -40,6 +49,5 @@ public abstract class Player {
     );
   }
 
-  public abstract String getDisplayName();
   public abstract void notify(GameState gameState);
 }

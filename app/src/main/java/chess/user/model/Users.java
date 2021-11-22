@@ -33,7 +33,8 @@ public class Users extends PlayerRepo<User> {
 	public User createUser(String userId, String email, String displayName) {
 		Session session = getSession();
 
-		User user = new User(userId, email, displayName);
+		User user = new User(userId, email);
+    user.setDisplayName(displayName);
 
 		session.save(user);
 		return user;
