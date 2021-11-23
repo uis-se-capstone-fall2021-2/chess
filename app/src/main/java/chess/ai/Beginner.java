@@ -10,11 +10,12 @@ import chess.game.GameState;
 
 public class Beginner extends ChessAI {
     Random r;
-    public Beginner() {
+    public Beginner(PlayerColor team) {
+        super(team);
         r = new Random();
     }
     @Override
-    public MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory, PlayerColor team) {
+    public MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory) {
 
         List<MoveIntent> possibleMoves = MoveValidator.getAllValidMoves(state, moveHistory, team);
         // just return a random move...

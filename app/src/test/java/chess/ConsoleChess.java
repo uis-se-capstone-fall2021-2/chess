@@ -2,19 +2,19 @@ package chess;
 
 import chess.game.GameStatus;
 import chess.game.model.Game;
-import chess.ai.Beginner;
+import chess.ai.Advanced;
+import chess.ai.ChessAI;
 import chess.board.Board;
 
 import java.util.Scanner;
 
-import chess.Position;
 
 public class ConsoleChess {
 
 
     public static void main(String[] args) {
         Game game = new Game(0,1,0);
-        Beginner ai = new Beginner();
+        Advanced ai = new Advanced(PlayerColor.BLACK);
         Scanner scan = new Scanner(System.in);
 
 
@@ -38,10 +38,9 @@ public class ConsoleChess {
                 System.out.println("Game has ended: Winning PlayerID: " + game.getWinner());
                 break;
             }
-            System.out.println(game.currentPlayer());
             drawChessBoard(game);
             System.out.println(game.currentPlayerColor() + " to move ");
-            MoveIntent aiMove = ai.chooseMove(game.getGameState(), game.getMoveHistory(), PlayerColor.BLACK);
+            MoveIntent aiMove = ai.chooseMove(game.getGameState(), game.getMoveHistory());
             game.move(1, aiMove);
             System.out.println("AI has moved");
         }
@@ -127,6 +126,7 @@ public class ConsoleChess {
             System.out.print(getPieceLetter(board.getPiece(new Position(i))) + " ");
             if(i%8==0) System.out.print("\n");
         }
+        System.out.println(ChessAI.getBoardScore(g.getBoard()));
         System.out.println();
     }
 

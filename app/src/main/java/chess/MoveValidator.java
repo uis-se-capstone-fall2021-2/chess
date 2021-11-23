@@ -614,7 +614,17 @@ public class MoveValidator {
         }
         return validMoves;
     }
-
+    public static List<MoveIntent> getAllValidMoves(Board board, List<MoveIntent> moveHistory, PlayerColor team) {
+        List<MoveIntent> validMoves = new ArrayList<>();
+        for(int i = 0; i < board.board.length; i++) {
+            int piece = board.board[i];
+            // if piece is mine
+            if(piece != 0 && piece / Math.abs(piece) == team.value) {
+                validMoves.addAll(MoveValidator.getValidMoves(ChessPiece.FromInteger(piece), new Position(i), board, moveHistory, team));
+            }
+        }
+        return validMoves;
+    }
 
 
 
@@ -730,8 +740,8 @@ public class MoveValidator {
         }
         x = loc.file.value;
         y = loc.rank.value;
-        while(y < 7) {
-            y++;
+        while(y > 0) {
+            y--;
             Position next = new Position(x, y);
             int piece = board.getPiece(next);
             if(piece == (-team * 2) || piece == (-team * 5)) {
