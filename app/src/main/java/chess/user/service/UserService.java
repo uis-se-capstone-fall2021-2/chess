@@ -48,6 +48,11 @@ public class UserService {
   }
 
   public User provisionUser(Jwt principal) throws Exception {
+    User user = getUserById(principal.getSubject());
+    if(user != null) {
+      return user;
+    }
+
     Auth0UserInfo userInfo = fetchUserProfile(principal);
 
     int i = 0;

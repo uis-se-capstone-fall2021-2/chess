@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name="Players")
 @DiscriminatorColumn(name="PLAYER_TYPE", discriminatorType=DiscriminatorType.STRING)
 @NoArgsConstructor
-public abstract class Player {
+public abstract class Player implements IPlayer {
 
   public static class PlayerType {
     public static final String User = "User";

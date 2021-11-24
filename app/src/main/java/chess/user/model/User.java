@@ -1,12 +1,12 @@
 package chess.user.model;
 
 import javax.persistence.*;
-
-import chess.game.GameState;
-import chess.player.model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import chess.game.GameState;
+import chess.player.model.Player;
 
 
 @Entity
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name="Users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends Player {
+public class User extends Player implements IUser {
   public static class Fields {
     public static final String USER_ID = "USER_ID";
     public static final String USER_EMAIL = "USER_EMAIL";
