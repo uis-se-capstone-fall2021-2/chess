@@ -14,7 +14,6 @@ import chess.user.model.IUser;
 
 @AllArgsConstructor
 public abstract class CommandInterceptor {
-  protected final StompHeaderAccessor accessor;
 
   public abstract Message<?> handleMessage(Message<?> message, MessageChannel channel);
 

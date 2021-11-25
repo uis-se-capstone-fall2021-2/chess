@@ -10,7 +10,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
-
+import chess.game.service.GameService;
 import chess.security.ws.messageInterceptors.CommandInterceptor;
 import chess.security.ws.messageInterceptors.ConnectInterceptor;
 import chess.security.ws.messageInterceptors.SubscribeInterceptor;
@@ -25,6 +25,9 @@ public class StompInboundCommandInterceptor implements ChannelInterceptor {
   private final JwtDecoder jwtDecoder;
   @Autowired
   private final UserService userService;
+  @Autowired
+  private final GameService gameService;
+
   @Override
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -36,16 +39,18 @@ public class StompInboundCommandInterceptor implements ChannelInterceptor {
     CommandInterceptor interceptor;
     switch(command) {
       case CONNECT:
-        interceptor = new ConnectInterceptor(accessor, jwtDecoder, userService);
+        interceptor = new ConnectInterceptor(jwtDecoder, userService);
+        break;
       case SUBSCRIBE:
-        interceptor = new SubscribeInterceptor(accessor);
+        interceptor = new SubscribeInterceptor(gameService);
+        break;
       case UNSUBSCRIBE:
       case DISCONNECT:
       case ACK:
       case NACK:
         return message;
       default:
-        interceptor = new UnsupportedCommandInterceptor(accessor);
+        interceptor = new UnsupportedCommandInterceptor();
     }
 
     return interceptor.handleMessage(message, channel);

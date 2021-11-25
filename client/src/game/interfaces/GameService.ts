@@ -5,10 +5,9 @@ import {Player} from '../../player/interfaces/Player';
 import {PlayerColor} from '../../player/interfaces/PlayerColor';
 import {GameData, GameState} from './Game';
 import {GameId} from './GameId';
-import {GameStore} from './GameStore';
 
 export interface GameService {
-  on: Strongbus.Bus<GameStore.Events>['on'];
+  subscribe(gameId: GameId, handler: () => void): Strongbus.Subscription;
   getGame(gameId: GameId): GameData|null;
   fetchGameState(gameId: GameId): Promise<GameState>;
   createGame(params: {opponent: Player, playerColor: PlayerColor}): Promise<GameState>;

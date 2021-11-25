@@ -157,6 +157,20 @@ public class GameController {
     }
   }
 
+  @GetMapping("/")
+  public GameState[] getGameStates(
+    @Parameter(hidden=true) User user,
+    @RequestParam(value="id", required=true) Long[] gameIds
+  ) {
+    Result<GameState[], GameStateListErrorCode> result = gameService.getGameStates(gameIds, user.getPlayerId());
+
+    if(result.code != null) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return result.value;
+  }
+
   @GetMapping("/{id}")
   public GameState getGameState(
     @Parameter(hidden=true) User user,

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
@@ -19,16 +20,16 @@ public class ConnectInterceptor extends CommandInterceptor {
   private final UserService userService;
   
   public ConnectInterceptor(
-    StompHeaderAccessor accessor,
     JwtDecoder jwtDecoder,
     UserService userService
   ) {
-    super(accessor);
+    super();
     this.jwtDecoder = jwtDecoder;
     this.userService = userService;
   }
 
   public Message<?> handleMessage(Message<?> message, MessageChannel channel) {
+    final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
     final String token = accessor.getFirstNativeHeader(TOKEN_HEADER);
     Jwt principal = jwtDecoder.decode(token);
     if(principal == null) {
