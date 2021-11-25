@@ -104,7 +104,8 @@ export class GameServiceImpl implements GameService {
       realtimeGameUpdates = new GameSubscription({
         gameId,
         messagingService: this.messagingService,
-        onGameNotification: () => this.flaggedGames.add(gameId)
+        onGameUpdated: () => this.flaggedGames.add(gameId),
+        onGameDeleted: () => this.games.removeGame(gameId)
       });
       this.subscriptions.set(gameId, realtimeGameUpdates);
     }

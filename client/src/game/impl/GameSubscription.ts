@@ -9,13 +9,14 @@ export class GameSubscription {
   private readonly bus = new StrongBus.Bus<GameSubscription.Events>();
   private readonly messagingService: MessagingService;
   private readonly gameId: GameId;
-  private readonly onGameNotification: () => void;
+  private readonly onGameUpdated: () => void;
+  private readonly onGameDeleted: () => void;
   private subscription: () => void;
   
   constructor(params: GameSubscription.Params) {
     this.messagingService = params.messagingService;
     this.gameId = params.gameId;
-    this.onGameNotification = params.onGameNotification;
+    this.onGameUpdated = params.onGameUpdated;
     this.bus.hook('active', this.activateSubscription);
     this.bus.hook('idle', this.deactivateSubscription);
   }
@@ -25,11 +26,17 @@ export class GameSubscription {
   }
 
   private async activateSubscription() {
-    const subscribed = await this.messagingService.subscribe(
-      `/games/${this.gameId}`,
-      this.onGameNotification
-    );
-    this.subscription = () => subscribed.unsubscribe();
+    const subs = await Promise.all([
+      this.messagingService.subscribe(
+        `/games/${this.gameId}/update`,
+        this.onGameUpdated
+      ),
+      this.messagingService.subscribe(
+        `/games/${this.gameId}/delete`,
+        this.onGameDeleted
+      )
+    ]);
+    this.subscription = () => subs.forEach(s => s.unsubscribe());
   }
 
   private deactivateSubscription() {
@@ -41,7 +48,8 @@ export namespace GameSubscription {
   export interface Params {
     messagingService: MessagingService;
     gameId: GameId;
-    onGameNotification: () => void;
+    onGameUpdated: () => void;
+    onGameDeleted: () => void;
   }
 
   export interface Events {

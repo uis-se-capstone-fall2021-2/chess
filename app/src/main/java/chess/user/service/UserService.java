@@ -29,14 +29,16 @@ public class UserService {
   private final ObjectMapper jsonParser = new ObjectMapper();
 
   public User getUserById(String userId) {
-    return users.getUserById(userId);
+    User user = users.getUserById(userId);
+    return user;
   }
 
   public User getUserByDisplayName(String displayName) {
-    return users.getUserByDisplayName(displayName);
+    User user = users.getUserByDisplayName(displayName);
+    return user;
   }
 
-  public Auth0UserInfo fetchUserProfile(Jwt principal) throws Exception {
+  private Auth0UserInfo fetchUserProfile(Jwt principal) throws Exception {
     HttpRequest req = HttpRequest.newBuilder()
         .GET()
         .uri(URI.create(String.format("%suserinfo", issuer)))
@@ -61,11 +63,13 @@ public class UserService {
       displayName = String.format("%s_%d", displayName, ++i);
     }
 
-    return users.createUser(
+    user = users.createUser(
       userInfo.sub,
       userInfo.email,
       displayName
     );
+
+    return user;
   }
 }
 
