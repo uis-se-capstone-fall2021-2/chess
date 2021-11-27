@@ -43,6 +43,6 @@ public class User extends Player implements IUser {
       return;
     }
     NotificationService notificationService = springApplicationContext.getBean(NotificationService.class);
-    notificationService.sendGameUpdateNotification(gameState.gameId);
+    notificationService.sendGameUpdateNotificationToUser(gameState.gameId, getUserId());
   }
 }

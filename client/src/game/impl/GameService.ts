@@ -7,6 +7,7 @@ import {MessagingService} from '../../messaging/interfaces';
 
 import {Player} from '../../player/interfaces/Player';
 import {PlayerColor} from '../../player/interfaces/PlayerColor';
+import {User} from '../../user/interfaces';
 import {Resource} from '../../utils/resource/interfaces';
 import {GameId, GameData, GameService, GameState, GameStore} from '../interfaces';
 import {GameSubscription} from './GameSubscription';
@@ -16,6 +17,8 @@ import {GameSubscription} from './GameSubscription';
 @autobind
 export class GameServiceImpl implements GameService {
 
+  @Inject(User.Token)
+  private readonly user: User;
   @Inject(GameStore.Token)
   private readonly games: GameStore;
   @Resource('/api/v1/games')
@@ -102,6 +105,7 @@ export class GameServiceImpl implements GameService {
     let realtimeGameUpdates = this.subscriptions.get(gameId);
     if(!realtimeGameUpdates) {
       realtimeGameUpdates = new GameSubscription({
+        user: this.user,
         gameId,
         messagingService: this.messagingService,
         onGameUpdated: () => this.flaggedGames.add(gameId),

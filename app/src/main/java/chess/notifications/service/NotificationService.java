@@ -13,7 +13,7 @@ public class NotificationService {
   private final SimpMessagingTemplate template;
 
   public void sendGameUpdateNotificationToUser(long gameId, String userId) {
-    template.convertAndSend(String.format("/users/%s/games/%d/update", gameId, userId), "{}");
+    template.convertAndSend(String.format("/users/%s/games/%d/update", userId, gameId), "{}");
   }
 
   public void sendGameUpdateNotification(long gameId) {
