@@ -2,11 +2,8 @@ package chess.player.model;
 
 import javax.persistence.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
 import chess.game.GameState;
-import chess.notifications.service.NotificationService;
+import chess.util.persistence.ContextAwareEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +16,7 @@ import lombok.NoArgsConstructor;
 @DiscriminatorColumn(name="PLAYER_TYPE", discriminatorType=DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor
-@Configurable
-public abstract class Player implements IPlayer {
+public abstract class Player extends ContextAwareEntity implements IPlayer {
 
   public static class PlayerType {
     public static final String User = "User";
@@ -47,10 +43,6 @@ public abstract class Player implements IPlayer {
     return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }
 
-  @Transient
-  @Autowired
-  protected NotificationService notificationService;
-
   public PlayerInfo info() {
     return new PlayerInfo(
       getPlayerId(),
@@ -60,4 +52,7 @@ public abstract class Player implements IPlayer {
   }
 
   public abstract void notify(GameState gameState);
+  
 }
+
+
