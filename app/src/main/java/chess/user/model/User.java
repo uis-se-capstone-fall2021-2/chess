@@ -29,9 +29,6 @@ public class User extends Player implements IUser {
     this.email = email;
   }
 
-  @Transient
-  private NotificationService notificationService;
-
   @Column(name=Fields.USER_ID, unique=true)
   @Getter
   private String userId;
@@ -40,15 +37,12 @@ public class User extends Player implements IUser {
   @Getter
   private String email;
 
-  public void setNotificationService(NotificationService notificationService) {
-    this.notificationService = notificationService;
-  }
-
   public void notify(GameState gameState) {
-    if(notificationService == null) {
-      System.out.println(String.format("NotificationService not set for user %s", getDisplayName()));
+    if(springApplicationContext == null) {
+      System.out.println(String.format("Application not set for for user entity %s", getDisplayName()));
       return;
     }
+    NotificationService notificationService = springApplicationContext.getBean(NotificationService.class);
     notificationService.sendGameUpdateNotification(gameState.gameId);
   }
 }
