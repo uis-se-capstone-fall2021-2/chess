@@ -33,11 +33,11 @@ import {
   Link
 } from 'react-router-dom';
 
-
-import '../../player/impl/PlayerService';
-import '../../player/impl/PlayerStore';
 import '../../game/impl/GameService';
 import '../../game/impl/GameStore';
+import '../../messaging/impl/MessagingService';
+import '../../player/impl/PlayerService';
+import '../../player/impl/PlayerStore';
 import '../../utils/resource/ResourceFactory.impl';
 
 import {User} from '../../user/interfaces';

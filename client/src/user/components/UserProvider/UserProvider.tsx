@@ -48,7 +48,7 @@ export class UserProvider extends React.Component<UserProvider.Props, UserProvid
   private async loadUser(auth0user: Auth0ContextInterface<Auth0User>): Promise<void> {
     const token = await auth0user.getAccessTokenSilently();
     try {
-      const {data: userInfo} = await axios.get<User>(`${this.apiHost}/api/v1/user`, {
+      const {data: userInfo} = await axios.get<User>(`http://${this.apiHost}/api/v1/user`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
