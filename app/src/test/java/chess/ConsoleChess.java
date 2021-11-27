@@ -13,23 +13,28 @@ public class ConsoleChess {
 
 
     public static void main(String[] args) {
-        Game game = new Game(0,1,0);
-        Advanced ai = new Advanced(PlayerColor.BLACK);
+        Game game = new Game(1,0,1);
+        Advanced ai = new Advanced(PlayerColor.WHITE);
         Scanner scan = new Scanner(System.in);
 
 
         while(true) {
 
+
+            System.out.println(game.currentPlayerColor() + " to move ");
+            MoveIntent aiMove = ai.chooseMove(game.getGameState(), game.getMoveHistory());
+            game.move(1, aiMove);
+            System.out.println("AI has moved");
             if(game.getStatus() == GameStatus.COMPLETE) {
                 System.out.println("Game has ended: Winning PlayerID: " + game.getWinner());
                 break;
             }
-
             drawChessBoard(game);
             System.out.println(game.currentPlayerColor() + " to move ");
             System.out.print("Enter a move (\"e2 e4\"): ");
             String moveChoice = scan.nextLine();
             MoveIntent intendedMove = stringToMoveIntent(moveChoice, game.getBoard());
+            System.out.println("Move: " + intendedMove.from.toString() + " -> " + intendedMove.to.toString());
             if(!game.move(0, intendedMove)){
                 System.out.println("INVALID MOVE");
                 continue;
@@ -39,10 +44,7 @@ public class ConsoleChess {
                 break;
             }
             drawChessBoard(game);
-            System.out.println(game.currentPlayerColor() + " to move ");
-            MoveIntent aiMove = ai.chooseMove(game.getGameState(), game.getMoveHistory());
-            game.move(1, aiMove);
-            System.out.println("AI has moved");
+
         }
         scan.close();
     }

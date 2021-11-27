@@ -37,12 +37,14 @@ public class BoardTree {
         r = new Random();
     }
 
-    public int minimax(int depth, int alpha, int beta, Node node, boolean maximize) {
+    public int minimax(int depth, int alpha, int beta, Node node, boolean maximize, PlayerColor team) {
         treeSize++;
         if(depth == 0) {
             return ChessAI.getBoardScore(node.board);
         }
-        PlayerColor team = (node.history.size() % 2 == 0) ? PlayerColor.WHITE : PlayerColor.BLACK;
+    
+        PlayerColor opponent = (team == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
+
         List<MoveIntent> legalMoves = MoveValidator.getAllValidMoves(node.board, node.history, team);
         if(maximize) {
             //maximize
@@ -53,8 +55,7 @@ public class BoardTree {
                 tempBoard.updateBoard(legalMoves.get(i));
 
                 Node newNode = new Node(tempBoard, updatedHistory);
-                node.children.add(newNode);
-                bestMove = Math.max(bestMove, minimax(depth - 1, alpha, beta, newNode, !maximize ));
+                bestMove = Math.max(bestMove, minimax(depth - 1, alpha, beta, newNode, !maximize , opponent));
                 alpha = Math.max(bestMove, alpha);
                 if(beta <= alpha) {
                     return bestMove;
@@ -69,9 +70,8 @@ public class BoardTree {
                 List<MoveIntent> updatedHistory = new ArrayList<>(node.history);
                 tempBoard.updateBoard(legalMoves.get(i));
                 Node newNode = new Node(tempBoard, updatedHistory);
-                node.children.add(newNode);
-                bestMove = Math.min(bestMove, minimax(depth - 1, alpha, beta, newNode, !maximize ));
-                beta = Math.min(bestMove, alpha);
+                bestMove = Math.min(bestMove, minimax(depth - 1, alpha, beta, newNode, !maximize , opponent));
+                beta = Math.min(bestMove, beta);
                 if(beta <= alpha) {
                     return bestMove;
                 }
@@ -81,49 +81,38 @@ public class BoardTree {
         
     }
 
-    public MoveIntent findMinimaxMove() {
-        PlayerColor cteam = (head.history.size() % 2 == 0) ? PlayerColor.WHITE : PlayerColor.BLACK;
-        List<MoveIntent> potentialMoves = MoveValidator.getAllValidMoves(head.board, head.history, cteam);
-        List<Integer> minimaxValues = new ArrayList<>();
+    public MoveIntent findMinimaxMove(PlayerColor team) {
+        List<MoveIntent> potentialMoves = MoveValidator.getAllValidMoves(head.board, head.history, team);
+        PlayerColor opponent = (team == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
 
-        for(MoveIntent move : potentialMoves) {
+        int largest = -9999;
+        int smallest = 9999;
+        int largestIndex = 0;
+        int smallestIndex = 0;
+        for(int i = 0; i < potentialMoves.size(); i++) {
+            MoveIntent move = potentialMoves.get(i);
             Node newNode = new Node(head.board, head.history);
             newNode.board.updateBoard(move);
             newNode.history.add(move);
-            int newNodeValue = minimax(ChessAI.MINIMAX_DEPTH, -9999, 9999, newNode, cteam == PlayerColor.WHITE);
-            minimaxValues.add(newNodeValue);
-        }
-        List<Integer> goodMoves = new ArrayList<>();
-        int smallest = 9999;
-        int largest = -9999;
+            int newNodeValue;
+            newNodeValue = (team == PlayerColor.BLACK) 
+            ? minimax(ChessAI.MINIMAX_DEPTH, -9999, 9999, newNode, true, opponent)
+            : minimax(ChessAI.MINIMAX_DEPTH, -9999, 9999, newNode, false, opponent);
 
-        for(int i = 0; i < minimaxValues.size(); i++){
-            if(minimaxValues.get(i) > largest){
-                largest = minimaxValues.get(i);
+            if(newNodeValue > largest) {
+                largest = newNodeValue;
+                largestIndex = i;
             }
-            if(minimaxValues.get(i) < smallest) {
-                smallest = minimaxValues.get(i);
+            if(newNodeValue < smallest) {
+                smallest = newNodeValue;
+                smallestIndex = i;
             }
         }
-        if(cteam == PlayerColor.WHITE) {
-            //get a largest
-            System.out.println("(Largest) Chosen move value is : " + largest);
-            for(int i = 0; i < minimaxValues.size(); i++) {
-                if(minimaxValues.get(i) == largest) {
-                    goodMoves.add(i);
-                }
-            }
+        if(team == PlayerColor.WHITE) {
+            return potentialMoves.get(largestIndex);
         } else {
-            System.out.println("(Smallest) Chosen move value is : " + smallest);
-            for(int i = 0; i < minimaxValues.size(); i++) {
-                if(minimaxValues.get(i) == smallest) {
-                    goodMoves.add(i);
-                }
-            }
+            return potentialMoves.get(smallestIndex);
         }
-
-        int chosenIndex = r.nextInt(goodMoves.size());
-        return potentialMoves.get(chosenIndex);
     }
 
 }

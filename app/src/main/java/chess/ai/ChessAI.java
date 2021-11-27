@@ -1,8 +1,4 @@
 package chess.ai;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import chess.MoveIntent;
@@ -13,7 +9,149 @@ import chess.player.model.Player;
 
 public abstract class ChessAI extends Player {
 
-    static final int MINIMAX_DEPTH = 5;
+
+    //Square tables fro each piece to encourage certain behaviour from ai.
+    private static final int[][] pawnSquareTable = {
+        {
+            0,  0,  0,  0,  0,  0,  0,  0,
+            50, 50, 50, 50, 50, 50, 50, 50,
+            10, 10, 20, 30, 30, 20, 10, 10,
+            5,  5, 10, 25, 25, 10,  5,  5,
+            0,  0,  0, 20, 20,  0,  0,  0,
+            5, -5,-10,  0,  0,-10, -5,  5,
+            5, 10, 10,-20,-20, 10, 10,  5,
+            0,  0,  0,  0,  0,  0,  0,  0
+        },
+        {
+            0,  0,  0,  0,  0,  0,  0,  0,
+            5, 10, 10,-20,-20, 10, 10,  5,
+            5, -5,-10,  0,  0,-10, -5,  5,
+            0,  0,  0, 20, 20,  0,  0,  0,
+            5,  5, 10, 25, 25, 10,  5,  5,
+            10, 10, 20, 30, 30, 20, 10, 10,
+            50, 50, 50, 50, 50, 50, 50, 50,
+            0,  0,  0,  0,  0,  0,  0,  0    
+        }
+    };
+
+    private static final int[][] knightSquareTable = {
+        {
+            -50,-40,-30,-30,-30,-30,-40,-50,
+            -40,-20,  0,  0,  0,  0,-20,-40,
+            -30,  0, 10, 15, 15, 10,  0,-30,
+            -30,  5, 15, 20, 20, 15,  5,-30,
+            -30,  0, 15, 20, 20, 15,  0,-30,
+            -30,  5, 10, 15, 15, 10,  5,-30,
+            -40,-20,  0,  5,  5,  0,-20,-40,
+            -50,-40,-30,-30,-30,-30,-40,-50 
+        },
+        {
+            -50,-40,-30,-30,-30,-30,-40,-50, 
+            -40,-20,  0,  5,  5,  0,-20,-40,
+            -30,  5, 10, 15, 15, 10,  5,-30,
+            -30,  0, 15, 20, 20, 15,  0,-30,
+            -30,  5, 15, 20, 20, 15,  5,-30,
+            -30,  0, 10, 15, 15, 10,  0,-30,
+            -40,-20,  0,  0,  0,  0,-20,-40,
+            -50,-40,-30,-30,-30,-30,-40,-50
+        }
+    };
+    private static final int[][] bishopSquareTable = {
+        {
+            -20,-10,-10,-10,-10,-10,-10,-20,
+            -10,  0,  0,  0,  0,  0,  0,-10,
+            -10,  0,  5, 10, 10,  5,  0,-10,
+            -10,  5,  5, 10, 10,  5,  5,-10,
+            -10,  0, 10, 10, 10, 10,  0,-10,
+            -10, 10, 10, 10, 10, 10, 10,-10,
+            -10,  5,  0,  0,  0,  0,  5,-10,
+            -20,-10,-10,-10,-10,-10,-10,-20
+        }, 
+        {
+            -20,-10,-10,-10,-10,-10,-10,-20,
+            -10,  5,  0,  0,  0,  0,  5,-10,
+            -10, 10, 10, 10, 10, 10, 10,-10,
+            -10,  0, 10, 10, 10, 10,  0,-10,
+            -10,  5,  5, 10, 10,  5,  5,-10,
+            -10,  0,  5, 10, 10,  5,  0,-10,
+            -10,  0,  0,  0,  0,  0,  0,-10,
+            -20,-10,-10,-10,-10,-10,-10,-20
+        }
+       
+    };
+    private static final int[][] rookSquareTable = {
+        {
+            0,  0,  0,  0,  0,  0,  0,  0,
+            5, 10, 10, 10, 10, 10, 10,  5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            0,  -5,  0,  5,  5,  0,  -5,  0
+        },
+        {
+            0,  -5,  0,  5,  5,  0,  -5,  0,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            -5,  0,  0,  0,  0,  0,  0, -5,
+            5, 10, 10, 10, 10, 10, 10,  5,
+            0,  0,  0,  0,  0,  0,  0,  0
+        }
+
+    };
+    private static final int[][] queenSquareTable = {
+        {
+            -20,-10,-10, -5, -5,-10,-10,-20,
+            -10,  0,  0,  0,  0,  0,  0,-10,
+            -10,  0,  5,  5,  5,  5,  0,-10,
+             -5,  0,  5,  5,  5,  5,  0, -5,
+             -5,  0,  5,  5,  5,  5,  0, 0,
+            -10,  0,  5,  5,  5,  5,  5,-10,
+            -10,  0,  0,  0,  0,  5,  0,-10,
+            -20,-10,-10, -5, -5,-10,-10,-20
+        },
+        {
+            -20,-10,-10, -5, -5,-10,-10,-20,
+            -10,  0,  0,  0,  0,  5,  0,-10,
+            -10,  0,  5,  5,  5,  5,  5,-10,
+             -5,  0,  5,  5,  5,  5,  0, 0,
+             -5,  0,  5,  5,  5,  5,  0, -5,
+            -10,  0,  5,  5,  5,  5,  0,-10,
+            -10,  0,  0,  0,  0,  0,  0,-10,
+            -20,-10,-10, -5, -5,-10,-10,-20
+        }
+    };
+    private static final int[][] kingSquareTable = {
+        {
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -20,-30,-30,-40,-40,-30,-30,-20,
+            -10,-20,-20,-20,-20,-20,-20,-10,
+             20, 20,  0,  0,  0,  0, 20, 20,
+             20, 30, 10,  0,  0, 10, 30, 20
+        },
+        {
+            20, 30, 10,  0,  0, 10, 30, 20,
+            20, 20,  0,  0,  0,  0, 20, 20,
+            -10,-20,-20,-20,-20,-20,-20,-10,
+            -20,-30,-30,-40,-40,-30,-30,-20,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30,
+            -30,-40,-40,-50,-50,-40,-40,-30
+        }
+
+    };
+
+
+
+
+    static final int MINIMAX_DEPTH = 4;
 
     public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
 
@@ -35,23 +173,55 @@ public abstract class ChessAI extends Player {
         //TODO: does notify need to do anything for AI?
     }
     // returns simple piece values
-    protected static int getPieceValue(int piece) {
+    protected static int getPieceValue(int piece, int location) {
         if(piece == 0) return 0;
         int team = piece / Math.abs(piece);
+        int locationModifier = 0;
         switch(Math.abs(piece)) {
             case 0:
             return 0;
             case 1:
-            return 10 * team;
+            if(team == 1) {
+                locationModifier = pawnSquareTable[0][location];
+            } else {
+                locationModifier = -pawnSquareTable[1][location];
+            }
+            return (100 * team) + locationModifier;
             case 2:
-            return 32 * team;
+            if(team == 1) {
+                locationModifier = rookSquareTable[0][location];
+            } else {
+                locationModifier = -rookSquareTable[1][location];
+            }
+            return (500 * team) + locationModifier;
             case 3:
+            if(team == 1) {
+                locationModifier = knightSquareTable[0][location];
+            } else {
+                locationModifier = -knightSquareTable[1][location];
+            }
+            return (320 * team) + locationModifier;
             case 4:
-            return 33 * team;
+            if(team == 1) {
+                locationModifier = bishopSquareTable[0][location];
+            } else {
+                locationModifier = -bishopSquareTable[1][location];
+            }
+            return (330 * team) + locationModifier;
             case 5:
-            return 91 * team;
+            if(team == 1) {
+                locationModifier = queenSquareTable[0][location];
+            } else {
+                locationModifier = -queenSquareTable[1][location];
+            }
+            return (900 * team) + locationModifier;
             case 6:
-            return 900 * team;
+            if(team == 1) {
+                locationModifier = kingSquareTable[0][location];
+            } else {
+                locationModifier = -kingSquareTable[1][location];
+            }
+            return (20000 * team) + locationModifier;
             default:
             return 0;
 
@@ -61,7 +231,7 @@ public abstract class ChessAI extends Player {
         int boardScore = 0;
         for(int i = 0; i < board.board.length; i++){
             int piece = board.board[i];
-            boardScore += getPieceValue(piece);
+            boardScore += getPieceValue(piece, i);
         }
         return boardScore;
     }
