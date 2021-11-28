@@ -6,6 +6,9 @@ import chess.ai.Advanced;
 import chess.ai.ChessAI;
 import chess.board.Board;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -67,28 +70,28 @@ public class ConsoleChess {
         int x=0, y=0;
         switch(input.charAt(0)) {
             case 'a':
-            x = 7;
+            x = 0;
             break;
             case 'b':
-            x = 6;
-            break;
-            case 'c':
-            x = 5;
-            break;
-            case 'd':
-            x = 4;
-            break;
-            case 'e':
-            x = 3;
-            break;
-            case 'f':
-            x = 2;
-            break;
-            case 'g':
             x = 1;
             break;
+            case 'c':
+            x = 2;
+            break;
+            case 'd':
+            x = 3;
+            break;
+            case 'e':
+            x = 4;
+            break;
+            case 'f':
+            x = 5;
+            break;
+            case 'g':
+            x = 6;
+            break;
             case 'h':
-            x = 0;
+            x = 7;
             break;
         }
         switch(input.charAt(1)) {
@@ -124,10 +127,29 @@ public class ConsoleChess {
     public static void drawChessBoard(Game g){
         System.out.println();
         Board board = g.getBoard();
-        for(int i = board.board.length - 1; i >= 0; i--) {
-            System.out.print(getPieceLetter(board.getPiece(new Position(i))) + " ");
-            if(i%8==0) System.out.print("\n");
+        // for(int i = board.board.length - 1; i >= 0; i--) {
+        //     System.out.print(getPieceLetter(board.getPiece(new Position(i))) + " ");
+        //     if(i%8==0) System.out.print("\n");
+        // }
+
+        List<List<Integer>> rows = new ArrayList<>();
+        List<Integer> thisRow = new ArrayList<>();
+        for(int i = 0; i < board.board.length; i++){
+            if(i%8==0 && i>0) {
+                rows.add(thisRow);
+                thisRow = new ArrayList<>();
+            }
+            thisRow.add(board.board[i]);
         }
+        rows.add(thisRow);
+        Collections.reverse(rows);
+        for(List<Integer> row : rows){
+            for(Integer item : row) {
+                System.out.print(getPieceLetter(item) + " ");
+            }
+            System.out.println();
+        }
+
         System.out.println(ChessAI.getBoardScore(g.getBoard()));
         System.out.println();
     }

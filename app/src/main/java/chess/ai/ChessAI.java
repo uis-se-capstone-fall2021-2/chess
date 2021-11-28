@@ -151,7 +151,7 @@ public abstract class ChessAI extends Player {
 
 
 
-    static final int MINIMAX_DEPTH = 4;
+    static final int MINIMAX_DEPTH = 3;
 
     public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
 

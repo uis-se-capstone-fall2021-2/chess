@@ -1,32 +1,34 @@
 package chess.board;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import chess.*;
 public class Board implements IBoard {
     public final int[] board;
 
     public Board() {
         board = new int[] {
-            2,3,4,6,5,4,3,2,
+            2,3,4,5,6,4,3,2,
             1,1,1,1,1,1,1,1,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             -1,-1,-1,-1,-1,-1,-1,-1,
-            -2,-3,-4,-6,-5,-4,-3,-2
+            -2,-3,-4,-5,-6,-4,-3,-2
         };
     }
 
     public Board(ArrayList<MoveIntent> moveRecord) {
         board = new int[] {
-            2,3,4,6,5,4,3,2,
+            2,3,4,5,6,4,3,2,
             1,1,1,1,1,1,1,1,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,
             -1,-1,-1,-1,-1,-1,-1,-1,
-            -2,-3,-4,-6,-5,-4,-3,-2
+            -2,-3,-4,-5,-6,-4,-3,-2
         };
 
         // replay the moves to bring the board to current state
@@ -40,10 +42,7 @@ public class Board implements IBoard {
     }
 
     public Board copy() {
-        int[] newBoard = new int[board.length];
-        for(int i = 0; i < board.length; i++) {
-            newBoard[i] = board[i];
-        }
+        int[] newBoard = Arrays.copyOf(board, board.length);
         return new Board(newBoard);
     }
 
