@@ -101,14 +101,20 @@ public class Board implements IBoard {
     public int inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
-        if(MoveValidator.positionUnderThreat(bKing, -1, this)) {
-            return -1;
-
-        }      
-        if(MoveValidator.positionUnderThreat(wKing, 1, this)) {
-            return 1;
+        boolean blackInCheck = MoveValidator.positionUnderThreat(bKing, -1, this);
+        boolean whiteInCheck = MoveValidator.positionUnderThreat(wKing, 1, this);
+        if(whiteInCheck && blackInCheck) {
+            // avoid a situation where white's move is seen as valid because it 
+            // puts black in check, despite white actually being in check.
+            return 2;
+        } else {
+            if(whiteInCheck){
+                return 1;
+            }
+            if(blackInCheck){
+                return -1;
+            }
         }
-            
 
         return 0;
 

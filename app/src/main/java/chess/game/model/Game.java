@@ -216,10 +216,6 @@ public class Game {
 
         board.updateBoard(intent);
 
-        // TODO: check if the move was a castle, and move the rook as well in those cases
-
-        // TODO: check if the move was an en passant, and remove the captured pawn in that case.
-
         //if opponent no longer has any valid moves, && their king is in check, the game in won.
         if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
           if(board.inCheck() != 0 ) {

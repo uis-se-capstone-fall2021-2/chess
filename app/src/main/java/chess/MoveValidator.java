@@ -594,7 +594,7 @@ public class MoveValidator {
         for(MoveIntent move : validMoves) {
             Board tempBoard = board.copy();
             tempBoard.updateBoard(move);
-            if(tempBoard.inCheck() != playerColor.value) {
+            if(tempBoard.inCheck() != playerColor.value && tempBoard.inCheck() != 2) {
                 validMovesNotInCheck.add(move);
             }
         }
