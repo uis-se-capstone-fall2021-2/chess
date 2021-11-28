@@ -3,6 +3,8 @@ package chess.player.model;
 import javax.persistence.*;
 
 import chess.game.GameState;
+import chess.util.persistence.ContextAwareEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Table(name="Players")
 @DiscriminatorColumn(name="PLAYER_TYPE", discriminatorType=DiscriminatorType.STRING)
 @NoArgsConstructor
-public abstract class Player {
+@AllArgsConstructor
+public abstract class Player extends ContextAwareEntity implements IPlayer {
 
   public static class PlayerType {
     public static final String User = "User";
@@ -36,7 +39,6 @@ public abstract class Player {
   @Setter
   private String displayName;
 
-  @Transient
   public String getPlayerType() {
     return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }
@@ -50,4 +52,7 @@ public abstract class Player {
   }
 
   public abstract void notify(GameState gameState);
+  
 }
+
+

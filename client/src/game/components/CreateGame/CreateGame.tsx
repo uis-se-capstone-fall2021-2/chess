@@ -29,9 +29,23 @@ export class CreateGame extends React.Component<CreateGame.Props, CreateGame.Sta
       <Box>
         <Typography variant='h4'>New Game</Typography>
         <Box sx={{display: 'flex', flexDirection: 'row', flexBasis: 'min-content'}}>
-          <Box sx={{display: 'flex', flexDirection: 'column'}}>
+          <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: {
+                xs: 1,
+                sm: 0
+              }
+            }}>
             <Typography>Opponent</Typography>
-            <Box sx={{display: 'flex', flexDirection: 'row'}}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                width: {
+                  xs: '100%'
+                }
+              }}>
               <Select
                 id='opponent-type-select'
                 labelId='opponent-type-select__label'

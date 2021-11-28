@@ -32,6 +32,11 @@ public class GameService implements IGameService {
     return game.info();
   }
 
+  public Game getGame(long gameId) {
+    Game game = games.getGameById(gameId);
+    return game;
+  }
+
   public Result<GameInfo, CreateGameErrorCode> createGame(long playerId, PlayerColor playerColor, long opponentId) {
     if(players.getPlayerById(playerId) == null) {
       return new Result<GameInfo, CreateGameErrorCode>(CreateGameErrorCode.UNKNOWN_PLAYER);
@@ -169,6 +174,14 @@ public class GameService implements IGameService {
       return new Result<GameState, GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
     }
     return new Result<GameState, GameStateErrorCode>(game.getGameState());
+  }
+
+  public Result<GameState[], GameStateListErrorCode> getGameStates(Long[] gameIds, long playerId) {
+   return new Result<GameState[], GameStateListErrorCode>(
+    games.getGamesForPlayerById(playerId, gameIds)
+      .stream()
+      .map((Game game) -> game.getGameState())
+      .toArray(GameState[]::new));
   }
 
   public Result<GameState, UpdateGameErrorCode> move(long gameId, long playerId, MoveIntent moveIntent) {

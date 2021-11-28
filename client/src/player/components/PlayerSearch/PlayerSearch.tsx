@@ -24,7 +24,12 @@ export class PlayerSearch extends React.Component<PlayerSearch.Props, PlayerSear
     }));
     return (
       <Autocomplete
-        sx={{width: 350}}
+        sx={{
+          width: {
+            xs: '100%',
+            sm: '350px'
+          }
+        }}
         options={options}
         onChange={this.selectPlayer}
         renderInput={(params: AutocompleteRenderInputParams) => (
