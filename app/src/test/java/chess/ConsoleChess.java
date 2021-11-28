@@ -127,10 +127,6 @@ public class ConsoleChess {
     public static void drawChessBoard(Game g){
         System.out.println();
         Board board = g.getBoard();
-        // for(int i = board.board.length - 1; i >= 0; i--) {
-        //     System.out.print(getPieceLetter(board.getPiece(new Position(i))) + " ");
-        //     if(i%8==0) System.out.print("\n");
-        // }
 
         List<List<Integer>> rows = new ArrayList<>();
         List<Integer> thisRow = new ArrayList<>();

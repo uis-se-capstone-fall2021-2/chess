@@ -508,67 +508,68 @@ public class MoveValidator {
 
                 // King wants to castle:
                 // white king king side castle
-                if(x == 3 && y == 0 && board.getPiece(new Position(1, 0)) == 0 && board.getPiece(new Position(2, 0)) == 0){
+                if(x == 4 && y == 0 && board.getPiece(new Position(5, 0)) == 0 && board.getPiece(new Position(6, 0)) == 0){
                     boolean legalMoveFlag = true;
                     for(MoveIntent move : moveRecord){
                         // if the king or the rook has ever moved, cannot castle
-                        if(move.from.equals(new Position(0,0)) || move.from.equals(new Position(3,0))) {
+                        if(move.from.equals(new Position(7,0)) || move.from.equals(new Position(4,0))) {
                             legalMoveFlag = false;
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(2, 0), 1, board)) {
+                    if(positionUnderThreat(new Position(5, 0), 1, board) || positionUnderThreat(new Position(6, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
-                        locationsToCheck.add(new Position(x - 2, y));
+                        locationsToCheck.add(new Position(x + 2, y));
                 }
                 // white king queen side castle
-                if(x == 3 && y == 0 && board.getPiece(new Position(4, 0)) == 0 && board.getPiece(new Position(5, 0)) == 0 && board.getPiece(new Position(6, 0)) == 0){
+                if(x == 4 && y == 0 && board.getPiece(new Position(1, 0)) == 0 && board.getPiece(new Position(2, 0)) == 0 && board.getPiece(new Position(3, 0)) == 0){
                     boolean legalMoveFlag = true;
                     for(MoveIntent move : moveRecord){
-                        if(move.from.equals(new Position(7,0)) || move.from.equals(new Position(3,0))) {
+                        if(move.from.equals(new Position(0,0)) || move.from.equals(new Position(4,0))) {
                             // if the king or the rook has ever moved, cannot castle
                             legalMoveFlag = false;
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(4, 0), 1, board)) {
-                        legalMoveFlag = false;
-                    }
-                    if(legalMoveFlag)
-                        locationsToCheck.add(new Position(x + 2, y));
-                }
-                // black king side castle
-                if(x == 3 && y == 6 && board.getPiece(new Position(1,6)) == 0 && board.getPiece(new Position(2,6)) == 0){
-                    boolean legalMoveFlag = true;
-                    for(MoveIntent move : moveRecord){
-                        // if the king or the rook has ever moved, cannot castle
-                        if(move.from.equals(new Position(0, 6))  || move.from.equals(new Position(3, 6))) {
-                            legalMoveFlag = false;
-                        }
-                    }
-                    // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(2, 6), -1, board)) {
+                    if(positionUnderThreat(new Position(4, 0), 1, board) || positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(2, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
                         locationsToCheck.add(new Position(x - 2, y));
                 }
-                if(x == 3 && y == 6 && board.getPiece(new Position(4,6)) == 0 && board.getPiece(new Position(5,6)) == 0){
+                // black king side castle
+                if(x == 4 && y == 7 && board.getPiece(new Position(6,7)) == 0 && board.getPiece(new Position(5,7)) == 0){
                     boolean legalMoveFlag = true;
                     for(MoveIntent move : moveRecord){
                         // if the king or the rook has ever moved, cannot castle
-                        if(move.from.equals(new Position(6, 6))  || move.from.equals(new Position(3, 6))) {
+                        if(move.from.equals(new Position(7, 7))  || move.from.equals(new Position(4, 7))) {
                             legalMoveFlag = false;
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 6), -1, board) || positionUnderThreat(new Position(4, 6), -1, board)) {
+                    if(positionUnderThreat(new Position(5, 7), -1, board) || positionUnderThreat(new Position(6, 7), -1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
                         locationsToCheck.add(new Position(x + 2, y));
+                }
+                //black queen side castle
+                if(x == 4 && y == 7 && board.getPiece(new Position(3,7)) == 0 && board.getPiece(new Position(2,7)) == 0 && board.getPiece(new Position(1,7)) == 0){
+                    boolean legalMoveFlag = true;
+                    for(MoveIntent move : moveRecord){
+                        // if the king or the rook has ever moved, cannot castle
+                        if(move.from.equals(new Position(0, 7))  || move.from.equals(new Position(4, 7))) {
+                            legalMoveFlag = false;
+                        }
+                    }
+                    // cannot castle when a king has to pass thru threatened square, or is in check.
+                    if(positionUnderThreat(new Position(3, 7), -1, board) || positionUnderThreat(new Position(2, 7), -1, board) || positionUnderThreat(new Position(1, 7), -1, board)) {
+                        legalMoveFlag = false;
+                    }
+                    if(legalMoveFlag)
+                        locationsToCheck.add(new Position(x - 2, y));
                 }
 
                 for(Position endPos : locationsToCheck) {
