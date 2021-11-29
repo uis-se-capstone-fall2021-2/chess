@@ -26,4 +26,7 @@ public class MoveIntent {
     public int hashCode() {
         return Objects.hash(chessPiece, from.hashCode(), to.hashCode(), promotion);
     }
+    public String toString() {
+        return from.toString() + " -> " + to.toString();
+    }
 }

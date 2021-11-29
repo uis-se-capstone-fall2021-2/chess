@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import chess.MoveIntent;
 import chess.PlayerColor;
+import chess.ai.model.ChessBots;
 import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
@@ -13,16 +14,19 @@ import chess.game.service.errorCodes.*;
 import chess.player.model.Player;
 import chess.player.model.Players;
 import chess.util.Result;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class GameService implements IGameService {
 
-  @Autowired
   private final Games games;
-  @Autowired
   private final Players players;
+
+  @Autowired
+  public GameService(Games games, Players players, ChessBots chessBots) {
+    this.games = games;
+    this.players = players;
+    chessBots.createBotsAsNeeded();
+  }
 
   public GameInfo getGameInfo(long gameId) {
     Game game = games.getGameById(gameId);
@@ -208,7 +212,7 @@ public class GameService implements IGameService {
     GameState state = game.getGameState();
     for(long playerId: game.getPlayers()) {
       Player player = players.getPlayerById(playerId);
-      player.notify(state);
+      player.notify(state, game.getMoveHistory());
     }
   }
 }

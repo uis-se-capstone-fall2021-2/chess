@@ -16,6 +16,7 @@ import chess.Position;
 import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
+import chess.board.InCheck;
 import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
@@ -49,7 +50,7 @@ public class Game {
   @Column
   @Getter
   @Setter
-  private long winner; // playerId
+  private long winner; // playerId | -1 if stalemate?
 
   @Column
   @Getter
@@ -68,7 +69,10 @@ public class Game {
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
+  private static final long STALEMATE = -1;
+
   @Transient
+  @Getter
   private Board board = new Board();
 
   public Game() {
@@ -214,6 +218,20 @@ public class Game {
         moves.add(new Move(intent));
 
         board.updateBoard(intent);
+
+        //if opponent no longer has any valid moves, && their king is in check, the game in won.
+        if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
+          if(board.inCheck() != InCheck.NONE ) {
+            //Player who last moved has won
+            winner = (currentPlayerColor() == PlayerColor.BLACK) ? getPlayer1() : getPlayer2();
+            status = GameStatus.COMPLETE;
+          } else {
+            // game has ended in a stalemate, no moves yet player is not in check.
+            status = GameStatus.COMPLETE;
+            winner = -1;
+          }
+        }
+        updateTimeStamps();
         return true;
         
     } else {
