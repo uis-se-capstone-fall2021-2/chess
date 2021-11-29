@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import chess.MoveIntent;
 import chess.board.Board;
 import chess.game.GameState;
+import chess.game.GameStatus;
 import chess.game.service.GameService;
 import chess.player.model.Player;
 
@@ -159,19 +160,26 @@ public abstract class ChessAI extends Player {
 
     public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
 
-
     protected ChessAI() {
         super();
     }
+
     @Override
     public void notify(GameState gameState, List<MoveIntent> moveHistory) {
-        MoveIntent move = chooseMove(gameState, moveHistory);
         GameService gameService = springApplicationContext.getBean(GameService.class);
-        gameService.move(
-            gameState.gameId,
-            getPlayerId(),
-            move
-        );
+
+        if(gameState.status == GameStatus.ACTIVE) {
+            MoveIntent move = chooseMove(gameState, moveHistory);
+        
+            gameService.move(
+                gameState.gameId,
+                getPlayerId(),
+                move
+            );
+        } else if (gameState.status == GameStatus.PENDING) {
+            gameService.acceptGameInvite(gameState.gameId, getPlayerId());
+        }
+
     }
     // returns simple piece values
     protected static int getPieceValue(int piece, int location) {
