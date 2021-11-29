@@ -1,13 +1,13 @@
 package chess.security.ws.messageInterceptors;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
 import lombok.AllArgsConstructor;
-
+import chess.MoveIntent;
 import chess.game.GameState;
 import chess.player.model.PlayerInfo;
 import chess.user.model.IUser;
@@ -47,8 +47,8 @@ public abstract class CommandInterceptor {
     }
 
     @Override
-    public void notify(GameState gamestate) {
-      user.notify(gamestate);
+    public void notify(GameState gamestate, List<MoveIntent> moveHistory) {
+      user.notify(gamestate, moveHistory);
     }
 
     @Override

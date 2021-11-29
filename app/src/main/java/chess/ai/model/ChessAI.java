@@ -1,16 +1,25 @@
-package chess.ai;
+package chess.ai.model;
 import java.util.List;
 
+import javax.persistence.Entity;
+
 import chess.MoveIntent;
-import chess.PlayerColor;
 import chess.board.Board;
 import chess.game.GameState;
+import chess.game.service.GameService;
 import chess.player.model.Player;
 
+@Entity
 public abstract class ChessAI extends Player {
 
 
-    //Square tables fro each piece to encourage certain behaviour from ai.
+    //Square tables for each piece to encourage certain behaviour from ai.
+    // The tables are used in the board evalation function, so a pawn on an index with value of 50 according to the pawn square table
+    // would be worth 150 rather than the standard 100 for a pawn. Pawns on negative squares are then worth less,
+    // encouraging the ai to move the pawn to improve its evaluation.
+
+    // The values used in these tables are from the Chess Programming wiki:
+    // https://www.chessprogramming.org/Simplified_Evaluation_Function
     private static final int[][] pawnSquareTable = {
         {
             0,  0,  0,  0,  0,  0,  0,  0,
@@ -148,29 +157,21 @@ public abstract class ChessAI extends Player {
 
     };
 
-
-
-
-    static final int MINIMAX_DEPTH = 3;
-
     public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
 
-    public PlayerColor team;
 
-    protected ChessAI(PlayerColor team) {
+    protected ChessAI() {
         super();
-        this.team = team;
     }
-
-
     @Override
-    public String getDisplayName() {
-        return this.getClass().getSimpleName() + " AI";
-    }
-
-    @Override
-    public void notify(GameState gameState) {
-        //TODO: does notify need to do anything for AI?
+    public void notify(GameState gameState, List<MoveIntent> moveHistory) {
+        MoveIntent move = chooseMove(gameState, moveHistory);
+        GameService gameService = springApplicationContext.getBean(GameService.class);
+        gameService.move(
+            gameState.gameId,
+            getPlayerId(),
+            move
+        );
     }
     // returns simple piece values
     protected static int getPieceValue(int piece, int location) {
@@ -181,45 +182,45 @@ public abstract class ChessAI extends Player {
             case 0:
             return 0;
             case 1:
-            if(team == 1) {
-                locationModifier = pawnSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -pawnSquareTable[0][location];
             } else {
-                locationModifier = -pawnSquareTable[1][location];
+                locationModifier = pawnSquareTable[1][location];
             }
             return (100 * team) + locationModifier;
             case 2:
-            if(team == 1) {
-                locationModifier = rookSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -rookSquareTable[0][location];
             } else {
-                locationModifier = -rookSquareTable[1][location];
+                locationModifier = rookSquareTable[1][location];
             }
             return (500 * team) + locationModifier;
             case 3:
-            if(team == 1) {
-                locationModifier = knightSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -knightSquareTable[0][location];
             } else {
-                locationModifier = -knightSquareTable[1][location];
+                locationModifier = knightSquareTable[1][location];
             }
             return (320 * team) + locationModifier;
             case 4:
-            if(team == 1) {
-                locationModifier = bishopSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -bishopSquareTable[0][location];
             } else {
-                locationModifier = -bishopSquareTable[1][location];
+                locationModifier = bishopSquareTable[1][location];
             }
             return (330 * team) + locationModifier;
             case 5:
-            if(team == 1) {
-                locationModifier = queenSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -queenSquareTable[0][location];
             } else {
-                locationModifier = -queenSquareTable[1][location];
+                locationModifier = queenSquareTable[1][location];
             }
             return (900 * team) + locationModifier;
             case 6:
-            if(team == 1) {
-                locationModifier = kingSquareTable[0][location];
+            if(team == -1) {
+                locationModifier = -kingSquareTable[0][location];
             } else {
-                locationModifier = -kingSquareTable[1][location];
+                locationModifier = kingSquareTable[1][location];
             }
             return (20000 * team) + locationModifier;
             default:

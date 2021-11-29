@@ -16,6 +16,7 @@ import chess.Position;
 import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
+import chess.board.InCheck;
 import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
@@ -67,6 +68,8 @@ public class Game {
   @Column
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
+
+  private static final long STALEMATE = -1;
 
   @Transient
   @Getter
@@ -218,7 +221,7 @@ public class Game {
 
         //if opponent no longer has any valid moves, && their king is in check, the game in won.
         if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
-          if(board.inCheck() != 0 ) {
+          if(board.inCheck() != InCheck.NONE ) {
             //Player who last moved has won
             winner = (currentPlayerColor() == PlayerColor.BLACK) ? getPlayer1() : getPlayer2();
             status = GameStatus.COMPLETE;

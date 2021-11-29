@@ -1,13 +1,16 @@
 package chess.player.model;
 
 import javax.persistence.*;
-
-import chess.game.GameState;
-import chess.util.persistence.ContextAwareEntity;
-import lombok.AllArgsConstructor;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import chess.game.GameState;
+import chess.util.persistence.ContextAwareEntity;
+import chess.MoveIntent;
+
 
 
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,7 +54,7 @@ public abstract class Player extends ContextAwareEntity implements IPlayer {
     );
   }
 
-  public abstract void notify(GameState gameState);
+  public abstract void notify(GameState gameState, List<MoveIntent> moveHistory);
   
 }
 

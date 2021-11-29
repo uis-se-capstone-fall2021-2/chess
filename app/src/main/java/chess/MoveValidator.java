@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chess.board.Board;
+import chess.board.InCheck;
 import chess.game.GameState;
 
 public class MoveValidator {
@@ -595,7 +596,7 @@ public class MoveValidator {
         for(MoveIntent move : validMoves) {
             Board tempBoard = board.copy();
             tempBoard.updateBoard(move);
-            if(tempBoard.inCheck() != playerColor.value && tempBoard.inCheck() != 2) {
+            if(tempBoard.inCheck().value != playerColor.value && tempBoard.inCheck() != InCheck.BOTH) {
                 validMovesNotInCheck.add(move);
             }
         }

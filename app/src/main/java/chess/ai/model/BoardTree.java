@@ -1,4 +1,4 @@
-package chess.ai;
+package chess.ai.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import chess.PlayerColor;
 import chess.board.Board;
 
 public class BoardTree {
+    static final int MINIMAX_DEPTH = 3;
     int treeSize;
     Random r;
     class Node {
@@ -96,8 +97,8 @@ public class BoardTree {
             newNode.history.add(move);
             int newNodeValue;
             newNodeValue = (team == PlayerColor.BLACK) 
-            ? minimax(ChessAI.MINIMAX_DEPTH, -9999, 9999, newNode, true, opponent)
-            : minimax(ChessAI.MINIMAX_DEPTH, -9999, 9999, newNode, false, opponent);
+            ? minimax(MINIMAX_DEPTH, -9999, 9999, newNode, true, opponent)
+            : minimax(MINIMAX_DEPTH, -9999, 9999, newNode, false, opponent);
 
             if(newNodeValue > largest) {
                 largest = newNodeValue;

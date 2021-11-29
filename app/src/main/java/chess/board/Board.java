@@ -93,29 +93,30 @@ public class Board implements IBoard {
 
         return board;
     }
-    /*** inCheck return which player is in check, or a 0 if nobody is
+    /*** inCheck returns who is in check, none, or both (for movevalidator's use not possible in real game)
      * 
-     * @return int: -1, 0, or 1
+     * @return InCheck
      */
-    public int inCheck() {
+    public InCheck inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
         boolean blackInCheck = MoveValidator.positionUnderThreat(bKing, -1, this);
         boolean whiteInCheck = MoveValidator.positionUnderThreat(wKing, 1, this);
+
         if(whiteInCheck && blackInCheck) {
             // avoid a situation where white's move is seen as valid because it 
             // puts black in check, despite white actually being in check.
-            return 2;
+            return InCheck.BOTH;
         } else {
             if(whiteInCheck){
-                return 1;
+                return InCheck.WHITE;
             }
             if(blackInCheck){
-                return -1;
+                return InCheck.BLACK;
             }
         }
 
-        return 0;
+        return InCheck.NONE;
 
     }
 

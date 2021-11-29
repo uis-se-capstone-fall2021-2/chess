@@ -2,8 +2,8 @@ package chess;
 
 import chess.game.GameStatus;
 import chess.game.model.Game;
-import chess.ai.Advanced;
-import chess.ai.ChessAI;
+import chess.ai.model.Advanced;
+import chess.ai.model.ChessAI;
 import chess.board.Board;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class ConsoleChess {
 
     public static void main(String[] args) {
         Game game = new Game(1,0,1);
-        Advanced ai = new Advanced(PlayerColor.WHITE);
+        Advanced ai = new Advanced();
         Scanner scan = new Scanner(System.in);
 
 

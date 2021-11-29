@@ -1,6 +1,7 @@
 package chess.user.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import chess.game.GameState;
 import chess.notifications.service.NotificationService;
 import chess.player.model.Player;
+import chess.MoveIntent;
 
 
 @Entity
@@ -37,7 +39,7 @@ public class User extends Player implements IUser {
   @Getter
   private String email;
 
-  public void notify(GameState gameState) {
+  public void notify(GameState gameState, List<MoveIntent> moveHistory) {
     if(springApplicationContext == null) {
       System.out.println(String.format("Application not set for for user entity %s", getDisplayName()));
       return;
