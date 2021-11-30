@@ -1,6 +1,7 @@
 import * as Strongbus from 'strongbus';
 import * as typedi from 'typedi';
 
+import {MoveIntent} from '../../board/interfaces';
 import {Player} from '../../player/interfaces/Player';
 import {PlayerColor} from '../../player/interfaces/PlayerColor';
 import {GameData, GameState} from './Game';
@@ -15,6 +16,7 @@ export interface GameService {
   acceptGameInvite(gameId: GameId): Promise<void>;
   declineGameInvite(gameId: GameId): Promise<void>;
   cancelGameInvite(gameId: GameId): Promise<void>;
+  move(gameId: GameId, intent: MoveIntent): Promise<GameState>;
 }
 
 export namespace GameService {

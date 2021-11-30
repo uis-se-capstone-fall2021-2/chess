@@ -40,6 +40,7 @@ import '../../player/impl/PlayerService';
 import '../../player/impl/PlayerStore';
 import '../../utils/resource/ResourceFactory.impl';
 
+import {RectContext} from '../../utils/layout/RectContext';
 import {User} from '../../user/interfaces';
 import {UserProvider} from '../../user/components/UserProvider';
 import {Home} from '../../views/Home';
@@ -48,6 +49,7 @@ import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
 
 import './style.css';
+
 
 
 @autobind
@@ -124,23 +126,27 @@ export class App extends React.Component<{}, {
                       }}
                     > 
                       <Toolbar/>
-                      <Switch>
-                        <Route exact path='/'>
-                          <Home/>
-                        </Route>
-                        <Route path='/games'>
-                          {(ctx) => (
-                            <Switch>
-                              <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
-                                {(ctx) => (<GameView gameId={parseInt(ctx.match?.params?.gameId)}/>)}
-                              </Route>
-                              <Route>
-                                <MyGames/>
-                              </Route>
-                            </Switch>
-                            )}
-                        </Route>
-                      </Switch>
+                      <Box sx={{flex: '1 1'}}>
+                        <RectContext.Observer>
+                          <Switch>
+                            <Route exact path='/'>
+                              <Home/>
+                            </Route>
+                            <Route path='/games'>
+                              {(ctx) => (
+                                <Switch>
+                                  <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
+                                    {(ctx) => (<GameView gameId={parseInt(ctx.match?.params?.gameId)}/>)}
+                                  </Route>
+                                  <Route>
+                                    <MyGames/>
+                                  </Route>
+                                </Switch>
+                                )}
+                            </Route>
+                          </Switch>
+                        </RectContext.Observer>
+                      </Box>
                     </Box>
                   </Box>
                 </Router>

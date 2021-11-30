@@ -90,7 +90,6 @@ public class Board implements IBoard {
 
         board[fromIndex] = 0;
         board[toIndex] = piece;
-
         return board;
     }
     /*** inCheck returns who is in check, none, or both (for movevalidator's use not possible in real game)

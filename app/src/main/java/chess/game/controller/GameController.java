@@ -192,7 +192,7 @@ public class GameController {
     }
   }
 
-  @PatchMapping("/{id}")
+  @PostMapping("/{id}/move")
   public GameState move(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId,

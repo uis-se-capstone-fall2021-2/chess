@@ -1,12 +1,26 @@
 package chess;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class MoveIntent {
+    @JsonProperty("chessPiece")
     public final ChessPiece chessPiece;
+    @JsonProperty("from")
     public final Position from;
+    @JsonProperty("to")
     public final Position to;
+    @JsonProperty("promotion")
     public final ChessPiece promotion;
+
+    public MoveIntent() {
+        this.chessPiece = ChessPiece.NONE;
+        this.from = null;
+        this.to = null;
+        this.promotion = ChessPiece.NONE;
+    }
+
     public MoveIntent(ChessPiece chessPiece, Position from, Position to) {
         this.chessPiece = chessPiece;
         this.from = from;
@@ -29,4 +43,10 @@ public class MoveIntent {
     public String toString() {
         return from.toString() + " -> " + to.toString();
     }
+
+    // @JsonCreator
+    // public static MoveIntent fromJson(String chessPiece, String from, String to) {
+    //     return new MoveIntent(ChessPiece.fromJson(chessPiece), 
+    // }
+
 }

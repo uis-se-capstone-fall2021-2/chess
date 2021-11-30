@@ -56,7 +56,10 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
         display: 'flex',
         height: '100%'
       }}>
-        <Box sx={{flexGrow: 1}}>
+        <Box sx={{
+          height: 'calc(100% - 50px)',
+          flex: '1 0'
+        }}>
           <DataGrid
             rows={rows}
             columns={GamesTable.columns}

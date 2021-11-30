@@ -41,3 +41,7 @@ app/src/main/resources/secrets.yml
 
 ###
 database/
+
+### client
+node_modules
+client/.yarn/releases/yarn-stable-temp.cjs

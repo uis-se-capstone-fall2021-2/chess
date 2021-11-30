@@ -3,6 +3,7 @@ import {sleep} from 'jaasync/lib';
 import {over} from 'lodash';
 import * as Strongbus from 'strongbus';
 import {Service, Inject} from 'typedi';
+import {MoveIntent} from '../../board/interfaces';
 import {MessagingService} from '../../messaging/interfaces';
 
 import {Player} from '../../player/interfaces/Player';
@@ -101,6 +102,12 @@ export class GameServiceImpl implements GameService {
     this.games.removeGame(gameId);
   }
 
+  public async move(gameId: GameId, intent: MoveIntent): Promise<GameState> {
+    const gameState = await this.resource.post<GameState>(`/${gameId}/move`, intent);
+    this.games.upsertGameState(gameState);
+    return gameState;
+  }
+
   public subscribe(gameId: GameId, handler: () => void): Strongbus.Subscription {
     let realtimeGameUpdates = this.subscriptions.get(gameId);
     if(!realtimeGameUpdates) {
@@ -119,7 +126,10 @@ export class GameServiceImpl implements GameService {
       this.games.on(`GAME_REMOVED_${gameId}`, handler)
     ];
 
-    return Strongbus.generateSubscription(over(subscriptions));
+    if(!this.games.getGame(gameId)) {
+      this.fetchGameState(gameId);
+    }
 
+    return Strongbus.generateSubscription(over(subscriptions));
   }
 }
