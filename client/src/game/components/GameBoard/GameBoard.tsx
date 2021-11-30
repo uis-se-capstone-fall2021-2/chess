@@ -1,10 +1,13 @@
 import {Chessboard} from 'react-chessboard';
 import {autobind} from 'core-decorators';
+import {Box} from '@mui/material';
 import * as React from 'react';
 
 import {ChessboardLib, MoveIntent, Rank, File, Position, ChessPiece} from '../../../board/interfaces';
 import {Inject} from '../../../di';
 import {GameService, GameState} from '../../interfaces';
+import {RectContext} from '../../../utils/layout/RectContext';
+
 
 @autobind
 export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State> {
@@ -20,12 +23,27 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   public override render(): React.ReactNode {
     const {gameId} = this.props.gameState;
     return (
-      <Chessboard
-        id={gameId}
-        position={this.getChessboardPosition()}
-        onPieceDrop={this.handleMoveSync}
-      />
+      <RectContext.Consumer>
+        {(dimensions: RectContext.Dimensions) => (
+          <Chessboard
+            id={gameId}
+            boardWidth={this.getBoardWidth(dimensions)}
+            position={this.getChessboardPosition()}
+            onPieceDrop={this.handleMoveSync}
+          />
+        )}
+      </RectContext.Consumer>
     );
+  }
+
+  private getBoardWidth({height, width}: RectContext.Dimensions): number {
+    if(height >= 560 && width >= 560) {
+      return 560 - 20;
+    } else if(height > width) {
+      return Math.max(100, width - 20);
+    } else {
+      return Math.max(100, height - 20);
+    }
   }
 
 

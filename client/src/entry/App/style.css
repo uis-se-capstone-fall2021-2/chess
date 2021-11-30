@@ -17,4 +17,5 @@ a, a:visited, a:active, a:-webkit-any-link {
   flex-direction: column;
   height: 100%;
   flex: 1 1 auto;
+  overflow: auto;
 }
