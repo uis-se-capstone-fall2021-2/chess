@@ -126,7 +126,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
 
     // check last file
-    var piece: number = board[rank * 8 + file];
+    piece = board[rank * 8 + file];
     if (piece === 0) {
       emptyCount++;
       fen = fen.concat(emptyCount.toString());
