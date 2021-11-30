@@ -1,12 +1,13 @@
 import {Chessboard} from 'react-chessboard';
 import {autobind} from 'core-decorators';
-import {Box} from '@mui/material';
 import * as React from 'react';
 
 import {ChessboardLib, MoveIntent, Rank, File, Position, ChessPiece} from '../../../board/interfaces';
 import {Inject} from '../../../di';
 import {GameService, GameState} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
+import {User} from '../../../user/interfaces';
+import {Alert} from '@mui/material';
 
 
 @autobind
@@ -14,24 +15,51 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   @Inject(GameService.Token)
   private readonly gameService: GameService;
+  @Inject(User.Token)
+  private readonly user: User;
 
   public override state: GameBoard.State = {
     error: null,
     pendingGameState: null
   };
 
+  public override componentDidMount() {
+    this.gameService.fetchGameState(this.props.gameState.gameId);
+  }
+
   public override render(): React.ReactNode {
-    const {gameId} = this.props.gameState;
+    const {gameId, players, playerInCheck, moveCount} = this.props.gameState;
+    const {error} = this.state;
+
+    const isUsersTurn = moveCount % 2 === players.indexOf(this.user.playerId)
+    const banner = (width: number) => (
+      error
+        ? <Alert sx={{width, marginBottom: 1}} severity='error'>{error.message}</Alert>
+        : playerInCheck === this.user.playerId
+          ? <Alert sx={{width, marginBottom: 1}} severity='warning'>Your King is in Check!</Alert>
+          : isUsersTurn
+            ? <Alert sx={{width, marginBottom: 1}} severity='success'>It's Your Turn</Alert>
+            : <Alert sx={{width, marginBottom: 1}} severity='info'>Waiting for opponent...</Alert>
+    );
+
     return (
       <RectContext.Consumer>
-        {(dimensions: RectContext.Dimensions) => (
-          <Chessboard
-            id={gameId}
-            boardWidth={this.getBoardWidth(dimensions)}
-            position={this.getChessboardPosition()}
-            onPieceDrop={this.handleMoveSync}
-          />
-        )}
+        {(dimensions: RectContext.Dimensions) => {
+          const width = this.getBoardWidth(dimensions);
+          return (
+            <>
+              {banner(width)}
+              <Chessboard
+                id={gameId}
+                boardWidth={width}
+                position={this.getChessboardPosition()}
+                onPieceDrop={this.handleMoveSync}
+                boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
+                arePiecesDraggable={isUsersTurn}
+              />
+            </>
+          );
+        }}
       </RectContext.Consumer>
     );
   }
@@ -52,7 +80,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
     const board = gameState.board;
     if(!board) {
-      debugger;
+      return "";
     }
     var fen: string = "";
     for(var rank = 7; rank >= 0; rank--){
@@ -66,15 +94,12 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // transform source, target, and piece into MoveIntent
     const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
-    // TODO: calculate desired GameState from moveIntent
-    const pendingGameState: GameState = {gameId: this.props.gameState.gameId,
-                                        owner: this.props.gameState.owner,
-                                        winner: this.props.gameState.winner,
-                                        players: this.props.gameState.players,
-                                        moveCount: this.props.gameState.moveCount,
-                                        status: this.props.gameState.status,
-                                        playerInCheck: this.props.gameState.playerInCheck,
-                                        board: this.props.gameState.board};
+    const pendingGameState: GameState = {
+      ...this.props.gameState,
+      moveCount: this.props.gameState.moveCount + 1,
+      playerInCheck: this.props.gameState.playerInCheck,
+      board: this.props.gameState.board // TODO: calculate desired GameState from moveIntent
+    };
     this.setState({
       error: null,
       pendingGameState
@@ -86,21 +111,14 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private async handleMove(moveIntent: MoveIntent): Promise<void> {
     const {gameId} = this.props.gameState;
     try {
-      await this.gameService.move(gameId, moveIntent); 
+      await this.gameService.move(gameId, moveIntent);
     } catch(e) {
       this.setState({
         error: e as Error
       });
     } finally {
       this.setState({
-        pendingGameState: {gameId: this.props.gameState.gameId,
-                          owner: this.props.gameState.owner,
-                          winner: this.props.gameState.winner,
-                          players: this.props.gameState.players,
-                          moveCount: this.props.gameState.moveCount,
-                          status: this.props.gameState.status,
-                          playerInCheck: this.props.gameState.playerInCheck,
-                          board: this.props.gameState.board}
+        pendingGameState: null
       });
     }
   }
