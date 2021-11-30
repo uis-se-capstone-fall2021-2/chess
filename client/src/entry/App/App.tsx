@@ -123,7 +123,7 @@ export class App extends React.Component<{}, {
                       }}
                     > 
                       <Toolbar/>
-                      <Box sx={{flexGrow: 1}}>
+                      <Box sx={{flex: '1 1'}}>
                         <RectContext.Observer>
                           <Switch>
                             <Route exact path='/'>
