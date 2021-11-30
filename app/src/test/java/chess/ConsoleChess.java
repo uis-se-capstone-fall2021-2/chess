@@ -3,6 +3,7 @@ package chess;
 import chess.game.GameStatus;
 import chess.game.model.Game;
 import chess.ai.model.Advanced;
+import chess.ai.model.BoardEvaluation;
 import chess.ai.model.ChessAI;
 import chess.board.Board;
 
@@ -74,7 +75,7 @@ public class ConsoleChess {
             System.out.println();
         }
 
-        System.out.println(ChessAI.getBoardScore(g.getBoard()));
+        System.out.println(BoardEvaluation.getBoardScore(g.getBoard()));
         System.out.println();
     }
 

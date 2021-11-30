@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import chess.ai.model.BoardEvaluation;
 import chess.ai.model.ChessAI;
 import chess.board.Board;
 
@@ -22,7 +23,7 @@ public class BoardEvaluationTest {
 
     @DisplayName("A standard board should evaluate as zero")
     @Test void checkDefaultEvaluation() {
-        int boardScore = ChessAI.getBoardScore(board);
+        int boardScore = BoardEvaluation.getBoardScore(board);
         assertEquals(0, boardScore);
     }
 
@@ -38,7 +39,7 @@ public class BoardEvaluationTest {
         for(int i = 0; i < moves.length; i++) {
             board.updateBoard(moves[i]);
         }
-        int boardScore = ChessAI.getBoardScore(board);
+        int boardScore = BoardEvaluation.getBoardScore(board);
         assertEquals(0, boardScore);
     }
 
@@ -52,7 +53,7 @@ public class BoardEvaluationTest {
         for(int i = 0; i < moves.length; i++) {
             board.updateBoard(moves[i]);
         }
-        int boardScore = ChessAI.getBoardScore(board);
+        int boardScore = BoardEvaluation.getBoardScore(board);
         assertEquals(40, boardScore);
     }
     @DisplayName("White opened with a poor pawn move, so black should have a better score")
@@ -65,7 +66,7 @@ public class BoardEvaluationTest {
         for(int i = 0; i < moves.length; i++) {
             board.updateBoard(moves[i]);
         }
-        int boardScore = ChessAI.getBoardScore(board);
+        int boardScore = BoardEvaluation.getBoardScore(board);
         assertEquals(-40, boardScore);
     }
 }

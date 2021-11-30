@@ -41,7 +41,7 @@ public class BoardTree {
     public int minimax(int depth, int alpha, int beta, Node node, boolean maximize, PlayerColor team) {
         treeSize++;
         if(depth == 0) {
-            return ChessAI.getBoardScore(node.board);
+            return BoardEvaluation.getBoardScore(node.board);
         }
     
         PlayerColor opponent = (team == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
