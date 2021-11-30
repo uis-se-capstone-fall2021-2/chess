@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import {Tokens} from './di';
 
 // TODO: load this from environment
-Container.set(Tokens.API_HOST, 'localhost:8080');
+Container.set(Tokens.API_HOST, 'http://localhost:8080');
 
 (window as any).di = Container;
 

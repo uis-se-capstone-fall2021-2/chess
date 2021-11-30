@@ -1,7 +1,6 @@
 import * as typedi from 'typedi';
 
 export interface User {
-  userId: string;
   displayName: string;
   token: string;
   playerId: number;

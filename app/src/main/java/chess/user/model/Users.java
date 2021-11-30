@@ -6,13 +6,13 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
+
 import org.springframework.stereotype.Repository;
 
 import chess.player.model.PlayerRepo;
 
 @Repository
 public class Users extends PlayerRepo<User> {
-
   public Users(EntityManager em) {
     super(em, User.class);
   }

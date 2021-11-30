@@ -33,11 +33,11 @@ import {
   Link
 } from 'react-router-dom';
 
-import '../../game/impl/GameService';
-import '../../game/impl/GameStore';
-import '../../messaging/impl/MessagingService';
+
 import '../../player/impl/PlayerService';
 import '../../player/impl/PlayerStore';
+import '../../game/impl/GameService';
+import '../../game/impl/GameStore';
 import '../../utils/resource/ResourceFactory.impl';
 
 import {User} from '../../user/interfaces';
@@ -109,9 +109,6 @@ export class App extends React.Component<{}, {
                       component='main'
                       sx={{
                         backgroundColor: 'secondary.main',
-                        padding: {
-                          xs: '4px'
-                        },
                         width: {
                           xs: '100%',
                           sm: `calc(100% - ${App.NAV_WIDTH}px)`
@@ -160,7 +157,7 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
-            <Link to='/' onClick={this.closeMobileNav}>
+            <Link to='/'>
               <ListItemIcon>
                 <AddIcon sx={this.navSx}/>
               </ListItemIcon>
@@ -168,7 +165,7 @@ export class App extends React.Component<{}, {
             </Link>
           </ListItem>
           <ListItem button>
-            <Link to="/games/active" onClick={this.closeMobileNav}>
+            <Link to="/games/active">
               <ListItemIcon>
                 <GridOnIcon sx={this.navSx}/>
               </ListItemIcon>
@@ -178,17 +175,17 @@ export class App extends React.Component<{}, {
           <Divider/>
           <List sx={{paddingLeft: '60px'}}>
             <ListItem button>
-              <Link to='/games/active' onClick={this.closeMobileNav}>
+              <Link to='/games/active'>
                 <ListItemText primary='Active'/>
               </Link>
             </ListItem>
             <ListItem button>
-              <Link to='/games/pending' onClick={this.closeMobileNav}>
+              <Link to='/games/pending'>
                 <ListItemText primary='Pending'/>
               </Link>
             </ListItem>
             <ListItem button>
-              <Link to='/games/history' onClick={this.closeMobileNav}>
+              <Link to='/games/history'>
                 <ListItemText primary='History'/>
               </Link>
             </ListItem>
@@ -218,10 +215,6 @@ export class App extends React.Component<{}, {
 
   private toggleMobileNavVisibility(): void {
     this.setState((state) => ({mobileNavOpen: !state.mobileNavOpen}));
-  }
-
-  private closeMobileNav(): void {
-    this.setState({mobileNavOpen: false});
   }
 
   private get mobileNavHeader(): React.ReactNode {

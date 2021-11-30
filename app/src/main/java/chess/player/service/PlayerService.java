@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import chess.ai.model.ChessBots;
+
 import chess.game.GameInfo;
 import chess.game.GameStatus;
 import chess.game.model.Game;
@@ -32,8 +32,6 @@ public class PlayerService {
   private final Users users;
   @Autowired
   private final Games games;
-  @Autowired
-  private final ChessBots chessBots;
 
   public Result<PlayerInfo[], GetPlayerInfoErrorCode> getPlayerInfo(Long[] playerIds) {
     return new Result<PlayerInfo[], GetPlayerInfoErrorCode>(
@@ -64,14 +62,14 @@ public class PlayerService {
         repo = users;
         break;
       case Player.PlayerType.AI:
-        repo = chessBots;
-        break;
+        // TODO: currently no ChessBot class extending Player
+        return new Result<PlayerInfo[], SearchPlayersErrorCode>(new PlayerInfo[] {});
       default:
         return new Result<PlayerInfo[], SearchPlayersErrorCode>(SearchPlayersErrorCode.INVALID_PLAYER_TYPE);
     }
   
     return new Result<PlayerInfo[], SearchPlayersErrorCode>(
-      repo.searchPlayers(query)
+      players.searchPlayers(query)
         .stream()
         .map((Player player) -> player.info())
         .toArray(PlayerInfo[]::new)

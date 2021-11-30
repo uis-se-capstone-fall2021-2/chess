@@ -37,7 +37,27 @@ class GameProviderInner extends React.Component<GameProvider.Props, GameProvider
 
   public override async componentDidMount() {
     this.__mounted = true;
-    this.gameSubscription = this.gameService.subscribe(this.props.gameId, this.updateGame);
+ 
+    const {gameId} = this.props;
+    this.gameSubscription = this.gameService.on([
+      `GAME_UPDATED_${gameId}`,
+      `GAME_REMOVED_${gameId}`
+    ], this.updateGame);
+
+
+    while(
+      this.__mounted &&
+      ![GameStatus.DECLINED, GameStatus.COMPLETE, GameStatus.TERMINATED].includes(this.state.game?.status)
+    ) {
+      try {
+        await this.gameService.fetchGameState(this.props.gameId);
+      } catch(error) {
+        if(this.__mounted) {
+          this.setState({error: error as Error});
+        }
+      }
+      await sleep(15_000);
+    }
   }
 
   public override componentWillUnmount() {

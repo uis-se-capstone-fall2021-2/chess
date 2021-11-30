@@ -1,5 +1,7 @@
 package chess.player.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -82,7 +84,7 @@ public class PlayerController {
   }
 
   @GetMapping("/{id}/games")
-  public GameInfo[] getGames(
+  public GameInfo[] getPendingGames(
     @PathVariable(value="id", required=true) long playerId,
     @RequestParam(value="status", required=false) GameStatus[] status,
     @RequestParam(value="orderBy", required=false) OrderBy orderBy,

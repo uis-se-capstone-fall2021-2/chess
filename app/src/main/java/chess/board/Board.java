@@ -1,7 +1,5 @@
 package chess.board;
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import chess.*;
 public class Board implements IBoard {
     public final int[] board;
@@ -42,13 +40,17 @@ public class Board implements IBoard {
     }
 
     public Board copy() {
-        int[] newBoard = Arrays.copyOf(board, board.length);
+        int[] newBoard = new int[board.length];
+        for(int i = 0; i < board.length; i++) {
+            newBoard[i] = board[i];
+        }
         return new Board(newBoard);
     }
 
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
+
     public Position getPositionOf(int piece){
         Position position = null;
         for(int row = 0; row < 8; row++){
@@ -67,56 +69,21 @@ public class Board implements IBoard {
         int toIndex = intent.to.rank.value * 8 + intent.to.file.value;
         int piece = getPiece(intent.from);
 
-        if(intent.promotion != ChessPiece.NONE){
-            // maintain piece's team:
-            piece = (piece > 0) ? intent.promotion.value : -intent.promotion.value;
-        }
-        // En Passant
-        if(intent.chessPiece == ChessPiece.PAWN && (intent.from.file != intent.to.file) && getPiece(intent.to) == 0){
-            int opposingPawnRank = (piece > 0) ? intent.to.rank.value - 1 : intent.to.rank.value + 1;
-            board[opposingPawnRank * 8 + intent.to.file.value] = 0;
-        }
-        if(intent.chessPiece == ChessPiece.KING && (Math.abs(intent.to.file.value - intent.from.file.value) == 2)) {
-            if(intent.to.file.value - intent.from.file.value == 2){
-                // kingside castle
-                board[intent.to.rank.value * 8 + 7] = 0;
-                board[toIndex - 1] = (piece > 0) ? 2 : -2;
-            } else {
-                // queenside castle
-                board[intent.to.rank.value * 8] = 0;
-                board[toIndex + 1] = (piece > 0) ? 2 : -2;
-            }
-        }
-
         board[fromIndex] = 0;
         board[toIndex] = piece;
 
         return board;
     }
-    /*** inCheck returns who is in check, none, or both (for movevalidator's use not possible in real game)
+    /*** inCheck return which player is in check, or a 0 if nobody is
      * 
-     * @return InCheck
+     * @return int: -1, 0, or 1
      */
-    public InCheck inCheck() {
+    public int inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
-        boolean blackInCheck = MoveValidator.positionUnderThreat(bKing, -1, this);
-        boolean whiteInCheck = MoveValidator.positionUnderThreat(wKing, 1, this);
-
-        if(whiteInCheck && blackInCheck) {
-            // avoid a situation where white's move is seen as valid because it 
-            // puts black in check, despite white actually being in check.
-            return InCheck.BOTH;
-        } else {
-            if(whiteInCheck){
-                return InCheck.WHITE;
-            }
-            if(blackInCheck){
-                return InCheck.BLACK;
-            }
-        }
-
-        return InCheck.NONE;
+        if(MoveValidator.positionUnderThreat(bKing, -1, this)) return -1;
+        if(MoveValidator.positionUnderThreat(wKing, 1, this)) return 1;
+        return 0;
 
     }
 
