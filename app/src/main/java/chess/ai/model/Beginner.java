@@ -29,9 +29,5 @@ public class Beginner extends ChessAI {
         // just return a random move...
         return possibleMoves.get(r.nextInt(possibleMoves.size()));
     }
-    @Override
-    public void notify(GameState gameState, List<MoveIntent> moveHistory) {
-        super.notify(gameState, moveHistory);
-    }
 
 }

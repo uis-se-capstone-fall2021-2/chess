@@ -25,8 +25,5 @@ public class Advanced extends ChessAI {
         System.out.println("AI has chosen a move: " + output.toString());
         return output;
     }
-    @Override
-    public void notify(GameState state, List<MoveIntent> moveHistory) {
-        super.notify(state, moveHistory);
-    }
+
 }
