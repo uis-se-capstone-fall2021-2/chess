@@ -13,6 +13,9 @@ import chess.PlayerColor;
 import chess.game.GameState;
 import chess.player.model.Player;
 
+/**
+ *  Chess AI using a random number generator to make move decisions.
+ */
 @Entity
 @DiscriminatorValue(value=Player.PlayerType.AI)
 public class Beginner extends ChessAI {
@@ -28,10 +31,6 @@ public class Beginner extends ChessAI {
         List<MoveIntent> possibleMoves = MoveValidator.getAllValidMoves(state, moveHistory, team);
         // just return a random move...
         return possibleMoves.get(r.nextInt(possibleMoves.size()));
-    }
-    @Override
-    public void notify(GameState gameState, List<MoveIntent> moveHistory) {
-        super.notify(gameState, moveHistory);
     }
 
 }

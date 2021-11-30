@@ -6,9 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import chess.board.Board;
-
+/**
+ * Tests a variety of moves on the move validator to check for game logic errors
+ */
 public class MoveValidationTest {
-    MoveValidator validator;
     ArrayList<MoveIntent> moveRecord;
     Board board;
 
@@ -18,7 +19,222 @@ public class MoveValidationTest {
         board = new Board();
         
     }
+    @DisplayName("Queen should be able to move")
+    @Test void testLegalQueenMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e5", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("d1 h5", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Queen should not be able to move when blocked")
+    @Test void testIllegalQueenMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("a2 a4", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e5", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("d1 h5", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Queen should not be able to move when it would leave the king in check")
+    @Test void testIllegalQueenMoveQueenPinned() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("d7 e5", board),
+            ChessTestUtilities.stringToMoveIntent("d1 e2", board),
+            ChessTestUtilities.stringToMoveIntent("d8 e7", board),
+            ChessTestUtilities.stringToMoveIntent("g1 f3", board),
+            ChessTestUtilities.stringToMoveIntent("g6 f6", board),
+            ChessTestUtilities.stringToMoveIntent("f3 e5", board),
+            ChessTestUtilities.stringToMoveIntent("f6 e4", board),
+            ChessTestUtilities.stringToMoveIntent("e5 c4", board),
+            ChessTestUtilities.stringToMoveIntent("e4 c5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("e2 f3", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Rook should be able to move")
+    @Test void testLegalRookMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("h2 h4", board),
+            ChessTestUtilities.stringToMoveIntent("g7 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h4 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h7 h5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h1 h3", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Rook should be able to capture")
+    @Test void testLegalRookCapture() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("h2 h4", board),
+            ChessTestUtilities.stringToMoveIntent("g7 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h4 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h7 h5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h1 h5", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Rook should not be able to move through a piece")
+    @Test void testillegalRookMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("h2 h4", board),
+            ChessTestUtilities.stringToMoveIntent("g7 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h4 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h7 h5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h1 h6", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Bishop should be able to move diagonally")
+    @Test void testLegalBishopMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e5", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("f1 d3", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Bishop should be able to capture a piece")
+    @Test void testLegalBishopCapture() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e5", board),
+            ChessTestUtilities.stringToMoveIntent("f1 c4", board),
+            ChessTestUtilities.stringToMoveIntent("g8 f6", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("c4 f7", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("King should be able to move")
+    @Test void testLegalKingMove() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e5", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("e1 e2", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("King should be able to castle")
+    @Test void testLegalKingCastle() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e3", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e6", board),
+            ChessTestUtilities.stringToMoveIntent("f1 d3", board),
+            ChessTestUtilities.stringToMoveIntent("f8 d6", board),
+            ChessTestUtilities.stringToMoveIntent("g1 e2", board),
+            ChessTestUtilities.stringToMoveIntent("g8 e7", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("e1 g1", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Bishop should not be able to move through pieces")
+    @Test void testBlockedBishop() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("a2 a3", board),
+            ChessTestUtilities.stringToMoveIntent("a7 a6", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("c1 e4", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
 
+    @DisplayName("Bishop should be able to capture a piece")
+    @Test void testBishopCapturePawn() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("e2 e4", board),
+            ChessTestUtilities.stringToMoveIntent("b7 b5", board)
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("f1 b5", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+
+
+    // Old version of tests, tests are still good but these are more tedious to set up
     @DisplayName("Knight should be able to move to open space")
     @Test void testLegalKnightMove() {
         Position currentPosition = new Position(File.FromInteger(1), Rank.FromInteger(0)); // knight at B1

@@ -21,7 +21,9 @@ import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
-
+/**
+ * A full representation of a chess game.
+ */
 @Entity
 @Table(name="Games")
 public class Game {
@@ -138,6 +140,10 @@ public class Game {
     return history;
   }
 
+  
+  /** Creates and returns a GameInfo object
+   * @return GameInfo new GameInfo object
+   */
   public GameInfo info() {
     return new GameInfo(
       getGameId(),
@@ -152,6 +158,10 @@ public class Game {
     );
   }
 
+  
+  /** Creates and returns a GameState object.
+   * @return GameState
+   */
   public GameState getGameState() {
     return new GameState(
       getGameId(),
@@ -165,61 +175,51 @@ public class Game {
     );
   }
 
+  
+  /** Gets the player who is up next to make a move.
+   * @return long
+   */
   public long currentPlayer() {
     return getPlayers()[(int)getMoves().size() % 2];
   }
+  
+  /** Gets the <code>PlayerColor</code> of the current player.
+   * @return PlayerColor
+   */
   public PlayerColor currentPlayerColor() {
     if(currentPlayer() == player1)
       return PlayerColor.WHITE;
     else
       return PlayerColor.BLACK;
   }
+  
+  /** Gets the player ID of the player that is in check
+   * @return long Player in check player ID, or -1 if nobody is in check.
+   */
   // determine if one of the players is in check
   public long playerInCheck() {
-    Board board = getBoard();
-    // check if white king is in check
-    // first, get position of white king
-    Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
-    // check every black piece to see if white king's position is a possible move
-    // if it is, return white player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get black piece
-        if(board.getPiece(position) < 0){
-          // if white king's location is possible move, then white king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())) {
-            return player1;
-          }
-        }
-      }
+    InCheck inCheckStatus = getBoard().inCheck();
+    switch(inCheckStatus){
+      case WHITE:
+        return player1;
+      case BLACK:
+        return player2;
+      case NONE:
+        return -1; // game is stalemate when there are no legal moves and incheck == NONE
+      default:
+        return -1;
     }
-
-    // check if black king is in check
-    // first, get position of black king
-    Position blackKingLocation = board.getPositionOf(-ChessPiece.KING.value);
-    // check every white piece to see if black king's position is a possible move
-    // if it is, return black player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get white piece
-        if(board.getPiece(position) > 0){
-          // if black king's location is a possible move, then black king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
-            return player2;
-          }
-        }
-      }
-    }
-    return -1;
   }
 
 
+  
+  /** Executes a move on the game, after verifying that the move is legal.
+   *  Also makes a check to determine if the game is finished after the move is executed.
+   *  If the game is determined to be over, sets {@link #winner} to the player ID of the winner, or to {@link #STALEMATE} 
+   * @param playerId ID of the moving player
+   * @param intent MoveIntent of the desired move
+   * @return boolean true when the move was successful, false when it was not
+   */
   public boolean move(long playerId, MoveIntent intent){
     Board board = getBoard();
     if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){

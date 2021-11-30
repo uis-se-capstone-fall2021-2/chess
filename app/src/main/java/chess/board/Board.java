@@ -3,6 +3,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import chess.*;
+/**
+ * Representation of a chess board with an internal 1d integer array.
+ * Board can be updated with new moves through {@link #updateBoard(MoveIntent)}
+ * 
+ */
 public class Board implements IBoard {
     public final int[] board;
 
@@ -46,9 +51,20 @@ public class Board implements IBoard {
         return new Board(newBoard);
     }
 
+    
+    /** Get which piece is located at a requested location on the board.
+     * @param position requested position input
+     * @return int integer representation of the requested piece
+     */
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
+    
+    /** Gets the position of a requested integer representation of a piece (allowing negative input for a black piece).
+     *  In the case of duplicate pieces, returns the first piece of correct type.
+     * @param piece integer representation of requested piece
+     * @return Position position of requested piece on board.
+     */
     public Position getPositionOf(int piece){
         Position position = null;
         for(int row = 0; row < 8; row++){
@@ -62,6 +78,12 @@ public class Board implements IBoard {
         return position;
     }
 
+    
+    /** Executes a supplied MoveIntent on the board. The MoveIntent is assumed to be valid.
+     *  Makes the correct changes to the board that need to be made when a king castles, pawn is taken through en passant rule, and pieces are promoted.
+     * @param intent MoveIntent object representing desired move.
+     * @return int[] the updated board (can be ignored, the board is updated in place)
+     */
     public int[] updateBoard(MoveIntent intent){
         int fromIndex = intent.from.rank.value * 8 + intent.from.file.value;
         int toIndex = intent.to.rank.value * 8 + intent.to.file.value;
@@ -92,9 +114,9 @@ public class Board implements IBoard {
         board[toIndex] = piece;
         return board;
     }
-    /*** inCheck returns who is in check, none, or both (for movevalidator's use not possible in real game)
+    /** figures out who is in check, if anybody
      * 
-     * @return InCheck
+     * @return InCheck enum representing which team is in check
      */
     public InCheck inCheck() {
         Position bKing = getPositionOf(-6);

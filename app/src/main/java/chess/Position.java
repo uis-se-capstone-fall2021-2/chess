@@ -3,7 +3,9 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * A position on a chessboard
+ */
 public class Position {
     @JsonProperty("rank")
     public final Rank rank;

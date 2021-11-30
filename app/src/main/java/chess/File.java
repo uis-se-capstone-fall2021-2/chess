@@ -2,7 +2,9 @@ package chess;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * A file, or x coordinate, on a chess board.
+ */
 public enum File {
     @JsonProperty("A") A(0),
     @JsonProperty("B") B(1),

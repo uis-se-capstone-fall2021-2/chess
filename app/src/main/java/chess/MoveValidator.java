@@ -6,8 +6,18 @@ import java.util.List;
 import chess.board.Board;
 import chess.board.InCheck;
 import chess.game.GameState;
-
+/**
+ * Contains static methods for determining if moves are legal.
+ */
 public class MoveValidator {
+    
+    /** Determines whether a supplied move is a legal move.
+     * @param intent inputted move
+     * @param board board for the move to be checked on
+     * @param moveRecord moves which have happened in the game so far
+     * @param moveColor the team making the move
+     * @return boolean true if the move is legal, otherwise false
+     */
     public static boolean validateMove(MoveIntent intent, Board board, List<MoveIntent> moveRecord, PlayerColor moveColor) {
         PlayerColor playerColor;
         Position startingPoint = intent.from;
@@ -34,6 +44,15 @@ public class MoveValidator {
         return false;
     }
 
+    
+    /** Gets a list of valid moves, for a particular piece on the board.
+     * @param piece the piece to get moves for
+     * @param startPos the piece's position on the board
+     * @param board the board to get moves on
+     * @param moveRecord the moves which have happened so far
+     * @param playerColor the team that is moving
+     * @return List list of legal moves for given piece
+     */
     public static List<MoveIntent> getValidMoves(ChessPiece piece, Position startPos, Board board, List<MoveIntent> moveRecord, PlayerColor playerColor){
 
         List<MoveIntent> validMoves = new ArrayList<>();
@@ -604,6 +623,13 @@ public class MoveValidator {
 
     }
 
+    
+    /** Gets every valid move on the board, for a particular team.
+     * @param state the current gamestate
+     * @param moveHistory moves which have happened so far
+     * @param team the team which is moving
+     * @return List All available legal moves
+     */
     public static List<MoveIntent> getAllValidMoves(GameState state, List<MoveIntent> moveHistory, PlayerColor team) {
         List<MoveIntent> validMoves = new ArrayList<>();
         Board board = state.board;
@@ -616,6 +642,13 @@ public class MoveValidator {
         }
         return validMoves;
     }
+    
+    /** Gets every valid move on the board, for a particular team.
+     * @param board the current board
+     * @param moveHistory moves which have happened so far
+     * @param team the team which is moving
+     * @return List All available legal moves
+     */
     public static List<MoveIntent> getAllValidMoves(Board board, List<MoveIntent> moveHistory, PlayerColor team) {
         List<MoveIntent> validMoves = new ArrayList<>();
         for(int i = 0; i < board.board.length; i++) {
@@ -630,6 +663,13 @@ public class MoveValidator {
 
 
 
+    
+    /** determines if a specific location is in danger. This is used for determining if a player is in check, and for determining if moves are legal.
+     * @param loc location to check
+     * @param team team to check for
+     * @param board board to check on
+     * @return boolean true if the position is under threat from a piece, otherwise false
+     */
     public static boolean positionUnderThreat(Position loc, int team, Board board) {
         int x = loc.file.value;
         int y = loc.rank.value;

@@ -8,7 +8,9 @@ import chess.MoveIntent;
 import chess.PlayerColor;
 import chess.game.GameState;
 import chess.player.model.Player;
-
+/**
+ *  Chess AI using a minimax algorithm for move decisions.
+ */
 @Entity
 @DiscriminatorValue(value=Player.PlayerType.AI)
 public class Advanced extends ChessAI {
@@ -25,8 +27,5 @@ public class Advanced extends ChessAI {
         System.out.println("AI has chosen a move: " + output.toString());
         return output;
     }
-    @Override
-    public void notify(GameState state, List<MoveIntent> moveHistory) {
-        super.notify(state, moveHistory);
-    }
+
 }

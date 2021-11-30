@@ -3,7 +3,10 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
+/**
+ * A move in a chess game
+ * MoveIntents are not necessarily valid moves.
+ */
 public class MoveIntent {
     @JsonProperty("chessPiece")
     public final ChessPiece chessPiece;
