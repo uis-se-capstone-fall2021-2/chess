@@ -4,7 +4,6 @@ import chess.game.GameStatus;
 import chess.game.model.Game;
 import chess.ai.model.Advanced;
 import chess.ai.model.BoardEvaluation;
-import chess.ai.model.ChessAI;
 import chess.board.Board;
 
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class ConsoleChess {
         scan.close();
     }
 
-    public static void drawChessBoard(Game g){
+    private static void drawChessBoard(Game g){
         System.out.println();
         Board board = g.getBoard();
 
@@ -79,7 +78,7 @@ public class ConsoleChess {
         System.out.println();
     }
 
-    public static String getPieceLetter(int piece){
+    private static String getPieceLetter(int piece){
         String out = "";
         if(piece == 0) {
             return "--";
