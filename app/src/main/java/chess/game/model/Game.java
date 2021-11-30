@@ -176,47 +176,17 @@ public class Game {
   }
   // determine if one of the players is in check
   public long playerInCheck() {
-    Board board = getBoard();
-    // check if white king is in check
-    // first, get position of white king
-    Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
-    // check every black piece to see if white king's position is a possible move
-    // if it is, return white player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get black piece
-        if(board.getPiece(position) < 0){
-          // if white king's location is possible move, then white king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())) {
-            return player1;
-          }
-        }
-      }
+    InCheck inCheckStatus = getBoard().inCheck();
+    switch(inCheckStatus){
+      case WHITE:
+        return player1;
+      case BLACK:
+        return player2;
+      case NONE:
+        return STALEMATE; // game is stalemate when there are no legal moves and incheck == NONE
+      default:
+        return STALEMATE;
     }
-
-    // check if black king is in check
-    // first, get position of black king
-    Position blackKingLocation = board.getPositionOf(-ChessPiece.KING.value);
-    // check every white piece to see if black king's position is a possible move
-    // if it is, return black player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get white piece
-        if(board.getPiece(position) > 0){
-          // if black king's location is a possible move, then black king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
-            return player2;
-          }
-        }
-      }
-    }
-    return -1;
   }
 
 
