@@ -8,7 +8,9 @@ import chess.MoveIntent;
 import chess.PlayerColor;
 import chess.game.GameState;
 import chess.player.model.Player;
-
+/**
+ *  Chess AI using a minimax algorithm for move decisions.
+ */
 @Entity
 @DiscriminatorValue(value=Player.PlayerType.AI)
 public class Advanced extends ChessAI {

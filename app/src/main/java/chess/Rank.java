@@ -3,7 +3,9 @@ package chess;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
+/**
+ * A rank, or y coordinate, on a chess board.
+ */
 public enum Rank {
     @JsonProperty("_1") _1(0),
     @JsonProperty("_2") _2(1),

@@ -1,7 +1,9 @@
 package chess;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+/**
+ * Representation of a chess piece
+ */
 public enum ChessPiece {
     NONE(0),
     PAWN(1),

@@ -21,7 +21,9 @@ import chess.game.GameStatus;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
-
+/**
+ * A full representation of a chess game.
+ */
 @Entity
 @Table(name="Games")
 public class Game {
@@ -138,6 +140,10 @@ public class Game {
     return history;
   }
 
+  
+  /** Creates and returns a GameInfo object
+   * @return GameInfo new GameInfo object
+   */
   public GameInfo info() {
     return new GameInfo(
       getGameId(),
@@ -152,6 +158,10 @@ public class Game {
     );
   }
 
+  
+  /** Creates and returns a GameState object.
+   * @return GameState
+   */
   public GameState getGameState() {
     return new GameState(
       getGameId(),
@@ -165,15 +175,27 @@ public class Game {
     );
   }
 
+  
+  /** Gets the player who is up next to make a move.
+   * @return long
+   */
   public long currentPlayer() {
     return getPlayers()[(int)getMoves().size() % 2];
   }
+  
+  /** Gets the <code>PlayerColor</code> of the current player.
+   * @return PlayerColor
+   */
   public PlayerColor currentPlayerColor() {
     if(currentPlayer() == player1)
       return PlayerColor.WHITE;
     else
       return PlayerColor.BLACK;
   }
+  
+  /** Gets the player ID of the player that is in check
+   * @return long Player in check player ID, or -1 if nobody is in check.
+   */
   // determine if one of the players is in check
   public long playerInCheck() {
     InCheck inCheckStatus = getBoard().inCheck();
@@ -183,13 +205,21 @@ public class Game {
       case BLACK:
         return player2;
       case NONE:
-        return STALEMATE; // game is stalemate when there are no legal moves and incheck == NONE
+        return -1; // game is stalemate when there are no legal moves and incheck == NONE
       default:
-        return STALEMATE;
+        return -1;
     }
   }
 
 
+  
+  /** Executes a move on the game, after verifying that the move is legal.
+   *  Also makes a check to determine if the game is finished after the move is executed.
+   *  If the game is determined to be over, sets {@link #winner} to the player ID of the winner, or to {@link #STALEMATE} 
+   * @param playerId ID of the moving player
+   * @param intent MoveIntent of the desired move
+   * @return boolean true when the move was successful, false when it was not
+   */
   public boolean move(long playerId, MoveIntent intent){
     Board board = getBoard();
     if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){

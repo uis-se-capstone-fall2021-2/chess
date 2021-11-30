@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import chess.player.model.PlayerRepo;
 
+/**
+ * Responsible for creating the Chess AI players in the app.
+ */
 @Repository
 public class ChessBots extends PlayerRepo<ChessAI> {
   private final static String NOVICE_BOT = "Novice Bot";
@@ -15,7 +18,7 @@ public class ChessBots extends PlayerRepo<ChessAI> {
   public ChessBots(EntityManager em) {
     super(em, ChessAI.class);
   }
-
+  
   public void createBotsAsNeeded() {
     createBeginnerBotAsNeeded();
     createAdvancedBotAsNeeded();

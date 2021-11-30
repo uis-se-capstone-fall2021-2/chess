@@ -4,12 +4,15 @@ import java.util.List;
 import javax.persistence.Entity;
 
 import chess.MoveIntent;
-import chess.board.Board;
 import chess.game.GameState;
 import chess.game.GameStatus;
 import chess.game.service.GameService;
 import chess.player.model.Player;
 
+
+/**
+ * Generic AI template to be extended by specific AI implementations.
+ */
 @Entity
 public abstract class ChessAI extends Player {
 

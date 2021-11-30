@@ -13,6 +13,9 @@ import chess.PlayerColor;
 import chess.game.GameState;
 import chess.player.model.Player;
 
+/**
+ *  Chess AI using a random number generator to make move decisions.
+ */
 @Entity
 @DiscriminatorValue(value=Player.PlayerType.AI)
 public class Beginner extends ChessAI {

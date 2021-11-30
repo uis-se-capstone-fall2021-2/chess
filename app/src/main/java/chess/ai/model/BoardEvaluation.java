@@ -2,11 +2,12 @@ package chess.ai.model;
 
 import chess.board.Board;
 
-import chess.board.Board;
-
+/**
+ * Handles evaluating board states for use in chess AI.
+ */
 public class BoardEvaluation {
     
-    //Square tables for each piece to encourage certain behaviour from ai.
+    // Square tables for each piece to encourage certain behaviour from ai.
     // The tables are used in the board evalation function, so a pawn on an index with value of 50 according to the pawn square table
     // would be worth 150 rather than the standard 100 for a pawn. Pawns on negative squares are then worth less,
     // encouraging the ai to move the pawn to improve its evaluation.
@@ -149,7 +150,36 @@ public class BoardEvaluation {
         }
 
     };
-    // returns simple piece values
+    
+    /** 
+     * Returns a value for a piece based on its type and location.
+     * <p>
+     * <b>Base piece values:</b>
+     * </p>
+     * <ul>
+     * <li>Pawn:   100 </li>
+     * <li>Knight:   320 </li>
+     * <li>Bishop:   330 </li>
+     * <li>Rook:   500 </li>
+     * <li>Queen:   900 </li>
+     * <li>King:   20000 </li>
+     * </ul>
+     * The values used for pieces are based on the values provided by the
+     * <cite>
+     * <a href="https://www.chessprogramming.org/Simplified_Evaluation_Function">
+     * Chess Programming Wiki.
+     * </a></cite>
+     * The value for the king is large enough that an ai should never choose to 'trade' anything for it's king.
+     * <hr>
+     * After taking the base value for a piece, the value is modified based on the piece's location according to the
+     * the square tables for each piece type.
+     * 
+     * 
+     * 
+     * @param piece integer representing a piece according to the values of the enum <code>ChessPiece</code>
+     * @param location integer representing a location on a <code>Board</code>
+     * @return int the value of the current piece taking into account its type and location
+     */
     protected static int getPieceValue(int piece, int location) {
         if(piece == 0) return 0;
         int team = piece / Math.abs(piece);
@@ -204,7 +234,15 @@ public class BoardEvaluation {
 
         }
     }
+    /** 
+     *  Looks at the supplied board, and returns the sum of {@link #getPieceValue(int, int) getPieceValue} for each index of the board.
+     * 
+     * @param board board object
+     * @return int the evaluation score for the whole board.
+     */
     public static int getBoardScore(Board board) {
+    
+
         int boardScore = 0;
         for(int i = 0; i < board.board.length; i++){
             int piece = board.board[i];

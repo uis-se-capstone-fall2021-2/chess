@@ -8,7 +8,9 @@ import chess.MoveIntent;
 import chess.MoveValidator;
 import chess.PlayerColor;
 import chess.board.Board;
-
+/**
+ * Implements minimax algorithm for use in AIs.
+ */
 public class BoardTree {
     static final int MINIMAX_DEPTH = 3;
     int treeSize;
@@ -46,7 +48,7 @@ public class BoardTree {
      *  Returns the 'minimax value' of the provided node. When maximize is true, this 
      *  value is the highest minimax value of the node's children, whose own minimax values are the lowest
      *  value from their children, repeating until depth is zero, where the minimax value is simply the 
-     *  board's current evaluation according to {@link #BoardEvaluation.getBoardScore(Board) getBoardScore} method.
+     *  board's current evaluation according to <code>BoardEvaluation.getBoardScore(Board)</code>.
      * 
      * 
      * @param depth the depth to recursively search future board states

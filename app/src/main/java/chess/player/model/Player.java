@@ -12,7 +12,9 @@ import chess.util.persistence.ContextAwareEntity;
 import chess.MoveIntent;
 
 
-
+/**
+ * Representation of a player
+ */
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name="Players")
@@ -45,7 +47,6 @@ public abstract class Player extends ContextAwareEntity implements IPlayer {
   public String getPlayerType() {
     return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }
-
   public PlayerInfo info() {
     return new PlayerInfo(
       getPlayerId(),
