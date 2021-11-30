@@ -23,12 +23,6 @@ public class UserProvider {
     if(principal == null) {
       return null;
     }
-    User user = userService.getUserById(principal.getSubject());
-    if(user == null) {
-      // principal has been authenticated through Auth0; we must provision them in our system
-      user = userService.provisionUser(principal);
-    }
-
-    return user;
+    return userService.provisionUser(principal);
   }
 }
