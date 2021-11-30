@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import chess.ai.model.BoardEvaluation;
-import chess.ai.model.ChessAI;
 import chess.board.Board;
 
 
