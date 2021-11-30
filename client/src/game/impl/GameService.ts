@@ -126,7 +126,10 @@ export class GameServiceImpl implements GameService {
       this.games.on(`GAME_REMOVED_${gameId}`, handler)
     ];
 
-    return Strongbus.generateSubscription(over(subscriptions));
+    if(!this.games.getGame(gameId)) {
+      this.fetchGameState(gameId);
+    }
 
+    return Strongbus.generateSubscription(over(subscriptions));
   }
 }

@@ -66,19 +66,18 @@ public class Game {
   private GameStatus status;
 
   @Column
-  @OneToMany(cascade=CascadeType.ALL)
+  @Getter
+  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+  @OrderBy("timestamp ASC")
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
   private static final long STALEMATE = -1;
 
   @Transient
-  @Getter
-  private Board board = new Board();
+  private Board _board;
 
-  public Game() {
-    this.board = initializeBoard(moves);
-  }
+  public Game() {}
 
   public Game(
     long player1,
@@ -87,18 +86,24 @@ public class Game {
   ) {
     this.player1 = player1;
     this.player2 = player2;
-    this.board = initializeBoard(moves);
     this.owner = owner;
     this.status = GameStatus.PENDING;
   }
 
-  private Board initializeBoard(List<Move> moves) {
+  private Board initializeBoard() {
     ArrayList<MoveIntent> moveRecord = new ArrayList<>();
-    for(Move move : moves){
+    for(Move move : getMoves()){
       moveRecord.add(move.asIntent());
     }
 
-    return board = new Board(moveRecord);
+    return new Board(moveRecord);
+  }
+
+  public Board getBoard() {
+    if(_board == null) {
+      _board = initializeBoard();
+    }
+    return _board;
   }
 
   @PreUpdate
@@ -127,7 +132,7 @@ public class Game {
   public List<MoveIntent> getMoveHistory() {
     List<MoveIntent> history = new ArrayList<MoveIntent>();
     int i = 0;
-    for(Move move: moves) {
+    for(Move move: getMoves()) {
       history.add(i++, move.asIntent());
     }
     return history;
@@ -139,7 +144,7 @@ public class Game {
       getOwner(),
       getWinner(),
       getPlayers(),
-      moves.size(),
+      getMoves().size(),
       getStatus(),
       getCreatedAt(),
       getUpdatedAt(),
@@ -153,15 +158,15 @@ public class Game {
       getOwner(),
       getWinner(),
       getPlayers(),
-      moves.size(),
+      getMoves().size(),
       playerInCheck(),
-      this.board,
+      getBoard(),
       getStatus()
     );
   }
 
   public long currentPlayer() {
-    return getPlayers()[(int)moves.size() % 2];
+    return getPlayers()[(int)getMoves().size() % 2];
   }
   public PlayerColor currentPlayerColor() {
     if(currentPlayer() == player1)
@@ -171,6 +176,7 @@ public class Game {
   }
   // determine if one of the players is in check
   public long playerInCheck() {
+    Board board = getBoard();
     // check if white king is in check
     // first, get position of white king
     Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
@@ -215,7 +221,8 @@ public class Game {
 
 
   public boolean move(long playerId, MoveIntent intent){
-    if(MoveValidator.validateMove(intent, this.board, getMoveHistory(), currentPlayerColor())){
+    Board board = getBoard();
+    if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
         moves.add(new Move(intent));
 
         board.updateBoard(intent);
@@ -229,7 +236,7 @@ public class Game {
           } else {
             // game has ended in a stalemate, no moves yet player is not in check.
             status = GameStatus.COMPLETE;
-            winner = -1;
+            winner = STALEMATE;
           }
         }
         updateTimeStamps();

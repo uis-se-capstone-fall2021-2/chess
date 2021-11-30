@@ -1,5 +1,7 @@
 package chess;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum ChessPiece {
     NONE(0),
     PAWN(1),
@@ -19,6 +21,16 @@ public enum ChessPiece {
         for(ChessPiece type : values()) {
             if(type.value == input){
                 return type;
+            }
+        }
+        return null;
+    }
+
+    @JsonCreator
+    public static ChessPiece fromJson(String key) {
+        for(ChessPiece p: values()) {
+            if(p.name().equals(key)) {
+                return p;
             }
         }
         return null;

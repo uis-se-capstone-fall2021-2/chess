@@ -199,8 +199,8 @@ public class GameService implements IGameService {
     }
 
     boolean success = game.move(playerId, moveIntent);
-    games.saveGame(game);
     if(success) {
+      games.saveGame(game);
       notifyPlayers(game);
       return new Result<GameState, UpdateGameErrorCode>(game.getGameState());
     } else {
