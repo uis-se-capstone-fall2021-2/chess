@@ -5,19 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
-import chess.ChessPiece;
-import chess.File;
 import chess.MoveIntent;
 import chess.MoveValidator;
-import chess.Position;
-import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
 import chess.board.InCheck;
 import chess.game.GameStatus;
+import chess.game.PGNUtility;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
@@ -245,5 +243,39 @@ public class Game {
     } else {
       return false;
     }
+  }
+  /**
+   * Converts the games move history to standard chess notation so that it can be imported into other chess software.
+   * 
+   * <p> Expected sample output: </p>
+   * <code>
+   *  1. e4 e5
+   *  2. Nf3 Nc6
+   *  3. d4 Nxd6
+   *  4. Nxe5 Nxc2+
+   * </code>
+   * @return a string containing the game's moves in algebraic notation, includes newline characters.
+   */
+  public String export() {
+    StringBuilder pgnString = new StringBuilder();
+    Board newBoard = new Board();
+    List<MoveIntent> newHistory = new ArrayList<>();
+    List<MoveIntent> history = getMoveHistory();
+    int turnNumber = 0;
+    for(int i = 0; i < history.size(); i++){
+      if(i%2 == 0){
+        if(i > 0)
+          pgnString.append("\n");
+        turnNumber++;
+        pgnString.append(turnNumber + ". ");
+      }
+      MoveIntent currentMove = history.get(i);
+      pgnString.append(PGNUtility.convertMove(currentMove, newBoard, newHistory) + " ");
+      newBoard.updateBoard(currentMove);
+      newHistory.add(currentMove);
+
+    }
+
+    return pgnString.toString();
   }
 }

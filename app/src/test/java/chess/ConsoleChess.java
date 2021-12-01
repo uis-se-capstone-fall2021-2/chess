@@ -47,7 +47,7 @@ public class ConsoleChess {
                 break;
             }
             drawChessBoard(game);
-
+            System.out.println(game.export());
         }
         scan.close();
     }

@@ -192,6 +192,19 @@ public class GameController {
     }
   }
 
+  
+  @GetMapping(path = "/{id}/export", produces=MediaType.TEXT_PLAIN_VALUE)
+  public String export(
+    @PathVariable(value="id", required=true) long gameId
+  ){
+    Result<String, ExportErrorCode> result = gameService.export(gameId);
+    if(result.code != null){
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    } else {
+      return result.value;
+    }
+  }
+
   @PostMapping("/{id}/move")
   public GameState move(
     @Parameter(hidden=true) User user,

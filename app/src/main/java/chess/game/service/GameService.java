@@ -207,7 +207,18 @@ public class GameService implements IGameService {
       return new Result<GameState, UpdateGameErrorCode>(UpdateGameErrorCode.ILLEGAL_MOVE);
     }
   }
-
+  /**
+   * 
+   * @param gameId requested game ID
+   * @return the PGN/Algebraic notation string for the game.
+   */
+  public Result<String, ExportErrorCode> export(long gameId){
+    Game game = getGame(gameId);
+    if(game == null)
+      return new Result<String, ExportErrorCode>(ExportErrorCode.GAME_NOT_FOUND);
+    else 
+      return new Result<String, ExportErrorCode>(game.export());
+  }
   private void notifyPlayers(Game game) {
     GameState state = game.getGameState();
     for(long playerId: game.getPlayers()) {
