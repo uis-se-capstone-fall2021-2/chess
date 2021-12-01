@@ -132,4 +132,16 @@ export class GameServiceImpl implements GameService {
 
     return Strongbus.generateSubscription(over(subscriptions));
   }
+
+  public async download(gameId: GameId): Promise<void> {
+    const pgn = await this.resource.get<string>(`/${gameId}/export`);
+    const {createObjectURL, revokeObjectURL} = window.URL || window.webkitURL;
+    const blob = new Blob([pgn], {type: 'text/plain'});
+    const url = createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', `game_${gameId}.pgn`);
+    a.click();
+    revokeObjectURL(url);
+  }
 }

@@ -198,8 +198,13 @@ public class GameController {
     @PathVariable(value="id", required=true) long gameId
   ){
     Result<String, ExportErrorCode> result = gameService.export(gameId);
-    if(result.code != null){
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    if(result.code != null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     } else {
       return result.value;
     }

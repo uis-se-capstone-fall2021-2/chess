@@ -9,6 +9,7 @@ import {GameData, GameId, GameService, GameState, GameStatus} from '../../../int
 import {User} from '../../../../user/interfaces';
 import {PendingGameActionsCell} from './PendingGameActionsCell';
 import {ActiveGameActionsCell} from './ActiveGameActionsCell';
+import {CompletedGameActionsCell} from './CompletedGameActionsCell';
 
 
 
@@ -40,10 +41,11 @@ export class GameActionsCell extends React.Component<GridRenderCellParams<GameId
                   )}
                 </Route>
               );
-            case GameStatus.DECLINED:
+            
             case GameStatus.COMPLETE:
             case GameStatus.TERMINATED:
-
+              return <CompletedGameActionsCell game={gameData} gameService={this.gameService}/>;
+            case GameStatus.DECLINED:
             default:
               return <span/>
           }

@@ -17,6 +17,7 @@ export interface GameService {
   declineGameInvite(gameId: GameId): Promise<void>;
   cancelGameInvite(gameId: GameId): Promise<void>;
   move(gameId: GameId, intent: MoveIntent): Promise<GameState>;
+  download(gameId: GameId): Promise<void>;
 }
 
 export namespace GameService {
