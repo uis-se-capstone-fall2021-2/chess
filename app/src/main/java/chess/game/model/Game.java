@@ -5,17 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
-import org.springframework.security.access.method.P;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import chess.ChessPiece;
-import chess.File;
 import chess.MoveIntent;
 import chess.MoveValidator;
-import chess.Position;
-import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
 import chess.board.InCheck;
