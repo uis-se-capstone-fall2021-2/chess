@@ -157,6 +157,20 @@ public class GameController {
     }
   }
 
+  @GetMapping("/")
+  public GameState[] getGameStates(
+    @Parameter(hidden=true) User user,
+    @RequestParam(value="id", required=true) Long[] gameIds
+  ) {
+    Result<GameState[], GameStateListErrorCode> result = gameService.getGameStates(gameIds, user.getPlayerId());
+
+    if(result.code != null) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return result.value;
+  }
+
   @GetMapping("/{id}")
   public GameState getGameState(
     @Parameter(hidden=true) User user,
@@ -170,6 +184,24 @@ public class GameController {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         case UNAUTHORIZED:
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return result.value;
+    }
+  }
+
+  
+  @GetMapping(path = "/{id}/export", produces=MediaType.TEXT_PLAIN_VALUE)
+  public String export(
+    @PathVariable(value="id", required=true) long gameId
+  ){
+    Result<String, ExportErrorCode> result = gameService.export(gameId);
+    if(result.code != null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }

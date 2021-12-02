@@ -64,6 +64,23 @@ public class Games extends Repo<Game> {
 		session.saveOrUpdate(game);
 	}
 
+	public List<Game> getGamesForPlayerById(
+		long playerId,
+		Long[] gameIds
+	) {
+		Query<Game> query = super.simpleFilterQuery(
+			new OrFilter(Map.of(
+			"player1", playerId,
+			"player2", playerId
+			)),
+			new OrFilter(Map.of(
+				"gameId", gameIds
+			))
+		);
+
+		return query.getResultList();
+	}
+
 	public List<Game> listGamesForPlayer(
 		long playerId,
 		GameStatus[] status,

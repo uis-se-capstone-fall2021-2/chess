@@ -1,6 +1,13 @@
 package chess.board;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import chess.*;
+/**
+ * Representation of a chess board with an internal 1d integer array.
+ * Board can be updated with new moves through {@link #updateBoard(MoveIntent)}
+ * 
+ */
 public class Board implements IBoard {
     public final int[] board;
 
@@ -40,17 +47,24 @@ public class Board implements IBoard {
     }
 
     public Board copy() {
-        int[] newBoard = new int[board.length];
-        for(int i = 0; i < board.length; i++) {
-            newBoard[i] = board[i];
-        }
+        int[] newBoard = Arrays.copyOf(board, board.length);
         return new Board(newBoard);
     }
 
+    
+    /** Get which piece is located at a requested location on the board.
+     * @param position requested position input
+     * @return int integer representation of the requested piece
+     */
     public int getPiece(Position position){
         return board[position.rank.value * 8 + position.file.value];
     }
-
+    
+    /** Gets the position of a requested integer representation of a piece (allowing negative input for a black piece).
+     *  In the case of duplicate pieces, returns the first piece of correct type.
+     * @param piece integer representation of requested piece
+     * @return Position position of requested piece on board.
+     */
     public Position getPositionOf(int piece){
         Position position = null;
         for(int row = 0; row < 8; row++){
@@ -64,26 +78,66 @@ public class Board implements IBoard {
         return position;
     }
 
+    
+    /** Executes a supplied MoveIntent on the board. The MoveIntent is assumed to be valid.
+     *  Makes the correct changes to the board that need to be made when a king castles, pawn is taken through en passant rule, and pieces are promoted.
+     * @param intent MoveIntent object representing desired move.
+     * @return int[] the updated board (can be ignored, the board is updated in place)
+     */
     public int[] updateBoard(MoveIntent intent){
         int fromIndex = intent.from.rank.value * 8 + intent.from.file.value;
         int toIndex = intent.to.rank.value * 8 + intent.to.file.value;
         int piece = getPiece(intent.from);
 
+        if(intent.promotion != ChessPiece.NONE){
+            // maintain piece's team:
+            piece = (piece > 0) ? intent.promotion.value : -intent.promotion.value;
+        }
+        // En Passant
+        if(intent.chessPiece == ChessPiece.PAWN && (intent.from.file != intent.to.file) && getPiece(intent.to) == 0){
+            int opposingPawnRank = (piece > 0) ? intent.to.rank.value - 1 : intent.to.rank.value + 1;
+            board[opposingPawnRank * 8 + intent.to.file.value] = 0;
+        }
+        if(intent.chessPiece == ChessPiece.KING && (Math.abs(intent.to.file.value - intent.from.file.value) == 2)) {
+            if(intent.to.file.value - intent.from.file.value == 2){
+                // kingside castle
+                board[intent.to.rank.value * 8 + 7] = 0;
+                board[toIndex - 1] = (piece > 0) ? 2 : -2;
+            } else {
+                // queenside castle
+                board[intent.to.rank.value * 8] = 0;
+                board[toIndex + 1] = (piece > 0) ? 2 : -2;
+            }
+        }
+
         board[fromIndex] = 0;
         board[toIndex] = piece;
-
         return board;
     }
-    /*** inCheck return which player is in check, or a 0 if nobody is
+    /** figures out who is in check, if anybody
      * 
-     * @return int: -1, 0, or 1
+     * @return InCheck enum representing which team is in check
      */
-    public int inCheck() {
+    public InCheck inCheck() {
         Position bKing = getPositionOf(-6);
         Position wKing = getPositionOf(6);
-        if(MoveValidator.positionUnderThreat(bKing, -1, this)) return -1;
-        if(MoveValidator.positionUnderThreat(wKing, 1, this)) return 1;
-        return 0;
+        boolean blackInCheck = MoveValidator.positionUnderThreat(bKing, -1, this);
+        boolean whiteInCheck = MoveValidator.positionUnderThreat(wKing, 1, this);
+
+        if(whiteInCheck && blackInCheck) {
+            // avoid a situation where white's move is seen as valid because it 
+            // puts black in check, despite white actually being in check.
+            return InCheck.BOTH;
+        } else {
+            if(whiteInCheck){
+                return InCheck.WHITE;
+            }
+            if(blackInCheck){
+                return InCheck.BLACK;
+            }
+        }
+
+        return InCheck.NONE;
 
     }
 

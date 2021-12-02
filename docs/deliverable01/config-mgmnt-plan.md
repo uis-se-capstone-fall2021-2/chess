@@ -1,0 +1,1 @@
+For configuration management we used Git since this is a tool that automatically keeps track of different versions of software. Release versions were tagged as such in Git using the major.minor.build numbering system.

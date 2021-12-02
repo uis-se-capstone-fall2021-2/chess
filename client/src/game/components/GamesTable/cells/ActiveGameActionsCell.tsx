@@ -6,6 +6,7 @@ import {
 import * as React from 'react';
 
 import {GameService, GameState} from '../../../interfaces';
+import {DownloadGame} from './DownloadGame';
 
 
 export function ActiveGameActionsCell (props: ActiveGameActionsCell.Props): React.ReactElement {
@@ -18,11 +19,14 @@ export function ActiveGameActionsCell (props: ActiveGameActionsCell.Props): Reac
   };
 
   return (
-    <Tooltip title='Quit Game'>
-      <Button onClick={quitGame} color='primary'>
-        <QuitIcon/>
-      </Button>
-    </Tooltip>
+    <>
+      <Tooltip title='Quit Game'>
+        <Button onClick={quitGame} color='primary'>
+          <QuitIcon/>
+        </Button>
+      </Tooltip>
+      <DownloadGame gameId={game.gameId} gameService={gameService}/>
+    </>
   );
 }
 

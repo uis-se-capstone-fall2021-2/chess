@@ -33,13 +33,14 @@ import {
   Link
 } from 'react-router-dom';
 
-
-import '../../player/impl/PlayerService';
-import '../../player/impl/PlayerStore';
 import '../../game/impl/GameService';
 import '../../game/impl/GameStore';
+import '../../messaging/impl/MessagingService';
+import '../../player/impl/PlayerService';
+import '../../player/impl/PlayerStore';
 import '../../utils/resource/ResourceFactory.impl';
 
+import {RectContext} from '../../utils/layout/RectContext';
 import {User} from '../../user/interfaces';
 import {UserProvider} from '../../user/components/UserProvider';
 import {Home} from '../../views/Home';
@@ -48,6 +49,7 @@ import {MyGames} from '../../views/games/MyGames';
 import {theme} from './theme';
 
 import './style.css';
+
 
 
 @autobind
@@ -109,6 +111,9 @@ export class App extends React.Component<{}, {
                       component='main'
                       sx={{
                         backgroundColor: 'secondary.main',
+                        padding: {
+                          xs: '4px'
+                        },
                         width: {
                           xs: '100%',
                           sm: `calc(100% - ${App.NAV_WIDTH}px)`
@@ -121,23 +126,27 @@ export class App extends React.Component<{}, {
                       }}
                     > 
                       <Toolbar/>
-                      <Switch>
-                        <Route exact path='/'>
-                          <Home/>
-                        </Route>
-                        <Route path='/games'>
-                          {(ctx) => (
-                            <Switch>
-                              <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
-                                {(ctx) => (<GameView gameId={parseInt(ctx.match?.params?.gameId)}/>)}
-                              </Route>
-                              <Route>
-                                <MyGames/>
-                              </Route>
-                            </Switch>
-                            )}
-                        </Route>
-                      </Switch>
+                      <Box sx={{flex: '1 1'}}>
+                        <RectContext.Observer>
+                          <Switch>
+                            <Route exact path='/'>
+                              <Home/>
+                            </Route>
+                            <Route path='/games'>
+                              {(ctx) => (
+                                <Switch>
+                                  <Route exact path={`${ctx.match?.path}/:gameId([\\d]+)`}>
+                                    {(ctx) => (<GameView gameId={parseInt(ctx.match?.params?.gameId)}/>)}
+                                  </Route>
+                                  <Route>
+                                    <MyGames/>
+                                  </Route>
+                                </Switch>
+                                )}
+                            </Route>
+                          </Switch>
+                        </RectContext.Observer>
+                      </Box>
                     </Box>
                   </Box>
                 </Router>
@@ -157,7 +166,7 @@ export class App extends React.Component<{}, {
         <Divider/>
         <List>
           <ListItem button>
-            <Link to='/'>
+            <Link to='/' onClick={this.closeMobileNav}>
               <ListItemIcon>
                 <AddIcon sx={this.navSx}/>
               </ListItemIcon>
@@ -165,7 +174,7 @@ export class App extends React.Component<{}, {
             </Link>
           </ListItem>
           <ListItem button>
-            <Link to="/games/active">
+            <Link to="/games/active" onClick={this.closeMobileNav}>
               <ListItemIcon>
                 <GridOnIcon sx={this.navSx}/>
               </ListItemIcon>
@@ -175,17 +184,17 @@ export class App extends React.Component<{}, {
           <Divider/>
           <List sx={{paddingLeft: '60px'}}>
             <ListItem button>
-              <Link to='/games/active'>
+              <Link to='/games/active' onClick={this.closeMobileNav}>
                 <ListItemText primary='Active'/>
               </Link>
             </ListItem>
             <ListItem button>
-              <Link to='/games/pending'>
+              <Link to='/games/pending' onClick={this.closeMobileNav}>
                 <ListItemText primary='Pending'/>
               </Link>
             </ListItem>
             <ListItem button>
-              <Link to='/games/history'>
+              <Link to='/games/history' onClick={this.closeMobileNav}>
                 <ListItemText primary='History'/>
               </Link>
             </ListItem>
@@ -215,6 +224,10 @@ export class App extends React.Component<{}, {
 
   private toggleMobileNavVisibility(): void {
     this.setState((state) => ({mobileNavOpen: !state.mobileNavOpen}));
+  }
+
+  private closeMobileNav(): void {
+    this.setState({mobileNavOpen: false});
   }
 
   private get mobileNavHeader(): React.ReactNode {

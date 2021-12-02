@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @description container to pass player info to client
+ * container to pass player info to client
  */
 @AllArgsConstructor
 public class PlayerInfo {

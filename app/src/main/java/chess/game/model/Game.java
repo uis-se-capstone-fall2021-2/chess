@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
-import chess.ChessPiece;
-import chess.File;
 import chess.MoveIntent;
 import chess.MoveValidator;
-import chess.Position;
-import chess.Rank;
 import chess.PlayerColor;
 import chess.board.Board;
+import chess.board.InCheck;
 import chess.game.GameStatus;
+import chess.game.PGNUtility;
 import chess.game.GameInfo;
 import chess.game.GameState;
 
-
+/**
+ * A full representation of a chess game.
+ */
 @Entity
 @Table(name="Games")
 public class Game {
@@ -49,7 +50,7 @@ public class Game {
   @Column
   @Getter
   @Setter
-  private long winner; // playerId
+  private long winner; // playerId | -1 if stalemate?
 
   @Column
   @Getter
@@ -65,16 +66,18 @@ public class Game {
   private GameStatus status;
 
   @Column
-  @OneToMany(cascade=CascadeType.ALL)
+  @Getter
+  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+  @OrderBy("timestamp ASC")
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
 
-  @Transient
-  private Board board = new Board();
+  private static final long STALEMATE = -1;
 
-  public Game() {
-    this.board = initializeBoard(moves);
-  }
+  @Transient
+  private Board _board;
+
+  public Game() {}
 
   public Game(
     long player1,
@@ -83,18 +86,24 @@ public class Game {
   ) {
     this.player1 = player1;
     this.player2 = player2;
-    this.board = initializeBoard(moves);
     this.owner = owner;
     this.status = GameStatus.PENDING;
   }
 
-  private Board initializeBoard(List<Move> moves) {
+  private Board initializeBoard() {
     ArrayList<MoveIntent> moveRecord = new ArrayList<>();
-    for(Move move : moves){
+    for(Move move : getMoves()){
       moveRecord.add(move.asIntent());
     }
 
-    return board = new Board(moveRecord);
+    return new Board(moveRecord);
+  }
+
+  public Board getBoard() {
+    if(_board == null) {
+      _board = initializeBoard();
+    }
+    return _board;
   }
 
   @PreUpdate
@@ -123,19 +132,23 @@ public class Game {
   public List<MoveIntent> getMoveHistory() {
     List<MoveIntent> history = new ArrayList<MoveIntent>();
     int i = 0;
-    for(Move move: moves) {
+    for(Move move: getMoves()) {
       history.add(i++, move.asIntent());
     }
     return history;
   }
 
+  
+  /** Creates and returns a GameInfo object
+   * @return GameInfo new GameInfo object
+   */
   public GameInfo info() {
     return new GameInfo(
       getGameId(),
       getOwner(),
       getWinner(),
       getPlayers(),
-      moves.size(),
+      getMoves().size(),
       getStatus(),
       getCreatedAt(),
       getUpdatedAt(),
@@ -143,82 +156,126 @@ public class Game {
     );
   }
 
+  
+  /** Creates and returns a GameState object.
+   * @return GameState
+   */
   public GameState getGameState() {
     return new GameState(
       getGameId(),
       getOwner(),
       getWinner(),
       getPlayers(),
-      moves.size(),
+      getMoves().size(),
       playerInCheck(),
-      this.board,
+      getBoard(),
       getStatus()
     );
   }
 
+  
+  /** Gets the player who is up next to make a move.
+   * @return long
+   */
   public long currentPlayer() {
-    return getPlayers()[(int)moves.size() % 2];
+    return getPlayers()[(int)getMoves().size() % 2];
   }
+  
+  /** Gets the <code>PlayerColor</code> of the current player.
+   * @return PlayerColor
+   */
   public PlayerColor currentPlayerColor() {
     if(currentPlayer() == player1)
       return PlayerColor.WHITE;
     else
       return PlayerColor.BLACK;
   }
+  
+  /** Gets the player ID of the player that is in check
+   * @return long Player in check player ID, or -1 if nobody is in check.
+   */
   // determine if one of the players is in check
   public long playerInCheck() {
-    // check if white king is in check
-    // first, get position of white king
-    Position whiteKingLocation = board.getPositionOf(ChessPiece.KING.value);
-    // check every black piece to see if white king's position is a possible move
-    // if it is, return white player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get black piece
-        if(board.getPiece(position) < 0){
-          // if white king's location is possible move, then white king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, whiteKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())) {
-            return player1;
-          }
-        }
-      }
+    InCheck inCheckStatus = getBoard().inCheck();
+    switch(inCheckStatus){
+      case WHITE:
+        return player1;
+      case BLACK:
+        return player2;
+      case NONE:
+        return -1; // game is stalemate when there are no legal moves and incheck == NONE
+      default:
+        return -1;
     }
-
-    // check if black king is in check
-    // first, get position of black king
-    Position blackKingLocation = board.getPositionOf(-ChessPiece.KING.value);
-    // check every white piece to see if black king's position is a possible move
-    // if it is, return black player's id
-    for(int row = 0; row < 8; row++){
-      for(int column = 0; column < 8; column++){
-        Position position = new Position(File.FromInteger(column), Rank.FromInteger(row));
-        int chessPiece = board.getPiece(position);
-        // get white piece
-        if(board.getPiece(position) > 0){
-          // if black king's location is a possible move, then black king is in check
-          MoveIntent intent = new MoveIntent(ChessPiece.FromInteger(chessPiece), position, blackKingLocation);
-          if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
-            return player2;
-          }
-        }
-      }
-    }
-    return -1;
   }
 
 
+  
+  /** Executes a move on the game, after verifying that the move is legal.
+   *  Also makes a check to determine if the game is finished after the move is executed.
+   *  If the game is determined to be over, sets {@link #winner} to the player ID of the winner, or to {@link #STALEMATE} 
+   * @param playerId ID of the moving player
+   * @param intent MoveIntent of the desired move
+   * @return boolean true when the move was successful, false when it was not
+   */
   public boolean move(long playerId, MoveIntent intent){
-    if(MoveValidator.validateMove(intent, this.board, getMoveHistory(), currentPlayerColor())){
+    Board board = getBoard();
+    if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
         moves.add(new Move(intent));
 
         board.updateBoard(intent);
+
+        //if opponent no longer has any valid moves, && their king is in check, the game in won.
+        if(MoveValidator.getAllValidMoves(getGameState(), getMoveHistory(), currentPlayerColor()).isEmpty()) {
+          if(board.inCheck() != InCheck.NONE ) {
+            //Player who last moved has won
+            winner = (currentPlayerColor() == PlayerColor.BLACK) ? getPlayer1() : getPlayer2();
+            status = GameStatus.COMPLETE;
+          } else {
+            // game has ended in a stalemate, no moves yet player is not in check.
+            status = GameStatus.COMPLETE;
+            winner = STALEMATE;
+          }
+        }
+        updateTimeStamps();
         return true;
         
     } else {
       return false;
     }
+  }
+  /**
+   * Converts the games move history to standard chess notation so that it can be imported into other chess software.
+   * 
+   * <p> Expected sample output: </p>
+   * <code>
+   *  1. e4 e5
+   *  2. Nf3 Nc6
+   *  3. d4 Nxd6
+   *  4. Nxe5 Nxc2+
+   * </code>
+   * @return a string containing the game's moves in algebraic notation, includes newline characters.
+   */
+  public String export() {
+    StringBuilder pgnString = new StringBuilder();
+    Board newBoard = new Board();
+    List<MoveIntent> newHistory = new ArrayList<>();
+    List<MoveIntent> history = getMoveHistory();
+    int turnNumber = 0;
+    for(int i = 0; i < history.size(); i++){
+      if(i%2 == 0){
+        if(i > 0)
+          pgnString.append("\n");
+        turnNumber++;
+        pgnString.append(turnNumber + ". ");
+      }
+      MoveIntent currentMove = history.get(i);
+      pgnString.append(PGNUtility.convertMove(currentMove, newBoard, newHistory) + " ");
+      newBoard.updateBoard(currentMove);
+      newHistory.add(currentMove);
+
+    }
+
+    return pgnString.toString();
   }
 }
