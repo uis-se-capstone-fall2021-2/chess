@@ -44,7 +44,7 @@ A User is anyone who would like to engage in a game of chess online against anot
 
 #### Development Dependencies
 
-See [README](../../README.md);
+See [README](../../README.md)
 
 ### Runtime Dependencies
 
@@ -65,11 +65,11 @@ See [README](../../README.md);
       6. A filter **should** be implemented to prohibit extremely long display names. (TODO)
          1. A 16 character maximum is recommended
    3. Users **must** authenticate in order to access the application
-   4. Users **must** authenticate via third party authentication management provider, Auth0
-      1. Users **may** create an Auth0 account for our application
-      2. Users **may** use their Google account
-   5. Users **must** be able to log out of the application 
-   6. Users **must** be able to access their auth token
+      1. Users **must** authenticate via third party authentication management provider, Auth0
+         1. Users **may** create an Auth0 account for our application
+         2. Users **may** use their Google account
+      2. Users **must** be able to log out of the application 
+      3. Users **must** be able to access their auth token
 3. All functions of the application **must** be available to an authenticated user via a REST API
    1. REST API **must** require authentication via the Authorization header with `bearer` scheme
    2. The application **should** expose a private Swagger UI for development testing against the API
