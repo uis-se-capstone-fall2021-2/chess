@@ -142,7 +142,7 @@ See [README](../../README.md)
             9. Knights **must** be able to move two spaces in either direction on one axis, and one space in either direction on the other axis, unless the ending space is occupied by a piece of the player's color.
             10. Knights **must** be able to capture an opponent's piece if it is on the square the knight is moving to.
             11. Kings **must** be able to move exactly one space in any direction, unless it is blocked by a piece of the same color, or results in a check (a state where the king is directly threatened by the potential move of another piece) on the king.
-            12. Kings **must** be able to [castle](https://en.wikipedia.org/wiki/Castling), provided the king is not in check, and would not be in check if it were located at any of the squares it has to move to accomplish the castle.
+            12. Kings **must** be able to [castle](https://en.wikipedia.org/wiki/Castling), provided the king is not in check, and would not be in check if it were located at any of the squares it has to move through to accomplish the castle.
             13. Any move which would result in the player's king being in check **must** be considered illegal, resulting in an error.
         2. When there are no legal moves for a player, the game is over.
            1. If a player is in check when the game is over, the player who last made a move is the winner
