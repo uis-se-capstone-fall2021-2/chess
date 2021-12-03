@@ -26,11 +26,11 @@ Intentionally left blank
 
 ### 2.1 Product Perspective
 
-TODO
+Playing chess is a great way to pass the time and it can be challenging as well. Playing chess with someone in person can be difficult though, especially nowadays. This chess app makes it possible to play chess any time you want. You can work on your skills by playing against a chess AI of varying levels of difficulty, from novice to advanced. Or you can play with a friend wherever you are.
 
 ### 2.2 Product Functions
 
-TODO
+This chess app allows a user to play a game of chess against another human player in real time or against a chess AI. It is a web based application so the user does not need to install anything, all a user needs is an active Internet connection. Users will need to sign in to use the application. The state of the game is automatically saved so that if the user leaves for any reason, their current game state will be unchanged when they come back. Multiple concurrent games are allowed so the user can play against more than one other person or AI at a time.
 
 ### 2.3 User Characteristics
 
