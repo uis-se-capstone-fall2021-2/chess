@@ -81,8 +81,8 @@ See [README](../../README.md)
          2. Users **must** be able to search for other human opponents by display name
          3. ~Users **must** be able to search for bot opponents by display name~
             1. ~Suggestions **should** be provided for the bot display names~
-         4. UI **should** provide a pre-populated selection of bots (TODO)
-      2. Users **should** be routed to the detail view of the created game upon submission
+         4. UI **should** provide a pre-populated selection of available bots (TODO)
+      2. Upon game creation, Users **should** be routed to the detail view of the created game
    2. Users **must** be able to view the status of pending invitations they've sent
       1. Users **must** be able to cancel a pending invitation they've sent to another user
    3. User **must** be able to view pending invitations they've received
