@@ -109,7 +109,7 @@ See [README](../../README.md)
    6. Users **must** be able to view a list of their active games
       1. Users **must** be able to quit active games
          1. Quitting an active game **must** reward the User's opponent with a win
-         2. User **must** not be able to quit inactive games
+         2. User **must not** be able to quit inactive games
             1. Inactive games are defined as games with status of pending, declined, and completed, and terminated
       2. Users **must** be able to view summary details of games from the list view
          1. opponent
