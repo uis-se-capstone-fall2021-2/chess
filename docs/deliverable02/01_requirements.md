@@ -108,9 +108,9 @@ See [README](../../README.md)
       2. Bots **must** immediately accept game invitations
    6. Users **must** be able to view a list of their active games
       1. Users **must** be able to quit active games
-         1. Quitting an active game **must** reward the User's opponent with a win
+         1. Quitting an active Game **must** reward the User's opponent with a win
          2. User **must not** be able to quit inactive games
-            1. Inactive games are defined as games with status of pending, declined, and completed, and terminated
+            1. Inactive games **shall** be defined as games with status of `pending`, `declined`, `completed`, and `terminated` (quit)
       2. Users **must** be able to view summary details of games from the list view
          1. opponent
          2. move count
@@ -123,50 +123,57 @@ See [README](../../README.md)
       4. Users **must** be able to access an active game from the list view
          1. Accessing an active game **must** route the User to the Game Board view
    7. The Game Board view **must** render a chess board
-      1. The orientation of the board **should** have the User's team at the bottom
-      2. The User **must** only be able to move their pieces on their turn
+      1. Users **must** only be able to interact with Games they are a player in
+         1. Attempting to access an unathorized Game **must** result in an error. The following constitue access:
+          1.  view Game
+          2.  quit Game
+          3.  accept Game invitation
+          4.  decline Game invitation
+          5.  move (update Game)
+      2. Users **must** be able to resume games across UI sessions
+         1. Navigating away from the Game Board view **must not** affect the Game state
+         2. Navigating away from the application site **must not** affect the Game state 
+         3. Closing the browser **must not** affect the game state
+         4. User **must** be able to engage with the same Game from multiple browsing instances
+      3. Game updates **must** be displayed in real time or near-realtime
+         1. websockets **shall** be used to push game updates to Users
+      4. The orientation of the board **should** have the User's team at the bottom
+      5. An indication **must** be shown when a Player is in check
+      6. The User **must** only be able to move their pieces on their turn
          1. An indication **must** be shown whose turn it is
          2. Moving an opponent's piece **must** result in an error
          3. Moving own piece out of turn **must** result in an error
-         4. Errors **must** be indicated visually
-      3. All moves **must** adhere to the rules of chess
+         4. Errors **must** be indicated visually 
+      7. All moves **must** adhere to the rules of chess
          1. All pieces **must** only be allowed to move in the following explicitly defined ways, attempting any other move **must** result in an error.
             1. Pawns **must** be able to move one space forward (or towards the opponent's pieces starting location), or twice on their first turn only.
             2. Pawns **must** be able to capture (remove opponent's piece from the game and take its place) forward diagonally, but prevented from capturing forwards vertically.
             3. Pawns **must** be able to capture according to the [en passant rule.](https://en.wikipedia.org/wiki/En_passant)
-            4. Pawns which reach the final rank **must** be promoted, converting the pawn into the player's choice of a knight, bishop, rook, or queen.
+            4. Pawns which reach the final rank **must** be promoted
+               1. Users **should** have the choice pawn into the player's choice of a knight, bishop, rook, or queen.
+               2. In absence of player choice, the application **must** default to queen promotion
             5. Bishops **must** be able to move any number of tiles away from its starting position diagonally, unless it is blocked by another piece.
             6. Rooks **must** be able to move any number of tiles away from its starting horizontally or vertically, unless it is blocked by another piece.
             7. Queens **must** be able to move any number of tiles away from its starting position diagonally, horizontally, or vertically, unless it is blocked by another piece.
             8. Rooks, bishops, and queens **must** be able to capture the blocking piece if the piece belongs to the opponent's team.
-            9. Knights **must** be able to move two spaces in either direction on one axis, and one space in either direction on the other axis, unless the ending space is occupied by a piece of the player's color.
+            9.  Knights **must** be able to move two spaces in either direction on one axis, and one space in either direction on the other axis, unless the ending space is occupied by a piece of the player's color.
             10. Knights **must** be able to capture an opponent's piece if it is on the square the knight is moving to.
             11. Kings **must** be able to move exactly one space in any direction, unless it is blocked by a piece of the same color, or results in a check (a state where the king is directly threatened by the potential move of another piece) on the king.
             12. Kings **must** be able to [castle](https://en.wikipedia.org/wiki/Castling), provided the king is not in check, and would not be in check if it were located at any of the squares it has to move through to accomplish the castle.
-            13. Any move which would result in the player's king being in check **must** be considered illegal, resulting in an error.
-        2. When there are no legal moves for a player, the game is over.
-           1. If a player is in check when the game is over, the player who last made a move is the winner
-           2. If there is no player in check when the game is over, the game ends in a draw by stalemate.  
-      4. An indication **must** be shown when a player is in check
-      5. Users **must** be able to resume games across UI sessions
-         1. Navigating away from the Game Board view **must not** affect the game state
-         2. Navigating away from the application site **must not** affect the game state 
-         3. Closing the browser **must not** affect the game state
-         4. User **must** be able to engage with the same game from multiple browsing instances
-   8. Game updates **must** be displayed in real time or near-realtime
-   9.  Users **must** only be able to interact with games they are a player in
-      1.  Attempting to access an unathorized game **must** result in an error. The following constitue access:
-          1.  view game
-          2.  quit game
-          3.  accept game invitation
-          4.  decline game invitation
-          5.  move (update game)
-  1.  Upon game completion, User **must** be routed to the Completed Game view
-      1.  Completed Game view **should** show a Game Summary (TODO)
-          1.  winner
-          2.  move count
-          3.  option to download game
-          4.  if User lost, **should** present option for rematch (sends invite to opponent)
+            13. Any move which would result in the Player's king being in check **must** be considered illegal, resulting in an error.
+      8. a Game **must** transition to the `completed` status when there are no legal moves for a Player
+         1. If a Player is in check when the Game is over, the player who last made a move is the winner
+              1. The winning Player's `playerId` **shall** be saved to the Game's `winner` field
+         2. If there is no Player in check when the game is over, the Game ends in a draw by stalemate.
+              1. The Game's `winner` field **shall** remain `null`
+              2. Stalemate **shall** be a function of `Game.status == complete && Game.winner == null`, rather than an explicitly stored state
+         3. Attempting to move after a Game has completed **must** result in an error
+         4. Upon Game completion, User **must** be routed to the Completed Game view
+            1.  Completed Game view **should** show a Game Summary (TODO)
+                 1.  winner
+                 2.  move count
+                 3.  option to download game
+                 4.  if User lost, **should** present option for rematch (sends invite to opponent)
 
 
 ## 4. Appendicies
