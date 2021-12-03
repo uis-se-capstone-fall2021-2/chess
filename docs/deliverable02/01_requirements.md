@@ -12,7 +12,7 @@ See [Scope Document](./scope.md)
 
 ### 1.3 Definitions and Acronyms
 
-Not Applicable
+For the purposes of this document, a `User` is a human who accesses the application. A `Bot` is a chess artificial intelligence (AI). A `Player` is either a `User` or a `Bot`.
 
 ### 1.4 References
 
@@ -26,15 +26,15 @@ Intentionally left blank
 
 ### 2.1 Product Perspective
 
-Product perspective — give a little background about why the software is being built and why it will be useful; one good paragraph will do
+TODO
 
 ### 2.2 Product Functions
 
-Product functions — describe fundamentally what the software will do; again, one  good  paragraph  will  suffice,  and  you  do  not  need  to  go  in  depth  (the specific requirements section will cover the in-depth functions)
+TODO
 
 ### 2.3 User Characteristics
 
-Describe the end users
+A User is anyone who would like to engage in a game of chess online against another human player or an AI opponent
 
 ### 2.4 General Constraints
 
