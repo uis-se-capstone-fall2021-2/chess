@@ -130,7 +130,23 @@ See [README](../../README.md)
          3. Moving own piece out of turn **must** result in an error
          4. Errors **must** be indicated visually
       3. All moves **must** adhere to the rules of chess
-         1. @bennettj12 please complete this with move validator requirements
+         1. All pieces **must** only be allowed to move in the following explicitly defined ways, attempting any other move **must** result in an error.
+            1. Pawns **must** be able to move one space forward (or towards the opponent's pieces starting location), or twice on their first turn only.
+            2. Pawns **must** be able to capture (remove opponent's piece from the game and take its place) forward diagonally, but prevented from capturing forwards vertically.
+            3. Pawns **must** be able to capture according to the [en passant rule.](https://en.wikipedia.org/wiki/En_passant)
+            4. Pawns which reach the final rank **must** be promoted, converting the pawn into the player's choice of a knight, bishop, rook, or queen.
+            5. Bishops **must** be able to move any number of tiles away from its starting position diagonally, unless it is blocked by another piece.
+            6. Rooks **must** be able to move any number of tiles away from its starting horizontally or vertically, unless it is blocked by another piece.
+            7. Queens **must** be able to move any number of tiles away from its starting position diagonally, horizontally, or vertically, unless it is blocked by another piece.
+            8. Rooks, bishops, and queens **must** be able to capture the blocking piece if the piece belongs to the opponent's team.
+            9. Knights **must** be able to move two spaces in either direction on one axis, and one space in either direction on the other axis, unless the ending space is occupied by a piece of the player's color.
+            10. Knights **must** be able to capture an opponent's piece if it is on the square the knight is moving to.
+            11. Kings **must** be able to move exactly one space in any direction, unless it is blocked by a piece of the same color, or results in a check (a state where the king is directly threatened by the potential move of another piece) on the king.
+            12. Kings **must** be able to [castle](https://en.wikipedia.org/wiki/Castling), provided the king is not in check, and would not be in check if it were located at any of the squares it has to move to accomplish the castle.
+            13. Any move which would result in the player's king being in check **must** be considered illegal, resulting in an error.
+        2. When there are no legal moves for a player, the game is over.
+           1. If a player is in check when the game is over, the player who last made a move is the winner
+           2. If there is no player in check when the game is over, the game ends in a draw by stalemate.  
       4. An indication **must** be shown when a player is in check
       5. Users **must** be able to resume games across UI sessions
          1. Navigating away from the Game Board view **must not** affect the game state
