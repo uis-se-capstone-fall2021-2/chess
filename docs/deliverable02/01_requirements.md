@@ -89,7 +89,7 @@ See [README](../../README.md)
       1. Users **must** be able to accept or decline game invitations from other users
       2. Users **may** be notified of new pending games
    4. Users **may** engage in multiple concurrent games
-      1. A limit **should** be placed on the number of games a User may be active in at any given time
+      1. A limit **should** be placed on the number of games a User may be active in at any given time (TODO)
          1. Users **should** not be prohibited from receiving game invites when they are at or beyond the active game limit
          2. Users **should** be prohibited from accepting game invites when they are at or beyond the active game limit
          3. Users **should** be prohibited from sending game invites when they are at or beyond the active game limit
