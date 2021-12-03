@@ -118,7 +118,7 @@ See [README](../../README.md)
          1. An indication **must** be shown whose turn it is
          2. Moving an opponent's piece **must** result in an error
          3. Moving own piece out of turn **must** result in an error
-            1. Errors **must** be displayed
+         4. Errors **must** be indicated visually
       3. All moves **must** adhere to the rules of chess
          1. @bennettj12 please complete this with move validator requirements
       4. An indication **must** be shown when a player is in check
