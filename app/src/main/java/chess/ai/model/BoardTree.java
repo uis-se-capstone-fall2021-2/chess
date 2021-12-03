@@ -2,7 +2,6 @@ package chess.ai.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import chess.MoveIntent;
 import chess.MoveValidator;
@@ -12,9 +11,8 @@ import chess.board.Board;
  * Implements minimax algorithm for use in AIs.
  */
 public class BoardTree {
-    static final int MINIMAX_DEPTH = 3;
+    static final int MINIMAX_DEPTH = 2;
     int treeSize;
-    Random r;
     class Node {
         int score;
         Board board;
@@ -37,7 +35,6 @@ public class BoardTree {
     BoardTree(Board board, List<MoveIntent> history) {
         head = new Node(board, history);
         treeSize = 1;
-        r = new Random();
     }
 
 
