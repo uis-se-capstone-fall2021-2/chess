@@ -52,26 +52,35 @@ See [README](../../README.md)
 
 ## 3. Specific Requirements
 
+| keyword    | meaning                                  |
+|------------|------------------------------------------|
+| **must**   | Requirement                              |
+| **should** | Not required, but strongly suggested     |
+| **shall**  | Accepted implementation of a requirement |
+| **may**    | Optional imlementation of a requirement  |
+
+
 1. Users **must** be able to interact with the application via a web interface
    1. application **must** be compatible with all modern browsers
 2. Multiple Users **must** be able to access the application concurrently
    1. Each User of the application **must** be a uniquely identifiable entity
    2. Each User of the application **must** have a unique, public display name
-      1. User **may** be able to change their display name to another globally unique name
-      2. A User's request to modify their display name **must** be accepted if there is no conflict with another user's display name
-      3. A User's request to modify their display name **must** be rejected with a if the name is in use by another user
-      4. A User **must not** be able to modify another user's display name
-      5. A filter **should** be implemented to prohibit obscene display names (TODO)
-      6. A filter **should** be implemented to prohibit extremely long display names. (TODO)
-         1. A 16 character maximum is recommended
+      1. User **should** be able to change their display name to another globally unique name
+         1. A User's request to modify their display name **must** be accepted if there is no conflict with another user's display name
+         2. A User's request to modify their display name **must** be rejected with a if the name is in use by another user
+         3. A User **must not** be able to modify another user's display name
+         4. A filter **should** be implemented to prohibit obscene display names (TODO)
+         5. A filter **should** be implemented to prohibit extremely long display names. (TODO)
+            1. A 16 character maximum is recommended
    3. Users **must** authenticate in order to access the application
-      1. Users **must** authenticate via third party authentication management provider, Auth0
+      1. Users **shall** authenticate via third party authentication management provider, Auth0
          1. Users **may** create an Auth0 account for our application
          2. Users **may** use their Google account
       2. Users **must** be able to log out of the application 
       3. Users **must** be able to access their auth token
 3. All functions of the application **must** be available to an authenticated user via a REST API
-   1. REST API **must** require authentication via the Authorization header with `bearer` scheme
+   1. REST API **must** require authentication
+      1. Authentication strategy **shall** be via the `Authorization` header with `bearer` scheme
    2. The application **should** expose a private Swagger UI for development testing against the API
    3. The application **may** expose a public Swagger UI
 4. A Users **must** be able to engage in a game of chess via a web UI
@@ -82,19 +91,20 @@ See [README](../../README.md)
          3. ~Users **must** be able to search for bot opponents by display name~
             1. ~Suggestions **should** be provided for the bot display names~
          4. UI **should** provide a pre-populated selection of available bots (TODO)
+         5. Users **must** be able to choose their color (team) when creating a chess game
       2. Upon game creation, Users **should** be routed to the detail view of the created game
    2. Users **must** be able to view the status of pending invitations they've sent
       1. Users **must** be able to cancel a pending invitation they've sent to another user
    3. User **must** be able to view pending invitations they've received
       1. Users **must** be able to accept or decline game invitations from other users
       2. Users **may** be notified of new pending games
-   4. Users **may** engage in multiple concurrent games
+   4. Users **must** be able to engage in multiple concurrent games
       1. A limit **should** be placed on the number of games a User may be active in at any given time (TODO)
-         1. Users **should** not be prohibited from receiving game invites when they are at or beyond the active game limit
+         1. Users **should not** be prohibited from receiving game invites when they are at or beyond the active game limit
          2. Users **should** be prohibited from accepting game invites when they are at or beyond the active game limit
          3. Users **should** be prohibited from sending game invites when they are at or beyond the active game limit
    5. Bots **must** have the capacity to engage in multiple concurrent games
-      1. Bots **must** not have an active game limit
+      1. Bots **must not** have an active game limit
       2. Bots **must** immediately accept game invitations
    6. Users **must** be able to view a list of their active games
       1. Users **must** be able to quit active games
@@ -126,9 +136,9 @@ See [README](../../README.md)
          1. Navigating away from the Game Board view **must not** affect the game state
          2. Navigating away from the application site **must not** affect the game state 
          3. Closing the browser **must not** affect the game state
-         4. User **may** engage with the same game from multiple browsing instances
+         4. User **must** be able to engage with the same game from multiple browsing instances
    8. Game updates **must** be displayed in real time or near-realtime
-   9. Users **must** only be able to interact with games they are a player in
+   9.  Users **must** only be able to interact with games they are a player in
       1.  Attempting to access an unathorized game **must** result in an error. The following constitue access:
           1.  view game
           2.  quit game
