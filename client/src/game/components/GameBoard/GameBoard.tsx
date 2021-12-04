@@ -1,5 +1,7 @@
 import {Chessboard} from 'react-chessboard';
+import {Chess} from 'chess.ts'
 import {autobind} from 'core-decorators';
+
 import * as React from 'react';
 
 import {ChessboardLib, MoveIntent, Rank, File, Position, ChessPiece} from '../../../board/interfaces';
@@ -85,9 +87,8 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
 
   private getChessboardPosition(): string {
-    const gameState: GameState = this.state.pendingGameState ?? this.props.gameState;
-
-    const board = gameState.board;
+    const board = this.props.gameState.board;
+    
     if(!board) {
       return "";
     }
@@ -97,22 +98,28 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       fen = fen.concat("/");
     }
     fen = fen.substring(0, fen.length-1);
+    fen = this.props.gameState.moveCount % 2 === 0 ? fen.concat(" w") : fen.concat(" b");
+    fen = fen.concat(" - - 0");
+    fen = fen.concat(" " + this.props.gameState.moveCount);
+
     return fen;
   }
 
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // transform source, target, and piece into MoveIntent
-    const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
+    const moveIntent: MoveIntent = { chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target) };
     const pendingGameState: GameState = {
       ...this.props.gameState,
       moveCount: this.props.gameState.moveCount + 1,
       playerInCheck: this.props.gameState.playerInCheck,
-      board: this.optimisticallyCalculateNextBoard(moveIntent)
+      board: this.optimisticallyCalculateNextBoard(moveIntent, source, target)
     };
+
     this.setState({
       error: null,
       pendingGameState
     });
+
     this.handleMove(moveIntent);
     return true;
   }
@@ -132,8 +139,70 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
   }
 
-  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
-    return this.props.gameState.board // TODO: calculate desired GameState from moveIntent
+  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent, source: ChessboardLib.Square, target: ChessboardLib.Square): number[] {
+    const chess = new Chess();
+    const moveCount: number = this.props.gameState.moveCount;
+    if(moveCount === 0){
+      chess.clear();
+    }
+    else{
+      chess.load(this.getChessboardPosition());
+    }
+    
+    var board: number[] = this.props.gameState.board;
+
+    if (chess.move({ from: source, to: target }) != null) {
+      const fromIndex: number = this.getRankIntValue(moveIntent.from.rank) * 8 + this.getFileIntValue(moveIntent.from.file);
+      const toIndex: number = this.getRankIntValue(moveIntent.to.rank) * 8 + this.getFileIntValue(moveIntent.to.file);
+      const piece: number = this.getPieceIntValueFromPosition(moveIntent.from);
+
+      board[fromIndex] = 0;
+      board[toIndex] = piece;
+    }
+
+    return board;
+  }
+
+  private getPieceIntValueFromPosition(position: Position): number{
+    return this.props.gameState.board[this.getRankIntValue(position.rank) * 8 + this.getFileIntValue(position.file)];
+  }
+
+  private getRankIntValue(rank: Rank): number{
+    if (rank.localeCompare("_1") === 0)
+      return 0;
+    else if (rank.localeCompare("_2") === 0)
+      return 1;
+    else if (rank.localeCompare("_3") === 0)
+      return 2;
+    else if (rank.localeCompare("_4") === 0)
+      return 3;
+    else if (rank.localeCompare("_5") === 0)
+      return 4;
+    else if (rank.localeCompare("_6") === 0)
+      return 5;
+    else if (rank.localeCompare("_7") === 0)
+      return 6;
+    else if (rank.localeCompare("_8") === 0)
+      return 7;
+  }
+
+  private getFileIntValue(file: File): number{
+    if (file === "A")
+      return 0;
+    else if (file === "B")
+      return 1;
+    else if (file === "C")
+      return 2;
+    else if (file === "D")
+      return 3;
+    else if (file === "E")
+      return 4;
+    else if (file === "F")
+      return 5;
+    else if (file === "G")
+      return 6;
+    else if (file === "H")
+      return 7;
   }
 
   private numToFenStr(piece: number): string {

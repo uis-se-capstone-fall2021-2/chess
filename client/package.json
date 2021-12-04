@@ -12,6 +12,7 @@
     "@mui/x-data-grid": "^5.0.0-beta.6",
     "@stomp/stompjs": "^6.1.2",
     "axios": "^0.22.0",
+    "chess.ts": "^0.16.2",
     "core-decorators": "^0.20.0",
     "cra-template-typescript": "1.1.2",
     "jaasync": "^0.9.3",
