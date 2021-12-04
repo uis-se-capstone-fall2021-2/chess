@@ -22,8 +22,6 @@ auth0:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
-webclient:
-  url:
 ---
 spring:
   config:
@@ -33,4 +31,16 @@ spring:
     url: jdbc:h2:file:./database/developmentDb
 webclient:
   url: http://localhost:3000
+---
+spring:
+  config:
+    activate:
+      on-profile: beta
+    datasource:
+      url: jdbc:h2:file:./database/betaDb
+server:
+  port: 8099
+webclient:
+  url: https://kingsfolly-beta.ngrok.io
+
 
