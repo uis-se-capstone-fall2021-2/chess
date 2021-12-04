@@ -3,6 +3,7 @@ package chess;
 import chess.game.GameStatus;
 import chess.game.model.Game;
 import chess.ai.model.Advanced;
+import chess.ai.model.Beginner;
 import chess.ai.model.BoardEvaluation;
 import chess.board.Board;
 
@@ -17,7 +18,7 @@ public class ConsoleChess {
 
     public static void main(String[] args) {
         Game game = new Game(1,0,1);
-        Advanced ai = new Advanced();
+        Beginner ai = new Beginner();
         Scanner scan = new Scanner(System.in);
 
 
@@ -27,12 +28,13 @@ public class ConsoleChess {
             System.out.println(game.currentPlayerColor() + " to move ");
             MoveIntent aiMove = ai.chooseMove(game.getGameState(), game.getMoveHistory());
             game.move(1, aiMove);
+            drawChessBoard(game);
             System.out.println("AI has moved");
             if(game.getStatus() == GameStatus.COMPLETE) {
                 System.out.println("Game has ended: Winning PlayerID: " + game.getWinner());
                 break;
             }
-            drawChessBoard(game);
+
             System.out.println(game.currentPlayerColor() + " to move ");
             System.out.print("Enter a move (\"e2 e4\"): ");
             String moveChoice = scan.nextLine();
@@ -47,7 +49,6 @@ public class ConsoleChess {
                 break;
             }
             drawChessBoard(game);
-            System.out.println(game.export());
         }
         scan.close();
     }
