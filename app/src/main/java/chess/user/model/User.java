@@ -3,9 +3,6 @@ package chess.user.model;
 import javax.persistence.*;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +35,11 @@ public class User extends Player implements IUser {
   @Column(name=Fields.USER_EMAIL)
   @Getter
   private String email;
+
+  @Override
+  public String getPlayerType() {
+    return Player.PlayerType.User;
+  }
 
   public void notify(GameState gameState, List<MoveIntent> moveHistory) {
     if(springApplicationContext == null) {
