@@ -1,10 +1,9 @@
 import {autobind} from 'core-decorators';
-import {sleep} from 'jaasync';
 import * as React from 'react';
 import * as Strongbus from 'strongbus';
 
 import {Inject} from '../../di';
-import {GameService, GameData, GameStatus, GameId} from '../interfaces';
+import {GameService, GameData, GameId} from '../interfaces';
 
 /**
  * @description container to abstract keeping game state up-to-date and providing it to child component tree
