@@ -9514,10 +9514,10 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
-react-chessboard@^0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/react-chessboard/-/react-chessboard-0.0.16.tgz#401d91b0d42395ea4e556a812239c949db669ffc"
-  integrity sha512-Clvm1jLYILLMzIuFBfRgdXgMgVB/4DvPaswztB3uUDPRrLG553LGFdyHuehirle+lRZe8L0GUIT42XKdVhZhrw==
+react-chessboard@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-chessboard/-/react-chessboard-1.0.0.tgz#f4306c440697bc8d808f0090187847fe6e80a97b"
+  integrity sha512-tTfouSdY7GRgWqFXF8djZyyFgIWM8Gx31b5H9GkT6XG0AiS70nVjk7Vl66SRqTVFY3hxZ+8BmEdTvblNYdVvhQ==
   dependencies:
     prop-types "^15.7.2"
     react-dnd "^14.0.3"
