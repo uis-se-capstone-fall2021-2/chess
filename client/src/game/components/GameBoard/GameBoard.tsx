@@ -107,7 +107,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       ...this.props.gameState,
       moveCount: this.props.gameState.moveCount + 1,
       playerInCheck: this.props.gameState.playerInCheck,
-      board: this.props.gameState.board // TODO: calculate desired GameState from moveIntent
+      board: this.optimisticallyCalculateNextBoard(moveIntent)
     };
     this.setState({
       error: null,
@@ -130,6 +130,10 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
         pendingGameState: null
       });
     }
+  }
+
+  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
+    return this.props.gameState.board // TODO: calculate desired GameState from moveIntent
   }
 
   private numToFenStr(piece: number): string {
