@@ -43,7 +43,7 @@ public abstract class Player extends ContextAwareEntity implements IPlayer {
   @Getter
   @Setter
   private String displayName;
-
+  
   public String getPlayerType() {
     return this.getClass().getAnnotation(DiscriminatorValue.class).value();
   }

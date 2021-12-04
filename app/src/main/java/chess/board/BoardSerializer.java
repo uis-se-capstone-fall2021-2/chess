@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.springframework.boot.jackson.JsonComponent;
-
+/**
+ * Utility which encodes <code>Board</code> objects
+ */
 @JsonComponent
 public class BoardSerializer {
   public static class Serialize extends JsonSerializer<Board> {
