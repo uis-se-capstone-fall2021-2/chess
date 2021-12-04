@@ -604,6 +604,7 @@ public class MoveValidator {
                             validMoves.add(new MoveIntent(piece, startPos, endPos));
                         }
                     }
+                    
                 }
                 break;
             default:
@@ -851,6 +852,38 @@ public class MoveValidator {
                 break;
             }
         }
+        //Check threat from king:
+        x = loc.file.value;
+        y = loc.rank.value;
+        List<Position> adjacencies = new ArrayList<>();
+        if(x < 7){
+            adjacencies.add(new Position(x + 1,y));
+            if(y < 7)
+                adjacencies.add(new Position(x + 1,y + 1));
+            if(y > 0)
+                adjacencies.add(new Position(x + 1,y - 1));
+        }
+        if(x > 0){
+            adjacencies.add(new Position(x - 1,y));
+            if(y < 7)
+                adjacencies.add(new Position(x - 1,y + 1));
+            if(y > 0)
+                adjacencies.add(new Position(x - 1,y - 1));
+        }
+        if(y < 7)
+            adjacencies.add(new Position(x,y + 1));
+        if(y > 0)
+            adjacencies.add(new Position(x,y - 1));
+
+        for(Position adjacency: adjacencies){
+            int piece = board.getPiece(adjacency);
+            // if opposing king
+            if(piece == (-team * 6)) {
+                return true;
+            }
+        }
+
+
         return false;
     }
 }
