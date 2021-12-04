@@ -48,6 +48,12 @@ Authenticate by runnng the client app, logging in, and getting a token. Copy the
 
 <img src="./docs/img/swagger_auth.png"/>
 
+### Access Database
+
+database is stored as ./app/database/developmentDb.mv.db
+
+[H2 Console](http://localhost:8080/h2-console)
+
 
 ### Tests
 

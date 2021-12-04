@@ -45,7 +45,7 @@ export class GameServiceImpl implements GameService {
           flagged.forEach(gameId => this.flaggedGames.add(gameId));
         }
       }
-      await sleep(2_000);
+      await sleep(250);
     }
   }
 

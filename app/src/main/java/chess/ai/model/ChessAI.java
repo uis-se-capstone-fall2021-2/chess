@@ -1,6 +1,8 @@
 package chess.ai.model;
 import java.util.List;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import chess.MoveIntent;
@@ -14,14 +16,24 @@ import chess.player.model.Player;
  * Generic AI template to be extended by specific AI implementations.
  */
 @Entity
+@DiscriminatorValue(value=Player.PlayerType.AI)
+@DiscriminatorColumn(name="AI_TYPE")
 public abstract class ChessAI extends Player {
 
-
-
-    public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
+    public static class AIType {
+        public static final String Advanced = "Advanced";
+        public static final String Beginner = "Beginner";
+    }
 
     protected ChessAI() {
         super();
+    }
+
+    public abstract MoveIntent chooseMove(GameState state, List<MoveIntent> moveHistory);
+
+    @Override
+    public String getPlayerType() {
+        return Player.PlayerType.AI;
     }
 
     @Override

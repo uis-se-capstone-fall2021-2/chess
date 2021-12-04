@@ -6,11 +6,22 @@ import './index.css';
 import {AppContainer} from './entry/AppContainer';
 import reportWebVitals from './reportWebVitals';
 import {Tokens} from './di';
+import axios, {AxiosError} from 'axios';
+
+document.title = "King's Folly";
 
 // TODO: load this from environment
 Container.set(Tokens.API_HOST, 'localhost:8080');
 
-(window as any).di = Container;
+axios.interceptors.response.use(
+  value => value,
+  error => {
+    const msg = (error as AxiosError<{message: string}>)?.response?.data?.message;
+    return Promise.reject(msg ? new Error(msg) : error);
+  }
+);
+
+// (window as any).di = Container;
 
 ReactDOM.render(
   <React.StrictMode>

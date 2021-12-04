@@ -44,9 +44,8 @@ public abstract class Player extends ContextAwareEntity implements IPlayer {
   @Setter
   private String displayName;
   
-  public String getPlayerType() {
-    return this.getClass().getAnnotation(DiscriminatorValue.class).value();
-  }
+  public abstract String getPlayerType();
+
   public PlayerInfo info() {
     return new PlayerInfo(
       getPlayerId(),
