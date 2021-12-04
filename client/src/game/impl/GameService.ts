@@ -127,7 +127,13 @@ export class GameServiceImpl implements GameService {
     ];
 
     if(!this.games.getGame(gameId)) {
-      this.fetchGameState(gameId);
+      (async () => {
+        try {
+          await this.fetchGameState(gameId);
+        } catch(e) {
+          console.warn(`Unable to fetch game ${gameId}`, e);
+        }
+      })();
     }
 
     return Strongbus.generateSubscription(over(subscriptions));
