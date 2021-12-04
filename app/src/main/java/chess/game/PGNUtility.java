@@ -63,13 +63,11 @@ public class PGNUtility {
             //checkmate, or stalemate.
             switch(newCheckStatus){
                 case WHITE:
-                check = "# 1 - 0";
-                break;
                 case BLACK:
-                check = "# 0 - 1";
+                check = "#";
                 break;
                 default:
-                check = " 1/2 1/2";
+                check = "";
                 break;
             }
         }
