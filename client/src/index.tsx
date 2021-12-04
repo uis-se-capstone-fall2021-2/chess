@@ -10,8 +10,11 @@ import axios, {AxiosError} from 'axios';
 
 document.title = "King's Folly";
 
+
 // TODO: load this from environment
-Container.set(Tokens.API_HOST, 'localhost:8080');
+Container.set(Tokens.API_HOST, process.env.REACT_APP_API_HOST);
+Container.set(Tokens.STOMP_BROKER_BASE_URL, process.env.REACT_APP_STOMP_BROKER_BASE_URL);
+Container.set(Tokens.AUTH_0_CLIENT_ID, process.env.REACT_APP_AUTH_0_CLIENT_ID);
 
 axios.interceptors.response.use(
   value => value,
