@@ -8,10 +8,11 @@ import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import chess.ChessPiece;
 import chess.MoveIntent;
 import chess.MoveValidator;
 import chess.PlayerColor;
+import chess.Rank;
 import chess.board.Board;
 import chess.board.InCheck;
 import chess.game.GameStatus;
@@ -220,6 +221,18 @@ public class Game {
    */
   public boolean move(long playerId, MoveIntent intent){
     Board board = getBoard();
+
+    //Pawn auto promote to queen when not specified
+    if(intent.chessPiece.equals(ChessPiece.PAWN)){
+      Rank pawnRank = intent.to.rank;
+      // pawn is on first or last rank and promotion is unset
+      if((pawnRank.equals(Rank._1) || pawnRank.equals(Rank._8)) && (intent.promotion.equals(ChessPiece.NONE))){
+        //replace intent with a new one with promotion set to queen
+        intent = new MoveIntent(intent.chessPiece, intent.from, intent.to, ChessPiece.QUEEN);
+      }
+    }
+
+
     if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){
         moves.add(new Move(intent));
 

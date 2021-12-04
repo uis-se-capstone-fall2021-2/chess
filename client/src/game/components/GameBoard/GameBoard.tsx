@@ -8,6 +8,7 @@ import {GameService, GameState} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
 import {Alert} from '@mui/material';
+import {isEqual} from 'lodash';
 
 
 @autobind
@@ -64,6 +65,14 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     );
   }
 
+  public override componentDidUpdate(prevProps: GameBoard.Props): void {
+    if(!isEqual(prevProps.gameState.board, this.props.gameState.board)) {
+      this.setState({
+        pendingGameState: null
+      });
+    }
+  }
+
   private getBoardWidth({height, width}: RectContext.Dimensions): number {
     if(height >= 560 && width >= 560) {
       return 560 - 20;
@@ -89,7 +98,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
     fen = fen.substring(0, fen.length-1);
     return fen;
-  } 
+  }
 
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // transform source, target, and piece into MoveIntent
@@ -98,7 +107,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       ...this.props.gameState,
       moveCount: this.props.gameState.moveCount + 1,
       playerInCheck: this.props.gameState.playerInCheck,
-      board: this.props.gameState.board // TODO: calculate desired GameState from moveIntent
+      board: this.optimisticallyCalculateNextBoard(moveIntent)
     };
     this.setState({
       error: null,
@@ -111,16 +120,20 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private async handleMove(moveIntent: MoveIntent): Promise<void> {
     const {gameId} = this.props.gameState;
     try {
-      await this.gameService.move(gameId, moveIntent);
+      const nextState: GameState = await this.gameService.move(gameId, moveIntent);
+      this.setState({
+        pendingGameState: nextState
+      });
     } catch(e) {
       this.setState({
-        error: e as Error
-      });
-    } finally {
-      this.setState({
+        error: e as Error,
         pendingGameState: null
       });
     }
+  }
+
+  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
+    return this.props.gameState.board // TODO: calculate desired GameState from moveIntent
   }
 
   private numToFenStr(piece: number): string {
