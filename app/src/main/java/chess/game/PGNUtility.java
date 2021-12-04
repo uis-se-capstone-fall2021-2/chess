@@ -96,6 +96,10 @@ public class PGNUtility {
                 if(move.from.rank.equals(positionToCheck.rank)){
                     fileAmbiguity = true;
                 }
+                //default to telling the file when two pieces can move
+                if(!fileAmbiguity && !rankAmbiguity){
+                    fileAmbiguity = true;
+                }
             }
         }
 
