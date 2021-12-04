@@ -13,8 +13,8 @@ export class MessagingServiceImpl implements MessagingService {
 
   @Inject(User.Token)
   private readonly user: User;
-  @Inject(Tokens.API_HOST)
-  private readonly apiHost: string;
+  @Inject(Tokens.STOMP_BROKER_BASE_URL)
+  private readonly stompBrokerBaseUrl: string;
   private connectionInitiated: boolean = false;
   private readonly connected = new Deferred<Stomp.Client>();
 
@@ -26,7 +26,7 @@ export class MessagingServiceImpl implements MessagingService {
     this.connectionInitiated = true;
 
     const client = new Stomp.Client({
-      brokerURL: `ws://${this.apiHost}/stomp`,
+      brokerURL: `${this.stompBrokerBaseUrl}/stomp`,
       connectHeaders: {
         authToken: this.user.token
       }

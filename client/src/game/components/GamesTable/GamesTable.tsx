@@ -6,13 +6,15 @@ import * as React from 'react';
 
 
 import {Inject} from '../../../di';
-import {GameData, GameId, GameStatus} from '../../interfaces';
+import {GameData, GameId} from '../../interfaces';
 import {PlayerColor, PlayerId, PlayerService} from '../../../player/interfaces';
 import {User} from '../../../user/interfaces';
 import {GameActionsCell} from './cells/GameActionsCell';
 import {PlayerCell} from './cells/PlayerCell';
 import {GameLinkCell} from './cells/GameLinkCell';
 import {DateCell} from './cells/DateCell';
+import {GameWinnerCell} from './cells/GameWinnerCell';
+import {GameStatusCell} from './cells/GameStatusCell';
 
 
 @autobind
@@ -75,14 +77,14 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
       gameId: gameData.gameId,
       ownerId: gameData.owner,
       opponentId: (gameData.players[0] === this.user.playerId) ? gameData.players[1] : gameData.players[0],
-      winnerId: (gameData.winner),
+      winner: gameData.gameId,
       playerColor: (gameData.players[0] === this.user.playerId) ? PlayerColor.WHITE : PlayerColor.BLACK,
       moveCount: gameData.moveCount,
       actions: gameData.gameId,
       createdAt: gameData.createdAt,
       updatedAt: gameData.updatedAt,
       completedAt: gameData.completedAt,
-      gameStatus: gameData.status
+      gameStatus: gameData.gameId
     }
   }
 
@@ -98,6 +100,12 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     headerAlign: 'center',
     align: 'center',
     renderCell: (params: GridRenderCellParams<PlayerId>) => (<PlayerCell {...params}/>)
+  }, {
+    field: 'gameStatus',
+    headerName: 'Status',
+    headerAlign: 'center',
+    align: 'center',
+    renderCell: (params: GridRenderCellParams<GameId>) => (<GameStatusCell gameId={params.value}/>)
   }, {
     field: 'ownerId',
     headerName: 'Owner',
@@ -122,6 +130,12 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     headerAlign: 'center',
     align: 'center'
   }, {
+    field: 'winner',
+    headerName: 'Winner',
+    headerAlign: 'center',
+    align: 'center',
+    renderCell: (params: GridRenderCellParams<GameId>) => (<GameWinnerCell {...params}/>)
+  },{
     field: 'updatedAt',
     width: 250,
     headerName: 'Last Updated',
@@ -135,11 +149,6 @@ export abstract class GamesTable extends React.Component<{}, GamesTable.State> {
     headerAlign: 'center',
     align: 'center',
     renderCell: DateCell
-  }, {
-    field: 'gameStatus',
-    headerName: 'Status',
-    headerAlign: 'center',
-    align: 'center'
   }];
 }
 
@@ -154,13 +163,13 @@ export namespace GamesTable {
     gameId: GameId;
     ownerId: PlayerId;
     opponentId: PlayerId;
-    winnerId: PlayerId;
+    winner: GameId;
     playerColor: PlayerColor;
     moveCount: number;
     actions: GameId;
     createdAt: Date;
     updatedAt: Date;
     completedAt: Date;
-    gameStatus: GameStatus;
+    gameStatus: GameId;
   }
 }

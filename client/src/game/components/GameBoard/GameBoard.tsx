@@ -1,16 +1,17 @@
-import {Chessboard} from 'react-chessboard';
-import {Chess} from 'chess.ts'
+import {Alert} from '@mui/material';
 import {autobind} from 'core-decorators';
-
+// @ts-ignore
+import {Chess} from 'chess.ts';
+import {isEqual} from 'lodash';
 import * as React from 'react';
+import {Chessboard} from 'react-chessboard';
 
 import {ChessboardLib, MoveIntent, Rank, File, Position, ChessPiece} from '../../../board/interfaces';
 import {Inject} from '../../../di';
 import {GameService, GameState} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
-import {Alert} from '@mui/material';
-import {isEqual} from 'lodash';
+import {GameLifecycleProvider} from '../GameLifecyleProvider';
 
 
 @autobind
@@ -27,43 +28,53 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   };
 
   public override componentDidMount() {
-    this.gameService.fetchGameState(this.props.gameState.gameId);
+    (async () => {
+      try {
+        await this.gameService.fetchGameState(this.props.gameState.gameId);
+      } catch(ignore) {}
+    })();
   }
 
   public override render(): React.ReactNode {
-    const {gameId, players, playerInCheck, moveCount} = this.props.gameState;
-    const {error} = this.state;
-
-    const isUsersTurn = moveCount % 2 === players.indexOf(this.user.playerId)
-    const banner = (width: number) => (
-      error
-        ? <Alert sx={{width, marginBottom: 1}} severity='error'>{error.message}</Alert>
-        : playerInCheck === this.user.playerId
-          ? <Alert sx={{width, marginBottom: 1}} severity='warning'>Your King is in Check!</Alert>
-          : isUsersTurn
-            ? <Alert sx={{width, marginBottom: 1}} severity='success'>It's Your Turn</Alert>
-            : <Alert sx={{width, marginBottom: 1}} severity='info'>Waiting for opponent...</Alert>
-    );
+    const {gameId, players} = this.props.gameState;
 
     return (
       <RectContext.Consumer>
         {(dimensions: RectContext.Dimensions) => {
           const width = this.getBoardWidth(dimensions);
           return (
-            <>
-              {banner(width)}
-              <Chessboard
-                id={gameId}
-                boardWidth={width}
-                position={this.getChessboardPosition()}
-                onPieceDrop={this.handleMoveSync}
-                boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
-                arePiecesDraggable={isUsersTurn}
-              />
-            </>
+            <GameLifecycleProvider gameState={this.props.gameState}>
+              {({isUsersTurn, isUserInCheck}) => (
+                <>
+                  <this.Banner width={width} isUsersTurn={isUsersTurn} isUserInCheck={isUserInCheck}/>
+                  <Chessboard
+                    id={gameId}
+                    boardWidth={width}
+                    position={this.getChessboardPosition()}
+                    onPieceDrop={this.handleMoveSync}
+                    boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
+                    arePiecesDraggable={isUsersTurn}
+                  />
+                </>
+              )}
+            </GameLifecycleProvider>
           );
         }}
       </RectContext.Consumer>
+    );
+  }
+
+  private Banner(params: {isUserInCheck: boolean, isUsersTurn: boolean, width: number}): React.ReactElement {
+    const {error} = this.state;
+    const {width, isUsersTurn, isUserInCheck} = params;
+    return (
+      error
+        ? <Alert sx={{width, marginBottom: 1}} severity='error'>{error.message}</Alert>
+        : isUserInCheck
+          ? <Alert sx={{width, marginBottom: 1}} severity='warning'>Your King is in Check!</Alert>
+          : isUsersTurn
+            ? <Alert sx={{width, marginBottom: 1}} severity='success'>It's Your Turn</Alert>
+            : <Alert sx={{width, marginBottom: 1}} severity='info'>Waiting for opponent...</Alert>
     );
   }
 
@@ -141,7 +152,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private optimisticallyCalculateNextBoard(moveIntent: MoveIntent, source: ChessboardLib.Square, target: ChessboardLib.Square): number[] {
     const chess = new Chess();
-    const moveCount: number = this.props.gameState.moveCount;
+    const {moveCount, board} = this.props.gameState;
     if(moveCount === 0){
       chess.clear();
     }
@@ -149,18 +160,18 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       chess.load(this.getChessboardPosition());
     }
     
-    var board: number[] = this.props.gameState.board;
+    const nextBoard: number[] = [...board];
 
     if (chess.move({ from: source, to: target }) != null) {
       const fromIndex: number = this.getRankIntValue(moveIntent.from.rank) * 8 + this.getFileIntValue(moveIntent.from.file);
       const toIndex: number = this.getRankIntValue(moveIntent.to.rank) * 8 + this.getFileIntValue(moveIntent.to.file);
       const piece: number = this.getPieceIntValueFromPosition(moveIntent.from);
 
-      board[fromIndex] = 0;
-      board[toIndex] = piece;
+      nextBoard[fromIndex] = 0;
+      nextBoard[toIndex] = piece;
     }
 
-    return board;
+    return nextBoard;
   }
 
   private getPieceIntValueFromPosition(position: Position): number{

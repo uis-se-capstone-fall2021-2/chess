@@ -84,61 +84,62 @@ public class MoveValidator {
                                 validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
                             }
                         }
-                    }
-
-                    // CAPTURES
-                    if(x > 0) {
-                        Position leftCapture = new Position(x - 1, y + 1);
-                        if(board.getPiece(leftCapture) < 0){
-                            if(y == 6){
-                                //pawn can capture and promote
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.BISHOP));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.KNIGHT));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.QUEEN));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.ROOK));
-                            } else {
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                        // CAPTURES
+                        if(x > 0) {
+                            Position leftCapture = new Position(x - 1, y + 1);
+                            if(board.getPiece(leftCapture) < 0){
+                                if(y == 6){
+                                    //pawn can capture and promote
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.BISHOP));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.KNIGHT));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.QUEEN));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.ROOK));
+                                } else {
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                                }
                             }
                         }
-                    }
-                    if(x < 7) {
-                        Position rightCapture = new Position(x + 1, y + 1);
-                        if(board.getPiece(rightCapture) < 0){
-                            if(y == 6){
-                                //pawn can capture and promote
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.BISHOP));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.KNIGHT));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.QUEEN));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.ROOK));
-                            } else {
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
+                        if(x < 7) {
+                            Position rightCapture = new Position(x + 1, y + 1);
+                            if(board.getPiece(rightCapture) < 0){
+                                if(y == 6){
+                                    //pawn can capture and promote
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.BISHOP));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.KNIGHT));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.QUEEN));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.ROOK));
+                                } else {
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
+                                }
                             }
                         }
+
+                        // EN PASSANT
+                            // LEFT EN PASSANT
+                        if(x > 0 && y == 4) {
+                            Position left = new Position(x - 1, y);
+                            Position leftPrevious = new Position(x - 1, y + 2);
+                            MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
+                            if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
+                                // if the previous move was the opposite pawn moving adjectent to this pawn.
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y + 1)));
+                            }
+                        }
+                            // RIGHT EN PASSANT
+                        if(x < 7 && y == 4) {
+                            Position right = new Position(x + 1, y);
+                            Position rightPrevious = new Position(x + 1, y + 2);
+                            MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
+                            if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
+                                // if the previous move was the opposite pawn moving adjectent to this pawn.
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y + 1)));
+                            }
+                        }
+                            
+
                     }
 
-                    // EN PASSANT
-                        // LEFT EN PASSANT
-                    if(x > 0 && y == 4) {
-                        Position left = new Position(x - 1, y);
-                        Position leftPrevious = new Position(x - 1, y + 2);
-                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
-                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
-                            // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y + 1)));
-                        }
-                    }
-                        // RIGHT EN PASSANT
-                    if(x < 7 && y == 4) {
-                        Position right = new Position(x + 1, y);
-                        Position rightPrevious = new Position(x + 1, y + 2);
-                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
-                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
-                            // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y + 1)));
-                        }
-                    }
-                        
-
+                    
 
                 } else {
                     // black pawn
@@ -162,59 +163,60 @@ public class MoveValidator {
                                 validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, doubleFront));
                             }
                         }
-                    }
-                    // CAPTURES
-                    if(x > 0) {
-                        Position leftCapture = new Position(x - 1, y - 1);
-                        if(board.getPiece(leftCapture) > 0){
-                            if(y == 1) {
-                                // capture and promote
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.BISHOP));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.KNIGHT));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.QUEEN));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.ROOK));
-                            } else {
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                        // CAPTURES
+                        if(x > 0) {
+                            Position leftCapture = new Position(x - 1, y - 1);
+                            if(board.getPiece(leftCapture) > 0){
+                                if(y == 1) {
+                                    // capture and promote
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.BISHOP));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.KNIGHT));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.QUEEN));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture, ChessPiece.ROOK));
+                                } else {
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, leftCapture));
+                                }
+                            }
+                        }
+                        if(x < 7) {
+                            Position rightCapture = new Position(x + 1, y - 1);
+                            if(board.getPiece(rightCapture) > 0){
+                                if(y == 1) {
+                                    // capture and promote
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.BISHOP));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.KNIGHT));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.QUEEN));
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.ROOK));
+                                } else {
+                                    validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
+                                }
+                            }
+                        }
+
+
+                        // EN PASSANT
+                            // LEFT EN PASSANT
+                        if(x > 0 && y == 3) {
+                            Position left = new Position(x - 1, y);
+                            Position leftPrevious = new Position(x - 1, y - 2);
+                            MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
+                            if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
+                                // if the previous move was the opposite pawn moving adjectent to this pawn.
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y - 1)));
+                            }
+                        }
+                            // RIGHT EN PASSANT
+                        if(x < 7 && y == 3) {
+                            Position right = new Position(x + 1, y);
+                            Position rightPrevious = new Position(x + 1, y - 2);
+                            MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
+                            if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
+                                // if the previous move was the opposite pawn moving adjectent to this pawn.
+                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y - 1)));
                             }
                         }
                     }
-                    if(x < 7) {
-                        Position rightCapture = new Position(x + 1, y - 1);
-                        if(board.getPiece(rightCapture) > 0){
-                            if(y == 1) {
-                                // capture and promote
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.BISHOP));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.KNIGHT));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.QUEEN));
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture, ChessPiece.ROOK));
-                            } else {
-                                validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, rightCapture));
-                            }
-                        }
-                    }
-
-
-                    // EN PASSANT
-                        // LEFT EN PASSANT
-                    if(x > 0 && y == 3) {
-                        Position left = new Position(x - 1, y);
-                        Position leftPrevious = new Position(x - 1, y - 2);
-                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, leftPrevious, left);
-                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
-                            // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x - 1, y - 1)));
-                        }
-                    }
-                        // RIGHT EN PASSANT
-                    if(x < 7 && y == 3) {
-                        Position right = new Position(x + 1, y);
-                        Position rightPrevious = new Position(x + 1, y - 2);
-                        MoveIntent intentToCheck = new MoveIntent(ChessPiece.PAWN, rightPrevious, right);
-                        if(moveRecord.get(moveRecord.size() - 1).equals(intentToCheck)) {
-                            // if the previous move was the opposite pawn moving adjectent to this pawn.
-                            validMoves.add(new MoveIntent(ChessPiece.PAWN, startPos, new Position(x + 1, y - 1)));
-                        }
-                    }
+                    
 
                 }
                 break;
@@ -604,6 +606,7 @@ public class MoveValidator {
                             validMoves.add(new MoveIntent(piece, startPos, endPos));
                         }
                     }
+                    
                 }
                 break;
             default:
@@ -851,6 +854,38 @@ public class MoveValidator {
                 break;
             }
         }
+        //Check threat from king:
+        x = loc.file.value;
+        y = loc.rank.value;
+        List<Position> adjacencies = new ArrayList<>();
+        if(x < 7){
+            adjacencies.add(new Position(x + 1,y));
+            if(y < 7)
+                adjacencies.add(new Position(x + 1,y + 1));
+            if(y > 0)
+                adjacencies.add(new Position(x + 1,y - 1));
+        }
+        if(x > 0){
+            adjacencies.add(new Position(x - 1,y));
+            if(y < 7)
+                adjacencies.add(new Position(x - 1,y + 1));
+            if(y > 0)
+                adjacencies.add(new Position(x - 1,y - 1));
+        }
+        if(y < 7)
+            adjacencies.add(new Position(x,y + 1));
+        if(y > 0)
+            adjacencies.add(new Position(x,y - 1));
+
+        for(Position adjacency: adjacencies){
+            int piece = board.getPiece(adjacency);
+            // if opposing king
+            if(piece == (-team * 6)) {
+                return true;
+            }
+        }
+
+
         return false;
     }
 }
