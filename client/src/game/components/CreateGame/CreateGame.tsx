@@ -56,7 +56,7 @@ export class CreateGame extends React.Component<CreateGame.Props, CreateGame.Sta
                 <MenuItem value={PlayerType.AI}>Bot</MenuItem>
               </Select>
               <PlayerSearch
-                label={opponentType === PlayerType.USER ? 'Search Players' : 'Choose Bot'}
+                label={opponentType === PlayerType.USER ? 'Search Players' : 'Advanced Bot or Novice Bot'}
                 playerType={opponentType}
                 onSelect={this.setOpponent}/>
             </Box>
