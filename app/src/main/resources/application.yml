@@ -1,7 +1,4 @@
 spring:
-  datasource:
-    username: sa
-    driverClassName: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -29,6 +26,8 @@ spring:
       on-profile: development
   datasource:
     url: jdbc:h2:file:./database/developmentDb
+    username: sa
+    driverClassName: org.h2.Driver
 webclient:
   url: http://localhost:3000
 ---
@@ -36,8 +35,11 @@ spring:
   config:
     activate:
       on-profile: beta
-    datasource:
-      url: jdbc:h2:file:./database/betaDb
+  datasource:
+    url: jdbc:h2:file:./database/betaDb
+    username: sa
+    password: foobarbaz
+    driverClassName: org.h2.Driver
 server:
   port: 8099
 webclient:
