@@ -45,7 +45,7 @@ public class MoveIntent {
     }
     public String toString() {
         if(promotion != ChessPiece.NONE){
-            return from.toString() + " -> " + to.toString() + "Promote: " + promotion.name();
+            return from.toString() + " -> " + to.toString() + " Promote: " + promotion.name();
         }
         return from.toString() + " -> " + to.toString();
     }

@@ -149,6 +149,22 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
   }
 
+
+  private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
+    const temp = new Chess();
+    temp.load(this.getFenString(this.props.gameState.board));
+    if(
+      (moveIntent.chessPiece == ChessPiece.PAWN) &&
+      (moveIntent.to.rank == Rank._1 || moveIntent.to.rank == Rank._8)){
+        if(temp.move({from: source, to: target, promotion: 'q'})){
+          return true;
+        }
+    } else if(temp.move({from: source, to: target})) {
+      return true;
+    }
+    return false;
+  }
+
   private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
     const nextBoard: number[] = [...this.props.gameState.board];
     const fromIndex: number = this.getRankIntValue(moveIntent.from.rank) * 8 + this.getFileIntValue(moveIntent.from.file);
