@@ -28,12 +28,10 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     pendingGameState: null
   };
 
-  public override componentDidMount() {
-    (async () => {
-      try {
-        await this.gameService.fetchGameState(this.props.gameState.gameId);
-      } catch(ignore) {}
-    })();
+  public override async componentDidMount() {
+    try {
+      await this.gameService.fetchGameState(this.props.gameState.gameId);
+    } catch(ignore) {}
   }
 
   public override render(): React.ReactNode {
@@ -42,7 +40,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     return (
       <RectContext.Consumer>
         {(dimensions: RectContext.Dimensions) => {
-          const width = this.getBoardWidth(dimensions);
+          const width = BoardUtils.getBoardWidth(dimensions);
           return (
             <GameLifecycleProvider gameState={this.props.gameState}>
               {({isUsersTurn, isUserInCheck}) => (
@@ -98,25 +96,12 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
   }
 
-  private getBoardWidth({height, width}: RectContext.Dimensions): number {
-    if(height >= 560 && width >= 560) {
-      return 560 - 20;
-    } else if(height > width) {
-      return Math.max(100, width - 20);
-    } else {
-      return Math.max(100, height - 20);
-    }
-  }
-
-
-  
-
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
 
     const moveIntent: MoveIntent = {
       chessPiece: BoardUtils.toChessPiece(piece),
-      from: BoardUtils.toPosition(source),
-      to: BoardUtils.toPosition(target)
+      from: BoardUtils.squareToPosition(source),
+      to: BoardUtils.squareToPosition(target)
     };
 
     if(this.validateMove(moveIntent, source, target)) {

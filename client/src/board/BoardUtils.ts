@@ -1,3 +1,5 @@
+import {PieceSymbol} from 'chess.ts';
+import {RectContext} from '../utils/layout/RectContext';
 import {ChessboardLib, Rank, File, Position, ChessPiece} from './interfaces';
 
 export class BoardUtils {
@@ -147,12 +149,16 @@ export class BoardUtils {
       return Rank._8;
   }
 
-  public static toPosition(square: ChessboardLib.Square): Position{
+  public static squareToPosition(square: ChessboardLib.Square): Position{
     const position: Position = {rank: BoardUtils.rankFromSquare(square), file: BoardUtils.fileFromSquare(square)};
     return position;
   }
 
-  public static toChessPiece(piece: ChessboardLib.Piece): ChessPiece{
+  public static positionToSquare(pos: Position): ChessboardLib.Square {
+    return `${pos.file.toLowerCase()}${pos.rank.replace('_', '')}` as ChessboardLib.Square;
+  } 
+
+  public static toChessPiece(piece: ChessboardLib.Piece): ChessPiece {
     if (piece.charAt(1).localeCompare("P") === 0)
       return ChessPiece.PAWN;
     else if (piece.charAt(1).localeCompare("R") === 0)
@@ -167,7 +173,32 @@ export class BoardUtils {
       return ChessPiece.KING;
   }
 
-  public static getPieceIntValueFromPosition(board: number[], position: Position): number{
+  private static readonly piecesToSymbols = new Map<ChessPiece, PieceSymbol>([
+    [ChessPiece.PAWN, 'p'],
+    [ChessPiece.ROOK, 'r'],
+    [ChessPiece.KNIGHT, 'n'],
+    [ChessPiece.BISHOP, 'b'],
+    [ChessPiece.QUEEN, 'q'],
+    [ChessPiece.KING, 'k']
+  ]);
+
+  public static getPieceSymbolFromChessPiece(chessPiece: ChessPiece): PieceSymbol {
+    return BoardUtils.piecesToSymbols.get(chessPiece);
+  }
+
+  public static getPieceIntValueFromPosition(board: number[], position: Position): number {
     return board[BoardUtils.getRankIntValue(position.rank) * 8 + BoardUtils.getFileIntValue(position.file)];
   }
+
+  public static getBoardWidth({height, width}: RectContext.Dimensions): number {
+    if(height >= 560 && width >= 560) {
+      return 560 - 20;
+    } else if(height > width) {
+      return Math.max(100, width - 20);
+    } else {
+      return Math.max(100, height - 20);
+    }
+  }
+
+  public static readonly STARTING_FEN: string = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 }

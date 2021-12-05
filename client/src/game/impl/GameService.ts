@@ -150,4 +150,9 @@ export class GameServiceImpl implements GameService {
     a.click();
     revokeObjectURL(url);
   }
+
+  public async getMoveHistory(gameId: GameId): Promise<MoveIntent[]> {
+    const history = await this.resource.get<MoveIntent[]>(`/${gameId}/moves/history`);
+    return history;
+  }
 }

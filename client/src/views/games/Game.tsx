@@ -25,7 +25,7 @@ export class GameView extends React.Component<GameView.Props, GameView.State> {
             case GameStatus.DECLINED:
               return <DeclinedGame gameInfo={gameData} />
             default:
-              return <CompletedGame gameInfo={gameData} />
+              return <CompletedGame gameState={gameData as GameState} />
           }
         }}
       </GameProvider>
