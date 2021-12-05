@@ -50,7 +50,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
                   <Chessboard
                     id={gameId}
                     boardWidth={width}
-                    position={this.getChessboardPosition()}
+                    position={this.getFenString()}
                     onPieceDrop={this.handleMoveSync}
                     boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
                     arePiecesDraggable={isUsersTurn}
@@ -97,10 +97,10 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
 
-  private getChessboardPosition(): string {
-    const board = this.props.gameState.board;
+  private getFenString(): string {
+    const {board, moveCount} = this.props.gameState;
     
-    if(!board) {
+    if(!board || !moveCount) {
       return "";
     }
     var fen: string = "";
@@ -118,20 +118,26 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // transform source, target, and piece into MoveIntent
-    const moveIntent: MoveIntent = { chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target) };
-    const pendingGameState: GameState = {
-      ...this.props.gameState,
-      moveCount: this.props.gameState.moveCount + 1,
-      playerInCheck: this.props.gameState.playerInCheck,
-      board: this.optimisticallyCalculateNextBoard(moveIntent, source, target)
-    };
+    const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
+    if(this.validateMove(moveIntent, source, target)) {
+      const pendingGameState: GameState = {
+        ...this.props.gameState,
+        moveCount: this.props.gameState.moveCount + 1,
+        playerInCheck: null, 
+        board: this.optimisticallyCalculateNextBoard(moveIntent)
+      };
+  
+      this.setState({
+        error: null,
+        pendingGameState
+      });
+      this.handleMove(moveIntent);
+    } else {
+      this.setState({
+        error: new Error('Illegal Move')
+      });
+    }
 
-    this.setState({
-      error: null,
-      pendingGameState
-    });
-
-    this.handleMove(moveIntent);
     return true;
   }
 
@@ -150,26 +156,23 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
   }
 
-  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent, source: ChessboardLib.Square, target: ChessboardLib.Square): number[] {
-    const chess = new Chess();
-    const {moveCount, board} = this.props.gameState;
-    if(moveCount === 0){
-      chess.clear();
+  private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
+    const temp = new Chess();
+    temp.load(this.getFenString());
+    if(temp.move({from: source, to: target})) {
+      return true;
     }
-    else{
-      chess.load(this.getChessboardPosition());
-    }
-    
-    const nextBoard: number[] = [...board];
+    return false;
+  }
 
-    if (chess.move({ from: source, to: target }) != null) {
-      const fromIndex: number = this.getRankIntValue(moveIntent.from.rank) * 8 + this.getFileIntValue(moveIntent.from.file);
-      const toIndex: number = this.getRankIntValue(moveIntent.to.rank) * 8 + this.getFileIntValue(moveIntent.to.file);
-      const piece: number = this.getPieceIntValueFromPosition(moveIntent.from);
+  private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
+    const nextBoard: number[] = [...this.props.gameState.board];
+    const fromIndex: number = this.getRankIntValue(moveIntent.from.rank) * 8 + this.getFileIntValue(moveIntent.from.file);
+    const toIndex: number = this.getRankIntValue(moveIntent.to.rank) * 8 + this.getFileIntValue(moveIntent.to.file);
+    const piece: number = this.getPieceIntValueFromPosition(moveIntent.from);
 
-      nextBoard[fromIndex] = 0;
-      nextBoard[toIndex] = piece;
-    }
+    nextBoard[fromIndex] = 0;
+    nextBoard[toIndex] = piece;
 
     return nextBoard;
   }
