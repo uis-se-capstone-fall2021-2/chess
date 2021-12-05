@@ -36,7 +36,8 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   public override render(): React.ReactNode {
-    const {gameId, players} = this.props.gameState;
+    const {gameId, players, board} = this.props.gameState;
+    const {pendingGameState} = this.state;
 
     return (
       <RectContext.Consumer>
@@ -50,7 +51,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
                   <Chessboard
                     id={gameId}
                     boardWidth={width}
-                    position={this.getFenString()}
+                    position={this.getFenString(pendingGameState?.board ?? board)}
                     onPieceDrop={this.handleMoveSync}
                     boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
                     arePiecesDraggable={isUsersTurn}
@@ -97,10 +98,9 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
 
-  private getFenString(): string {
-    const {board, moveCount} = this.props.gameState;
+  private getFenString(board: number[]): string {
     
-    if(!board || !moveCount) {
+    if(!board) {
       return "";
     }
     var fen: string = "";
@@ -158,7 +158,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
     const temp = new Chess();
-    temp.load(this.getFenString());
+    temp.load(this.getFenString(this.props.gameState.board));
     if(temp.move({from: source, to: target})) {
       return true;
     }
