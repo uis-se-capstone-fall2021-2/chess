@@ -195,13 +195,16 @@ public class GameController {
   
   @GetMapping(path = "/{id}/export", produces=MediaType.TEXT_PLAIN_VALUE)
   public String export(
+    @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
   ){
-    Result<String, ExportErrorCode> result = gameService.export(gameId);
+    Result<String, ExportErrorCode> result = gameService.export(gameId, user.getPlayerId());
     if(result.code != null) {
       switch(result.code) {
         case GAME_NOT_FOUND:
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         default:
           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -240,4 +243,24 @@ public class GameController {
     }
   }
 
+  @GetMapping("/{id}/moves/history")
+  public MoveIntent[] getMoveHistory(
+    @Parameter(hidden=true) User user,
+    @PathVariable(value="id", required=true) long gameId
+  ) {
+    Result<MoveIntent[], GameStateErrorCode> result = gameService.getMoveHistory(gameId, user.getPlayerId());
+
+    if(result.code != null) {
+      switch(result.code) {
+        case GAME_NOT_FOUND:
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        case UNAUTHORIZED:
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        default:
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return result.value;
+    }
+  }
 }

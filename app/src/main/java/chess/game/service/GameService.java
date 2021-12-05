@@ -212,13 +212,28 @@ public class GameService implements IGameService {
    * @param gameId requested game ID
    * @return the PGN/Algebraic notation string for the game.
    */
-  public Result<String, ExportErrorCode> export(long gameId){
-    Game game = getGame(gameId);
-    if(game == null)
+  public Result<String, ExportErrorCode> export(long gameId, long playerId){
+    Game game = games.getGameById(gameId);
+    if(game == null) {
       return new Result<String, ExportErrorCode>(ExportErrorCode.GAME_NOT_FOUND);
-    else 
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<String, ExportErrorCode>(ExportErrorCode.UNAUTHORIZED);
+    } else {
       return new Result<String, ExportErrorCode>(game.export());
+    }
   }
+
+  public Result<MoveIntent[], GameStateErrorCode> getMoveHistory(long gameId, long playerId) {
+    Game game = games.getGameById(gameId);
+    if(game == null) {
+      return new Result<MoveIntent[], GameStateErrorCode>(GameStateErrorCode.GAME_NOT_FOUND);
+    } else if(!game.hasPlayer(playerId)) {
+      return new Result<MoveIntent[], GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
+    } else {
+      return new Result<MoveIntent[], GameStateErrorCode>(game.getMoveHistory().toArray(MoveIntent[]::new));
+    }
+  }
+
   private void notifyPlayers(Game game) {
     GameState state = game.getGameState();
     for(long playerId: game.getPlayers()) {
