@@ -1,7 +1,5 @@
 import {Alert} from '@mui/material';
 import {autobind} from 'core-decorators';
-// @ts-ignore
-import {Chess} from 'chess.ts';
 import {isEqual} from 'lodash';
 import * as React from 'react';
 import {Chessboard} from 'react-chessboard';
@@ -119,24 +117,19 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
     // transform source, target, and piece into MoveIntent
     const moveIntent: MoveIntent = {chessPiece: this.toChessPiece(piece), from: this.toPosition(source), to: this.toPosition(target)};
-    if(this.validateMove(moveIntent, source, target)) {
-      const pendingGameState: GameState = {
-        ...this.props.gameState,
-        moveCount: this.props.gameState.moveCount + 1,
-        playerInCheck: null, 
-        board: this.optimisticallyCalculateNextBoard(moveIntent)
-      };
-  
-      this.setState({
-        error: null,
-        pendingGameState
-      });
-      this.handleMove(moveIntent);
-    } else {
-      this.setState({
-        error: new Error('Illegal Move')
-      });
-    }
+    
+    const pendingGameState: GameState = {
+      ...this.props.gameState,
+      moveCount: this.props.gameState.moveCount + 1,
+      playerInCheck: null, 
+      board: this.optimisticallyCalculateNextBoard(moveIntent)
+    };
+
+    this.setState({
+      error: null,
+      pendingGameState
+    });
+    this.handleMove(moveIntent);
 
     return true;
   }
@@ -154,15 +147,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
         pendingGameState: null
       });
     }
-  }
-
-  private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
-    const temp = new Chess();
-    temp.load(this.getFenString(this.props.gameState.board));
-    if(temp.move({from: source, to: target})) {
-      return true;
-    }
-    return false;
   }
 
   private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
