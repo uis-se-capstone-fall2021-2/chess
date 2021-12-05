@@ -3575,7 +3575,7 @@ check-types@^11.1.1:
 
 chess.ts@^0.16.2:
   version "0.16.2"
-  resolved "https://registry.npmjs.org/chess.ts/-/chess.ts-0.16.2.tgz"
+  resolved "https://registry.yarnpkg.com/chess.ts/-/chess.ts-0.16.2.tgz#d84b422d8178644eba92720861356a9e79493fb0"
   integrity sha512-eqTrUGxN7xLr/SHQcc7AT+Kp1aRQb1iCMn1pBXsmpU06soRH0u+HJmM/vcxKadqqvoDEazu9uFvVoZSKP2pDSg==
 
 chokidar@^2.1.8:
