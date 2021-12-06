@@ -1,4 +1,4 @@
-import {Alert, Tooltip} from '@mui/material';
+import {Tooltip} from '@mui/material';
 import {
   AccessTime as AccessTimeIcon,
   Celebration as CelebrationIcon,

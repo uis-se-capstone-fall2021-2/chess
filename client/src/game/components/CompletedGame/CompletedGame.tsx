@@ -1,5 +1,6 @@
 import {Alert, Button, ButtonGroup, Slider} from '@mui/material';
 import {
+  Celebration as CelebrationIcon,
   FastForward as FastForwardIcon,
   FastRewind as FastRewindIcon,
   SkipNext as SkipNextIcon,
@@ -37,7 +38,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
 
   public override state: CompletedGame.State = {
     moveHistory: null,
-    boardVersion: -1,
+    boardVersion: 0,
     sliderVersion: 0,
     error: null
   };
@@ -52,7 +53,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       this.setState({
         moveHistory
       });
-      this.loadSnapshot(0);
+      this.loadSnapshot(moveHistory.length);
     } catch(e) {
       this.setState({error: e as Error});
     }
@@ -132,7 +133,8 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
     const whoseTurn = this.game.turn() === 'w' ? gameState.players[0] : gameState.players[1];
     const winner = gameState.winner;
     const loser = gameState.players.find(playerId => playerId !== winner);
-    
+    const userIsWinner = winner === this.user.playerId;
+
     switch(true) {
       case Boolean(error):
         return <Alert sx={sx} severity='error'>{error.message}</Alert>;
@@ -140,7 +142,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
         return <Alert sx={sx} severity='warning'>Loading Move History</Alert>;
       case moveHistory?.length === boardVersion && gameState.status === GameStatus.TERMINATED:
         return (
-          <Alert sx={sx} severity='info'>
+          <Alert sx={sx} severity={userIsWinner ? 'success' : 'info'} icon={userIsWinner ? <CelebrationIcon/> : null}>
             <PlayerProvider playerId={loser}>
               {(player) => {
                 const playerName = player?.displayName || `Player ${loser}`;
@@ -160,7 +162,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
           return <Alert sx={sx} severity='warning'>Stalemate</Alert>;
         } else {
           return (
-            <Alert sx={sx} severity='info'>
+            <Alert sx={sx} severity={userIsWinner ? 'success' : 'info'} icon={userIsWinner ? <CelebrationIcon/> : null}>
               <PlayerProvider playerId={winner}>
                 {(player) => {
                   const playerName = player?.displayName || `Player ${whoseTurn}`;
