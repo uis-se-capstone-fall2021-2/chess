@@ -168,9 +168,12 @@ public class Game {
       getWinner(),
       getPlayers(),
       getMoves().size(),
+      getStatus(),
+      getCreatedAt(),
+      getUpdatedAt(),
+      getCompletedAt(),
       playerInCheck(),
-      getBoard(),
-      getStatus()
+      getBoard()
     );
   }
 
