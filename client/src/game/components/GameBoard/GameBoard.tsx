@@ -146,8 +146,8 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     const temp = new Chess();
     temp.load(BoardUtils.getFenString(this.props.gameState.board, this.props.gameState.moveCount));
     if(
-      (moveIntent.chessPiece == ChessPiece.PAWN) &&
-      (moveIntent.to.rank == Rank._1 || moveIntent.to.rank == Rank._8)){
+      (moveIntent.chessPiece === ChessPiece.PAWN) &&
+      (moveIntent.to.rank === Rank._1 || moveIntent.to.rank === Rank._8)){
         if(temp.move({from: source, to: target, promotion: 'q'})){
           return true;
         }

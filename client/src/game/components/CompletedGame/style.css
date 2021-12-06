@@ -1,0 +1,5 @@
+.completed-game-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

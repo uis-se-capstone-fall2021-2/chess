@@ -1,4 +1,4 @@
-import {Alert, Button, ButtonGroup} from '@mui/material';
+import {Alert, Button, ButtonGroup, Slider} from '@mui/material';
 import {
   FastForward as FastForwardIcon,
   FastRewind as FastRewindIcon,
@@ -8,6 +8,7 @@ import {
 import {autobind} from 'core-decorators';
 // @ts-ignore
 import {Chess} from 'chess.ts';
+import {isNil} from 'lodash';
 import * as React from 'react';
 import {Chessboard} from 'react-chessboard';
 
@@ -18,7 +19,9 @@ import {GameService, GameState, GameStatus} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
 import {PlayerProvider} from '../../../player/components/PlayerProvider';
-import {isNil} from 'lodash';
+import {DownloadGame} from '../DownloadGame';
+
+import './style.css';
 
 
 @autobind
@@ -35,6 +38,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
   public override state: CompletedGame.State = {
     moveHistory: null,
     boardVersion: -1,
+    sliderVersion: 0,
     error: null
   };
 
@@ -65,9 +69,10 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       i--;
     } while(i >= 0);
 
+    const {game} = this;
+    game.load(snapshot);
+
     if(i !== version) {
-      const {game} = this;
-      game.load(snapshot);
       const {moveHistory} = this.state;
       if(moveHistory) {
         const movesToReplay = moveHistory.slice(i, version);
@@ -84,11 +89,15 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       }
     }
 
-    this.setState({boardVersion: version});
+    this.setState({
+      boardVersion: version,
+      sliderVersion: null
+    });
   }
     
   public override render(): React.ReactNode {
     const {gameId, players} = this.props.gameState;
+    const fen = this.game.fen();
 
     return (
       <RectContext.Consumer>
@@ -100,11 +109,15 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
               <Chessboard
                 id={gameId}
                 boardWidth={width}
-                position={this.game.fen()}
+                position={fen}
                 boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
                 arePiecesDraggable={false}
               />
-              <this.Controls width={width}/>
+              <div style={{width, height: 12}}/>
+              <div style={{width, display: 'flex', justifyContent: 'center'}}>
+                <this.Controls/>
+              </div>
+              <pre style={{whiteSpace: 'pre-wrap'}}>{fen}</pre>
             </>
           );
         }}
@@ -172,15 +185,15 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
     }
   }
 
-  private Controls(props: {width: number}): React.ReactElement {
-    const {moveHistory, boardVersion} = this.state;
+  private Controls(): React.ReactElement {
+    const {moveHistory, boardVersion, sliderVersion} = this.state;
     if(!moveHistory) {
       return null;
     }
 
     return (
-      <>
-        <span>{`Move ${boardVersion}/${moveHistory.length} `}</span>
+      <div className='completed-game-controls'>
+        <span style={{marginRight: 8}}>{`Move ${boardVersion}/${moveHistory.length}`}</span>
         <ButtonGroup>
           <Button onClick={this.reset}>
             <FastRewindIcon/>
@@ -195,8 +208,27 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
             <FastForwardIcon/>
           </Button>
         </ButtonGroup>
-      </>
+        <DownloadGame gameId={this.props.gameState.gameId} gameService={this.gameService}/>
+        <Slider
+          defaultValue={0}
+          step={1}
+          marks
+          min={0}
+          max={moveHistory.length}
+          value={isNil(sliderVersion) ? boardVersion : sliderVersion}
+          onChange={this.onSliderChange}
+          onChangeCommitted={this.onSliderChangeCommitted}
+        />
+      </div>
     );
+  }
+
+  private onSliderChange(e: any, value: number|number[]) {
+    this.setState({sliderVersion: Array.isArray(value) ? value[0] : value ?? 0});
+  }
+
+  private onSliderChangeCommitted(e: any, value: number|number[]) {
+    this.loadSnapshot(Array.isArray(value) ? value[0] : value ?? 0);
   }
 
   private reset(): void {
@@ -227,6 +259,7 @@ export namespace CompletedGame {
 
   export interface State {
     boardVersion: number;
+    sliderVersion: number;
     moveHistory: MoveIntent[];
     error: Error;
   }
