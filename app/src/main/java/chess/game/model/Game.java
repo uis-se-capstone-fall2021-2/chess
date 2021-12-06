@@ -225,15 +225,15 @@ public class Game {
   public boolean move(long playerId, MoveIntent intent){
     Board board = getBoard();
 
-    //Pawn auto promote to queen when not specified
-    if(intent.chessPiece.equals(ChessPiece.PAWN)){
-      Rank pawnRank = intent.to.rank;
-      // pawn is on first or last rank and promotion is unset
-      if((pawnRank.equals(Rank._1) || pawnRank.equals(Rank._8)) && (intent.promotion.equals(ChessPiece.NONE))){
-        //replace intent with a new one with promotion set to queen
-        intent = new MoveIntent(ChessPiece.PAWN, intent.from.copy(), intent.to.copy(), ChessPiece.QUEEN);
-      }
-    }
+    // //Pawn auto promote to queen when not specified
+    // if(intent.chessPiece.equals(ChessPiece.PAWN)){
+    //   Rank pawnRank = intent.to.rank;
+    //   // pawn is on first or last rank and promotion is unset
+    //   if((pawnRank.equals(Rank._1) || pawnRank.equals(Rank._8)) && (intent.promotion.equals(ChessPiece.NONE))){
+    //     //replace intent with a new one with promotion set to queen
+    //     intent = new MoveIntent(ChessPiece.PAWN, intent.from.copy(), intent.to.copy(), ChessPiece.QUEEN);
+    //   }
+    // }
 
 
     if(MoveValidator.validateMove(intent, board, getMoveHistory(), currentPlayerColor())){

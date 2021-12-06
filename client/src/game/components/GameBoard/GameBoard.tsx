@@ -5,7 +5,7 @@ import {isEqual} from 'lodash';
 import * as React from 'react';
 import {Chessboard} from 'react-chessboard';
 
-import {ChessboardLib, MoveIntent} from '../../../board/interfaces';
+import {ChessboardLib, ChessPiece, MoveIntent, Rank} from '../../../board/interfaces';
 import {BoardUtils} from '../../../board/BoardUtils';
 import {Inject} from '../../../di';
 import {GameService, GameData, GameState} from '../../interfaces';
@@ -15,6 +15,7 @@ import {GameLifecycleProvider} from '../GameLifecyleProvider';
 import {PlayerProvider} from '../../../player/components/PlayerProvider';
 
 import './styles.css';
+import { RANK_8 } from 'chess.ts/dist/constants';
 
 @autobind
 export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State> {
@@ -113,7 +114,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private handleMoveSync(source: ChessboardLib.Square , target: ChessboardLib.Square, piece: ChessboardLib.Piece): boolean {
-
     const moveIntent: MoveIntent = {
       chessPiece: BoardUtils.toChessPiece(piece),
       from: BoardUtils.squareToPosition(source),
@@ -139,10 +139,29 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   private async handleMove(moveIntent: MoveIntent): Promise<void> {
     const {gameId} = this.props.game;
     try {
-      const nextState: GameState = await this.gameService.move(gameId, moveIntent);
-      this.setState({
-        pendingGameState: nextState
-      });
+      if((moveIntent.to.rank === Rank._8 || moveIntent.to.rank === Rank._1) && moveIntent.chessPiece === ChessPiece.PAWN){
+        const promotedMoveIntent: MoveIntent = {
+          chessPiece: ChessPiece.PAWN,
+          from: moveIntent.from,
+          to: moveIntent.to,
+          promotion: ChessPiece.QUEEN,
+        }
+        const nextState: GameState = await this.gameService.move(gameId, promotedMoveIntent);
+
+        this.setState({
+          pendingGameState: nextState
+        });
+
+      }
+      else{
+        const nextState: GameState = await this.gameService.move(gameId, moveIntent);
+
+        this.setState({
+          pendingGameState: nextState
+        });
+
+      }
+
     } catch(e) {
       this.setState({
         error: e as Error,
@@ -155,7 +174,11 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     const board: number[] = [...this.props.game.board];
     const fromIndex: number = BoardUtils.getRankIntValue(moveIntent.from.rank) * 8 + BoardUtils.getFileIntValue(moveIntent.from.file);
     const toIndex: number = BoardUtils.getRankIntValue(moveIntent.to.rank) * 8 + BoardUtils.getFileIntValue(moveIntent.to.file);
-    const piece: number = BoardUtils.getPieceIntValueFromPosition(board, moveIntent.from);
+    const piece: number = ((moveIntent.chessPiece === ChessPiece.PAWN && (moveIntent.to.rank === Rank._8 || moveIntent.to.rank === Rank._1)))
+    ? BoardUtils.getPieceIntValueFromPosition(board, moveIntent.from) > 0
+      ? 5
+      : -5
+    : BoardUtils.getPieceIntValueFromPosition(board, moveIntent.from);
 
     board[fromIndex] = 0;
     board[toIndex] = piece;

@@ -40,6 +40,7 @@ export interface MoveIntent {
   chessPiece: ChessPiece;
   from: Position;
   to: Position;
+  promotion?: ChessPiece;
 }
 
 // these are the types for react-chessboard that they didn't export from the package
