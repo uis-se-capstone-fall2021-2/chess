@@ -117,7 +117,6 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
               <div style={{width, display: 'flex', justifyContent: 'center'}}>
                 <this.Controls/>
               </div>
-              <pre style={{whiteSpace: 'pre-wrap'}}>{fen}</pre>
             </>
           );
         }}
