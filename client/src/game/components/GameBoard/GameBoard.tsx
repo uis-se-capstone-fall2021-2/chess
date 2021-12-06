@@ -9,11 +9,13 @@ import {Chessboard} from 'react-chessboard';
 import {ChessboardLib, MoveIntent, Rank, ChessPiece} from '../../../board/interfaces';
 import {BoardUtils} from '../../../board/BoardUtils';
 import {Inject} from '../../../di';
-import {GameService, GameState} from '../../interfaces';
+import {GameService, GameData, GameState} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
 import {GameLifecycleProvider} from '../GameLifecyleProvider';
+import {PlayerProvider} from '../../../player/components/PlayerProvider';
 
+import './styles.css';
 
 @autobind
 export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State> {
@@ -30,19 +32,28 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   public override async componentDidMount() {
     try {
-      await this.gameService.fetchGameState(this.props.gameState.gameId);
+      await this.gameService.fetchGameState(this.props.game.gameId);
     } catch(ignore) {}
   }
 
+  private Opponent(): React.ReactElement {
+    const opponentId = this.props.game.players.find(playerId => playerId !== this.user.playerId);
+    return (
+      <PlayerProvider playerId={opponentId}>
+        {(player) =>  player?.displayName || `Player ${opponentId}`}
+      </PlayerProvider>
+    );
+  }
+
   public override render(): React.ReactNode {
-    const {gameId, players} = this.props.gameState;
+    const {gameId, players, moveCount, updatedAt} = this.props.game;
 
     return (
       <RectContext.Consumer>
         {(dimensions: RectContext.Dimensions) => {
           const width = BoardUtils.getBoardWidth(dimensions);
           return (
-            <GameLifecycleProvider gameState={this.props.gameState}>
+            <GameLifecycleProvider game={this.props.game}>
               {({isUsersTurn, isUserInCheck}) => (
                 <>
                   <this.Banner width={width} isUsersTurn={isUsersTurn} isUserInCheck={isUserInCheck}/>
@@ -54,6 +65,11 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
                     boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
                     arePiecesDraggable={isUsersTurn}
                   />
+                  <div style={{width}} className='active-game-details'>
+                    <span>{'Opponent: '}<this.Opponent/></span>
+                    <span>{`Move Count: ${moveCount}`}</span>
+                    <span>{`Last Move: ${updatedAt.toLocaleString()}`}</span>
+                  </div>
                 </>
               )}
             </GameLifecycleProvider>
@@ -64,7 +80,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private getFenString(): string {
-    const {board, moveCount} = this.props.gameState;
+    const {board, moveCount} = this.props.game;
     const {pendingGameState} = this.state;
 
     const [viewBoard, viewMoveCount] = pendingGameState
@@ -89,7 +105,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   public override componentDidUpdate(prevProps: GameBoard.Props): void {
-    if(!isEqual(prevProps.gameState.board, this.props.gameState.board)) {
+    if(!isEqual(prevProps.game.board, this.props.game.board)) {
       this.setState({
         pendingGameState: null
       });
@@ -106,8 +122,8 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
     if(this.validateMove(moveIntent, source, target)) {
       const pendingGameState: GameState = {
-        ...this.props.gameState,
-        moveCount: this.props.gameState.moveCount + 1,
+        ...this.props.game,
+        moveCount: this.props.game.moveCount + 1,
         playerInCheck: null, 
         board: this.optimisticallyCalculateNextBoard(moveIntent)
       };
@@ -127,7 +143,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private async handleMove(moveIntent: MoveIntent): Promise<void> {
-    const {gameId} = this.props.gameState;
+    const {gameId} = this.props.game;
     try {
       const nextState: GameState = await this.gameService.move(gameId, moveIntent);
       this.setState({
@@ -144,7 +160,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
   private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
     const temp = new Chess();
-    temp.load(BoardUtils.getFenString(this.props.gameState.board, this.props.gameState.moveCount));
+    temp.load(BoardUtils.getFenString(this.props.game.board, this.props.game.moveCount));
     if(
       (moveIntent.chessPiece === ChessPiece.PAWN) &&
       (moveIntent.to.rank === Rank._1 || moveIntent.to.rank === Rank._8)){
@@ -158,7 +174,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
-    const board: number[] = [...this.props.gameState.board];
+    const board: number[] = [...this.props.game.board];
     const fromIndex: number = BoardUtils.getRankIntValue(moveIntent.from.rank) * 8 + BoardUtils.getFileIntValue(moveIntent.from.file);
     const toIndex: number = BoardUtils.getRankIntValue(moveIntent.to.rank) * 8 + BoardUtils.getFileIntValue(moveIntent.to.file);
     const piece: number = BoardUtils.getPieceIntValueFromPosition(board, moveIntent.from);
@@ -174,7 +190,7 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
 export namespace GameBoard {
   export interface Props {
-    gameState: GameState;
+    game: GameData;
   }
 
   export interface State {

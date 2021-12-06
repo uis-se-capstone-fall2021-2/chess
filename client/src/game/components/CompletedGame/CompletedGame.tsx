@@ -15,7 +15,7 @@ import {Chessboard} from 'react-chessboard';
 import {MoveIntent} from '../../../board/interfaces';
 import {BoardUtils} from '../../../board/BoardUtils';
 import {Inject} from '../../../di';
-import {GameService, GameState, GameStatus} from '../../interfaces';
+import {GameService, GameData, GameStatus} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
 import {PlayerProvider} from '../../../player/components/PlayerProvider';
@@ -43,7 +43,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
   };
 
   public override async componentDidMount() {
-    const {gameId} = this.props.gameState;
+    const {gameId} = this.props.game;
     try {
       const [moveHistory] = await Promise.all([
         this.gameService.getMoveHistory(gameId),
@@ -69,22 +69,21 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       i--;
     } while(i >= 0);
 
-    const {game} = this;
-    game.load(snapshot);
+    this.game.load(snapshot);
 
     if(i !== version) {
       const {moveHistory} = this.state;
       if(moveHistory) {
         const movesToReplay = moveHistory.slice(i, version);
         for(const move of movesToReplay) {
-          game.move({
+          this.game.move({
             from: BoardUtils.positionToSquare(move.from),
             to: BoardUtils.positionToSquare(move.to),
             promotion: move.chessPiece
               ? BoardUtils.getPieceSymbolFromChessPiece(move.chessPiece)
               : undefined
           });
-          this.boards[++i] = game.fen()
+          this.boards[++i] = this.game.fen()
         }
       }
     }
@@ -96,7 +95,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
   }
     
   public override render(): React.ReactNode {
-    const {gameId, players} = this.props.gameState;
+    const {gameId, players} = this.props.game;
     const fen = this.game.fen();
 
     return (
@@ -126,7 +125,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
   }
 
   private Banner(props: {width: number}): React.ReactElement {
-    const {gameState} = this.props;
+    const {game: gameState} = this.props;
     const {error, moveHistory, boardVersion} = this.state;
     const {width} = props;
     const sx = {width, marginBottom: 1};
@@ -208,7 +207,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
             <FastForwardIcon/>
           </Button>
         </ButtonGroup>
-        <DownloadGame gameId={this.props.gameState.gameId} gameService={this.gameService}/>
+        <DownloadGame gameId={this.props.game.gameId} gameService={this.gameService}/>
         <Slider
           defaultValue={0}
           step={1}
@@ -254,7 +253,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
 
 export namespace CompletedGame {
   export interface Props {
-    gameState: GameState;
+    game: GameData;
   }
 
   export interface State {

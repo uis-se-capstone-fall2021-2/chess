@@ -16,16 +16,16 @@ export class GameView extends React.Component<GameView.Props, GameView.State> {
   public override render(): React.ReactNode {
     return (
       <GameProvider gameId={this.props.gameId} errorRenderer={this.ErrorRenderer}>
-        {(gameData: GameData) => {
-          switch(gameData.status) {
+        {(game: GameData) => {
+          switch(game.status) {
             case GameStatus.ACTIVE:
-              return <ActiveGame gameState={gameData as GameState}/>
+              return <ActiveGame game={game}/>
             case GameStatus.PENDING:
-              return <PendingGame gameInfo={gameData} />
+              return <PendingGame gameInfo={game} />
             case GameStatus.DECLINED:
-              return <DeclinedGame gameInfo={gameData} />
+              return <DeclinedGame gameInfo={game} />
             default:
-              return <CompletedGame gameState={gameData as GameState} />
+              return <CompletedGame game={game} />
           }
         }}
       </GameProvider>

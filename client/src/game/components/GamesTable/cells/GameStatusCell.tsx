@@ -11,7 +11,7 @@ import * as React from 'react';
 import {Link} from 'react-router-dom';
 
 import {GameProvider} from '../../GameProvider';
-import {GameData, GameId, GameState, GameStatus} from '../../../interfaces';
+import {GameData, GameId, GameStatus} from '../../../interfaces';
 import {GameLifecycleProvider} from '../../GameLifecyleProvider';
 
 
@@ -20,11 +20,11 @@ export function GameStatusCell(props: GameStatusCell.Props): React.ReactElement 
   const link = (children: any) => (<Link to={`/games/${props.gameId}`}>{children}</Link>);
   return (
     <GameProvider gameId={gameId}>
-      {(gameData: GameData) => {
-        switch(gameData.status) {
+      {(game: GameData) => {
+        switch(game.status) {
           case GameStatus.ACTIVE:
             return (
-              <GameLifecycleProvider gameState={gameData as GameState}>
+              <GameLifecycleProvider game={game}>
                 {({isUsersTurn, isUserInCheck}) => (
                   isUserInCheck
                     ? <Tooltip title='In Check!'>
@@ -45,7 +45,7 @@ export function GameStatusCell(props: GameStatusCell.Props): React.ReactElement 
           case GameStatus.COMPLETE:
           case GameStatus.TERMINATED:
             return (
-              <GameLifecycleProvider gameState={gameData as GameState}>
+              <GameLifecycleProvider game={game}>
                 {({userIsWinner}) => (
                   userIsWinner
                     ? <Tooltip title='You Won!'>
@@ -58,7 +58,7 @@ export function GameStatusCell(props: GameStatusCell.Props): React.ReactElement 
               </GameLifecycleProvider>
             );
           default:
-            return <span>{gameData.status}</span>;
+            return <span>{game.status}</span>;
         }
       }}
     </GameProvider>
