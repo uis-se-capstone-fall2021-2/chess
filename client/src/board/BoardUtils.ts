@@ -16,12 +16,10 @@ export class BoardUtils {
     }
     fen = fen.substring(0, fen.length-1);
     fen = moveCount % 2 === 0 ? fen.concat(" w") : fen.concat(" b");
-    fen = fen.concat(" - - 0");
+    fen = fen.concat(" KQkq - 0");
     fen = fen.concat(" " + moveCount);
-
-    return fen;
+        return fen;
   }
-
   public static getRankIntValue(rank: Rank): number{
     if (rank.localeCompare("_1") === 0)
       return 0;
