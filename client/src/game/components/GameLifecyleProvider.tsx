@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import {Inject} from '../../di';
 import {User} from '../../user/interfaces';
-import {GameState} from '../interfaces';
+import {GameData} from '../interfaces';
 
 @autobind
 export class GameLifecycleProvider extends React.Component<GameLifecycleProvider.Props> {
@@ -11,7 +11,7 @@ export class GameLifecycleProvider extends React.Component<GameLifecycleProvider
   private readonly user: User;
 
   public override render(): React.ReactNode {
-    const {players, playerInCheck, moveCount, winner} = this.props.gameState;
+    const {players, playerInCheck, moveCount, winner} = this.props.game;
     const isUsersTurn = moveCount % 2 === players.indexOf(this.user.playerId);
     const isUserInCheck = playerInCheck === this.user.playerId;
     const userIsWinner = winner === this.user.playerId;
@@ -22,7 +22,7 @@ export class GameLifecycleProvider extends React.Component<GameLifecycleProvider
 
 export namespace GameLifecycleProvider {
   export interface Props {
-    gameState: GameState;
+    game: GameData;
     children: (props: ChildProps) => React.ReactNode;
   }
 

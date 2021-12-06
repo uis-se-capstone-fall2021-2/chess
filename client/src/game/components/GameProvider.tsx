@@ -5,11 +5,7 @@ import * as Strongbus from 'strongbus';
 import {Inject} from '../../di';
 import {GameService, GameData, GameId} from '../interfaces';
 
-/**
- * @description container to abstract keeping game state up-to-date and providing it to child component tree
- * current naive implementation is to poll the game service every 30s
- * future implementation is to use a real time service (websocket) to only get updates as necessary
- */
+
 export class GameProvider extends React.Component<GameProvider.Props> {
   public override render(): React.ReactNode {
     return (

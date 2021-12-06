@@ -5,7 +5,7 @@ import {
 import * as React from 'react';
 
 
-import {GameService, GameId} from '../../../interfaces';
+import {GameService, GameId} from '../interfaces';
 
 export function DownloadGame(props: {gameService: GameService, gameId: GameId}): React.ReactElement {
   const download = () => props.gameService.download(props.gameId);

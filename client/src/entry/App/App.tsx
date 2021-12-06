@@ -272,8 +272,7 @@ export class App extends React.Component<{}, {
         }}
         sx={{
           display: {xs: 'block', sm: 'none'},
-          '& .MuiDrawer-paper': {boxSizing: 'border-box', width: App.NAV_WIDTH},
-          ...this.navSx
+          '& .MuiDrawer-paper': {boxSizing: 'border-box', width: App.NAV_WIDTH}
         }}
         PaperProps={{
           sx: this.navSx

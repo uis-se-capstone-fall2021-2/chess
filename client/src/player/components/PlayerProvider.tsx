@@ -5,8 +5,14 @@ import * as React from 'react';
 import {Inject} from '../../di';
 import {Player, PlayerId, PlayerService} from '../interfaces';
 
+export function PlayerProvider(props: PlayerProvider.Props): React.ReactElement {
+  return (
+    <PlayerProviderInner {...props} key={props.playerId}/>
+  );
+}
+
 @autobind
-export class PlayerProvider extends React.Component<PlayerProvider.Props, PlayerProvider.State> {
+class PlayerProviderInner extends React.Component<PlayerProvider.Props, PlayerProvider.State> {
 
   @Inject(PlayerService.Token)
   private readonly playerService: PlayerService;

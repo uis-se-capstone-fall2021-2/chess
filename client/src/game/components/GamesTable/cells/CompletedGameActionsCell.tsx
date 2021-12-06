@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {GameService, GameInfo} from '../../../interfaces';
-import {DownloadGame} from './DownloadGame';
+import {DownloadGame} from '../../DownloadGame';
 
 
 export function CompletedGameActionsCell (props: CompletedGameActionsCell.Props): React.ReactElement {
