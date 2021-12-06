@@ -192,9 +192,9 @@ export class BoardUtils {
     if(height >= 560 && width >= 560) {
       return 560 - 20;
     } else if(height > width) {
-      return Math.max(100, width - 20);
+      return Math.max(100, width);
     } else {
-      return Math.max(100, height - 20);
+      return Math.max(100, height);
     }
   }
 

@@ -1,12 +1,11 @@
 import {Alert} from '@mui/material';
 import {autobind} from 'core-decorators';
-// @ts-ignore
-import {Chess} from 'chess.ts';
+
 import {isEqual} from 'lodash';
 import * as React from 'react';
 import {Chessboard} from 'react-chessboard';
 
-import {ChessboardLib, MoveIntent, Rank, ChessPiece} from '../../../board/interfaces';
+import {ChessboardLib, MoveIntent} from '../../../board/interfaces';
 import {BoardUtils} from '../../../board/BoardUtils';
 import {Inject} from '../../../di';
 import {GameService, GameData, GameState} from '../../interfaces';
@@ -46,14 +45,15 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
   }
 
   public override render(): React.ReactNode {
-    const {gameId, players, moveCount, updatedAt} = this.props.game;
+    const game = this.state.pendingGameState ?? this.props.game
+    const {gameId, players, moveCount, updatedAt} = game;
 
     return (
       <RectContext.Consumer>
         {(dimensions: RectContext.Dimensions) => {
           const width = BoardUtils.getBoardWidth(dimensions);
           return (
-            <GameLifecycleProvider game={this.props.game}>
+            <GameLifecycleProvider game={game}>
               {({isUsersTurn, isUserInCheck}) => (
                 <>
                   <this.Banner width={width} isUsersTurn={isUsersTurn} isUserInCheck={isUserInCheck}/>
@@ -120,25 +120,19 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
       to: BoardUtils.squareToPosition(target)
     };
 
-    if(this.validateMove(moveIntent, source, target)) {
-      const pendingGameState: GameState = {
-        ...this.props.game,
-        moveCount: this.props.game.moveCount + 1,
-        playerInCheck: null, 
-        board: this.optimisticallyCalculateNextBoard(moveIntent)
-      };
-  
-      this.setState({
-        error: null,
-        pendingGameState
-      });
-      this.handleMove(moveIntent);
-    } else {
-      this.setState({
-        error: new Error('Illegal Move')
-      });
-    }
+    const pendingGameState: GameState = {
+      ...this.props.game,
+      moveCount: this.props.game.moveCount + 1,
+      playerInCheck: null, 
+      board: this.optimisticallyCalculateNextBoard(moveIntent)
+    };
 
+    this.setState({
+      error: null,
+      pendingGameState
+    });
+    this.handleMove(moveIntent);
+  
     return true;
   }
 
@@ -157,22 +151,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
     }
   }
 
-
-  private validateMove(moveIntent: MoveIntent, source: ChessboardLib.Square , target: ChessboardLib.Square): boolean {
-    const temp = new Chess();
-    temp.load(BoardUtils.getFenString(this.props.game.board, this.props.game.moveCount));
-    if(
-      (moveIntent.chessPiece === ChessPiece.PAWN) &&
-      (moveIntent.to.rank === Rank._1 || moveIntent.to.rank === Rank._8)){
-        if(temp.move({from: source, to: target, promotion: 'q'})){
-          return true;
-        }
-    } else if(temp.move({from: source, to: target})) {
-      return true;
-    }
-    return false;
-  }
-
   private optimisticallyCalculateNextBoard(moveIntent: MoveIntent): number[] {
     const board: number[] = [...this.props.game.board];
     const fromIndex: number = BoardUtils.getRankIntValue(moveIntent.from.rank) * 8 + BoardUtils.getFileIntValue(moveIntent.from.file);
@@ -184,8 +162,6 @@ export class GameBoard extends React.Component<GameBoard.Props, GameBoard.State>
 
     return board;
   }
-
-  
 }
 
 export namespace GameBoard {

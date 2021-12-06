@@ -1,6 +1,7 @@
 import {Alert, Button, ButtonGroup, Slider} from '@mui/material';
 import {
   Celebration as CelebrationIcon,
+  Download as DownloadIcon,
   FastForward as FastForwardIcon,
   FastRewind as FastRewindIcon,
   SkipNext as SkipNextIcon,
@@ -20,7 +21,6 @@ import {GameService, GameData, GameStatus} from '../../interfaces';
 import {RectContext} from '../../../utils/layout/RectContext';
 import {User} from '../../../user/interfaces';
 import {PlayerProvider} from '../../../player/components/PlayerProvider';
-import {DownloadGame} from '../DownloadGame';
 
 import './style.css';
 
@@ -194,22 +194,29 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
     return (
       <div className='completed-game-controls'>
         <span style={{marginRight: 8}}>{`Move ${boardVersion}/${moveHistory.length}`}</span>
-        <ButtonGroup>
-          <Button onClick={this.reset}>
-            <FastRewindIcon/>
-          </Button>
-          <Button onClick={this.stepBack}>
-            <SkipPreviousIcon/>
-          </Button>
-          <Button onClick={this.stepAhead}>
-            <SkipNextIcon/>
-          </Button>
-          <Button onClick={this.skipToEnd}>
-            <FastForwardIcon/>
-          </Button>
-        </ButtonGroup>
-        <DownloadGame gameId={this.props.game.gameId} gameService={this.gameService}/>
+        <div>
+          <ButtonGroup>
+            <Button onClick={this.reset}>
+              <FastRewindIcon/>
+            </Button>
+            <Button onClick={this.stepBack}>
+              <SkipPreviousIcon/>
+            </Button>
+            <Button onClick={this.stepAhead}>
+              <SkipNextIcon/>
+            </Button>
+            <Button onClick={this.skipToEnd}>
+              <FastForwardIcon/>
+            </Button>
+            <Button onClick={this.downloadGame} color='primary'>
+              <DownloadIcon/>
+            </Button>
+          </ButtonGroup>
+        </div>
         <Slider
+          sx={{
+            maxWidth: '98%'
+          }}
           defaultValue={0}
           step={1}
           marks
@@ -221,6 +228,10 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
         />
       </div>
     );
+  }
+
+  private downloadGame(): void {
+    this.gameService.download(this.props.game.gameId);
   }
 
   private onSliderChange(e: any, value: number|number[]) {
