@@ -231,7 +231,7 @@ public class Game {
       // pawn is on first or last rank and promotion is unset
       if((pawnRank.equals(Rank._1) || pawnRank.equals(Rank._8)) && (intent.promotion.equals(ChessPiece.NONE))){
         //replace intent with a new one with promotion set to queen
-        intent = new MoveIntent(ChessPiece.PAWN, intent.from, intent.to, ChessPiece.QUEEN);
+        intent = new MoveIntent(ChessPiece.PAWN, intent.from.copy(), intent.to.copy(), ChessPiece.QUEEN);
       }
     }
 

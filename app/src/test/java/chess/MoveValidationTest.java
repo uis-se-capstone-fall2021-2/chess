@@ -19,6 +19,50 @@ public class MoveValidationTest {
         board = new Board();
         
     }
+    @DisplayName("Pawn should not be able to move to the final rank")
+    @Test void testPawnNonPromotion() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("h2 h4", board),
+            ChessTestUtilities.stringToMoveIntent("g7 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h4 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h7 h6", board),
+            ChessTestUtilities.stringToMoveIntent("g5 h6", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e6", board),
+            ChessTestUtilities.stringToMoveIntent("h6 h7", board),
+            ChessTestUtilities.stringToMoveIntent("e6 e5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h7 g8", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
+    @DisplayName("Pawn should be able to promote to queen")
+    @Test void testPawnPromotion() {
+        //prepare the board
+        MoveIntent[] moves = {
+            ChessTestUtilities.stringToMoveIntent("h2 h4", board),
+            ChessTestUtilities.stringToMoveIntent("g7 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h4 g5", board),
+            ChessTestUtilities.stringToMoveIntent("h7 h6", board),
+            ChessTestUtilities.stringToMoveIntent("g5 h6", board),
+            ChessTestUtilities.stringToMoveIntent("e7 e6", board),
+            ChessTestUtilities.stringToMoveIntent("h6 h7", board),
+            ChessTestUtilities.stringToMoveIntent("e6 e5", board),
+            
+        };
+        for(int i = 0; i < moves.length; i++) {
+            board.updateBoard(moves[i]);
+            moveRecord.add(moves[i]);
+        }
+        //test a move
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h7 g8 q", board);
+        assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+    }
     @DisplayName("Queen should be able to move")
     @Test void testLegalQueenMove() {
         //prepare the board
@@ -88,8 +132,8 @@ public class MoveValidationTest {
         for(int i = 0; i < moves.length; i++) {
             board.updateBoard(moves[i]);
             moveRecord.add(moves[i]);
-        }
-        //test a move
+       }
+        //test a move one
         MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("h1 h3", board);
         assertTrue(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
     }

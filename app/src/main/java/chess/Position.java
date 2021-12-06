@@ -38,4 +38,7 @@ public class Position {
     public String toString() {
         return (file.name() + rank.name());
     }
+    public Position copy() {
+        return new Position(this.file.value, this.rank.value);
+    }
 }   
