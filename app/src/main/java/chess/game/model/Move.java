@@ -12,10 +12,11 @@ import chess.Rank;
 
 @Entity
 @Table(name="Moves")
+@Embeddable
 public class Move {
   @Id
   @Column
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy=GenerationType.IDENTITY)
   private long moveId;
 
   @Column
@@ -23,6 +24,9 @@ public class Move {
 
   @Column
   private ChessPiece chessPiece;
+
+  @Column(nullable=true)
+  private ChessPiece promotion;
 
   @Column
   private Rank startRank;
@@ -44,6 +48,7 @@ public class Move {
     this.startFile = intent.from.file;
     this.endRank = intent.to.rank;
     this.endFile = intent.to.file;
+    this.promotion = intent.promotion;
   }
 
   @PrePersist
@@ -66,9 +71,19 @@ public class Move {
   }
 
   public MoveIntent asIntent() {
-    return new MoveIntent(
-      chessPiece,
-      new Position(startFile, startRank),
-      new Position(endFile, endRank));
+    if(promotion == null) {
+      return new MoveIntent(
+        chessPiece,
+        new Position(startFile, startRank),
+        new Position(endFile, endRank)
+      );
+    } else {
+      return new MoveIntent(
+        chessPiece,
+        new Position(startFile, startRank),
+        new Position(endFile, endRank),
+        promotion
+      );
+    }
   }
 }

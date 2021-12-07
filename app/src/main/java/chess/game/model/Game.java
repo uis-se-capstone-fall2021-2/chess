@@ -26,6 +26,8 @@ import chess.game.GameState;
 @Entity
 @Table(name="Games")
 public class Game {
+  private static final long WINNER_NONE = -1;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
@@ -51,7 +53,7 @@ public class Game {
   @Column
   @Getter
   @Setter
-  private long winner; // playerId | -1 if stalemate?
+  private long winner = Game.WINNER_NONE; // playerId
 
   @Column
   @Getter
@@ -72,8 +74,6 @@ public class Game {
   @OrderBy("timestamp ASC")
   @ElementCollection(targetClass=Move.class)
   private List<Move> moves = new ArrayList<Move>();
-
-  private static final long STALEMATE = -1;
 
   @Transient
   private Board _board;
@@ -139,7 +139,6 @@ public class Game {
     return history;
   }
 
-  
   /** Creates and returns a GameInfo object
    * @return GameInfo new GameInfo object
    */
@@ -217,7 +216,7 @@ public class Game {
   
   /** Executes a move on the game, after verifying that the move is legal.
    *  Also makes a check to determine if the game is finished after the move is executed.
-   *  If the game is determined to be over, sets {@link #winner} to the player ID of the winner, or to {@link #STALEMATE} 
+   *  If the game is determined to be over, sets {@link #winner} to the player ID of the winner, or to {@link #WINNER_NONE} 
    * @param playerId ID of the moving player
    * @param intent MoveIntent of the desired move
    * @return boolean true when the move was successful, false when it was not
@@ -250,7 +249,7 @@ public class Game {
           } else {
             // game has ended in a stalemate, no moves yet player is not in check.
             status = GameStatus.COMPLETE;
-            winner = STALEMATE;
+            winner = WINNER_NONE;
           }
         }
         updateTimeStamps();
