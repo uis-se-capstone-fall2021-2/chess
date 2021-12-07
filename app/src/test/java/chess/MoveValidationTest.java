@@ -19,6 +19,62 @@ public class MoveValidationTest {
         board = new Board();
         
     }
+    @DisplayName("King should not be able to castle when in check.")
+    @Test void testKingCastleInCheck() {
+        //prepare the board, king is in check.
+        String[] moves = {
+            "e2 e4",
+            "e7 e5",
+            "f2 f3",
+            "f7 f5",
+            "f1 b5",
+            "g8 f6",
+            "d2 d3",
+            "f8 b4",
+
+        };
+        for(int i = 0; i < moves.length; i++) {
+            MoveIntent curentMove = ChessTestUtilities.stringToMoveIntent(moves[i], board);
+            board.updateBoard(curentMove);
+            moveRecord.add(curentMove);
+        }
+        //test king castle attempt (King is in check)
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("e1 g1", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+
+    }
+    @DisplayName("King should not be able to castle when in-between square is threatened.")
+    @Test void testKingCastleThroughCheck() {
+        //prepare the board
+        String[] moves = {
+            "e2 e4",
+            "e7 e5",
+            "f2 f3",
+            "f7 f6",
+            "f1 c4",
+            "f8 c5",
+            "g1 e2",
+            "g8 c7",
+        };
+        for(int i = 0; i < moves.length; i++) {
+            MoveIntent curentMove = ChessTestUtilities.stringToMoveIntent(moves[i], board);
+            board.updateBoard(curentMove);
+            moveRecord.add(curentMove);
+        }
+        //test king castle attempt on white side
+        MoveIntent testMove = ChessTestUtilities.stringToMoveIntent("e1 g1", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.WHITE));
+
+        //go to black's turn.
+        testMove = ChessTestUtilities.stringToMoveIntent("h2 h3", board);
+        board.updateBoard(testMove);;
+        moveRecord.add(testMove);
+
+        //test on black side
+        testMove = ChessTestUtilities.stringToMoveIntent("e8 g8", board);
+        assertFalse(MoveValidator.validateMove(testMove, board, moveRecord, PlayerColor.BLACK));
+    }
+
     @DisplayName("Pawn should not be able to move to the final rank")
     @Test void testPawnNonPromotion() {
         //prepare the board
