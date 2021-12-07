@@ -18,7 +18,7 @@ export interface GameService {
   cancelGameInvite(gameId: GameId): Promise<void>;
   move(gameId: GameId, intent: MoveIntent): Promise<GameState>;
   download(gameId: GameId): Promise<void>;
-  getMoveHistory(gameId: GameId): Promise<MoveIntent[]>;
+  getMoveHistory(gameId: GameId): Promise<string[]>;
 }
 
 export namespace GameService {

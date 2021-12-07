@@ -77,14 +77,8 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       if(moveHistory) {
         const movesToReplay = moveHistory.slice(i, version);
         for(const move of movesToReplay) {
-          this.game.move({
-            from: BoardUtils.positionToSquare(move.from),
-            to: BoardUtils.positionToSquare(move.to),
-            promotion: move.chessPiece
-              ? BoardUtils.getPieceSymbolFromChessPiece(move.chessPiece)
-              : undefined
-          });
-          this.boards[++i] = this.game.fen()
+          this.game.move(move, {sloppy: true});
+          this.boards[++i] = this.game.fen();
         }
       }
     }
@@ -273,7 +267,7 @@ export namespace CompletedGame {
   export interface State {
     boardVersion: number;
     sliderVersion: number;
-    moveHistory: MoveIntent[];
+    moveHistory: string[];
     error: Error;
   }
 }

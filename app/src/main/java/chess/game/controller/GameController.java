@@ -244,11 +244,11 @@ public class GameController {
   }
 
   @GetMapping("/{id}/moves/history")
-  public MoveIntent[] getMoveHistory(
+  public String[] getMoveHistory(
     @Parameter(hidden=true) User user,
     @PathVariable(value="id", required=true) long gameId
   ) {
-    Result<MoveIntent[], GameStateErrorCode> result = gameService.getMoveHistory(gameId, user.getPlayerId());
+    Result<String[], GameStateErrorCode> result = gameService.getMoveHistory(gameId, user.getPlayerId());
 
     if(result.code != null) {
       switch(result.code) {

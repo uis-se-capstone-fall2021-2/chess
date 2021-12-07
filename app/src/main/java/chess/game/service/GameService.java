@@ -223,14 +223,14 @@ public class GameService implements IGameService {
     }
   }
 
-  public Result<MoveIntent[], GameStateErrorCode> getMoveHistory(long gameId, long playerId) {
+  public Result<String[], GameStateErrorCode> getMoveHistory(long gameId, long playerId) {
     Game game = games.getGameById(gameId);
     if(game == null) {
-      return new Result<MoveIntent[], GameStateErrorCode>(GameStateErrorCode.GAME_NOT_FOUND);
+      return new Result<String[], GameStateErrorCode>(GameStateErrorCode.GAME_NOT_FOUND);
     } else if(!game.hasPlayer(playerId)) {
-      return new Result<MoveIntent[], GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
+      return new Result<String[], GameStateErrorCode>(GameStateErrorCode.UNAUTHORIZED);
     } else {
-      return new Result<MoveIntent[], GameStateErrorCode>(game.getMoveHistory().toArray(MoveIntent[]::new));
+      return new Result<String[], GameStateErrorCode>(game.getMoveHistoryAsSAN());
     }
   }
 

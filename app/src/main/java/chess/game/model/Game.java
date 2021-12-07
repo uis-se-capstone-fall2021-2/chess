@@ -293,4 +293,24 @@ public class Game {
 
     return pgnString.toString();
   }
+
+  /**
+   * @return String[] move history as Standard Algebraic Notation array
+   */
+  public String[] getMoveHistoryAsSAN() {
+    Board newBoard = new Board();
+    List<MoveIntent> history = getMoveHistory();
+    List<MoveIntent> newHistory = new ArrayList<>();
+    String[] output = new String[history.size()];
+    
+    int i = 0;
+    for(MoveIntent move: history) {
+      String san = PGNUtility.convertMove(move, newBoard, newHistory);
+      output[i] = san;
+      newBoard.updateBoard(move);
+      newHistory.add(move);
+      i++;
+    }
+    return output;
+  }
 }

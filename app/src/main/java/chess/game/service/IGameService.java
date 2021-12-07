@@ -21,5 +21,5 @@ public interface IGameService {
   Result<GameState[], GameStateListErrorCode> getGameStates(Long[] gameIds, long playerId);
   Result<String, ExportErrorCode> export(long gameId, long playerId);
   Result<GameState, UpdateGameErrorCode> move(long gameId, long playerId, MoveIntent moveIntent);
-  Result<MoveIntent[], GameStateErrorCode> getMoveHistory(long gameId, long playerId);
+  Result<String[], GameStateErrorCode> getMoveHistory(long gameId, long playerId);
 }
