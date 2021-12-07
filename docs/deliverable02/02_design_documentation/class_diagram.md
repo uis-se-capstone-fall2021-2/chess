@@ -1,12 +1,12 @@
 ```mermaid
 classDiagram
 
+Game "1" --> "2" Player : allows
+Game "1" --> "1" Player : owned by
+Game "*" --> "1" MoveValidator : uses
+Game "1" --> "0...*" Move : creates
+Player "1" --> "0...*" Game : plays
 
-Game --> "2" Player : allows
-Game --> "1" Player : owned by
-Player --> "many" Game : plays in
-Game --> MoveValidator : uses
-Game --> "0...*" Move : creates
 Player <|-- User : is a
 Player <|-- ChessBot : is a
 ChessBot <|-- AdvancedBot : is a
@@ -26,12 +26,10 @@ class Move {
 }
 
 class MoveValidator {
-  <<static>>
   validateMove()
 }
 
 class Player {
-  <<abstract>>
   playerId
   displayName
   notify()
@@ -44,7 +42,6 @@ class User {
 }
 
 class ChessBot {
-  <<abstract>>
   chooseMove()
 }
 
