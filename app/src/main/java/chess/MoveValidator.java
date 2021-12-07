@@ -499,12 +499,6 @@ public class MoveValidator {
                 }
             }
             
-            
-            
-            // // reuse bishop and rook switches and combine the results of those calls.
-                // List<MoveIntent> horizontalMoves = getValidMoves(ChessPiece.ROOK, startPos, board, moveRecord, playerColor);
-                // validMoves = getValidMoves(ChessPiece.BISHOP, startPos, board, moveRecord, playerColor);
-                // validMoves.addAll(horizontalMoves);
                 break;
             case KING:
                 x = startPos.file.value;
@@ -539,7 +533,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(5, 0), 1, board) || positionUnderThreat(new Position(6, 0), 1, board)) {
+                    if(positionUnderThreat(new Position(4, 0), 1, board) || positionUnderThreat(new Position(5, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
@@ -555,7 +549,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(4, 0), 1, board) || positionUnderThreat(new Position(3, 0), 1, board) || positionUnderThreat(new Position(2, 0), 1, board)) {
+                    if(positionUnderThreat(new Position(4, 0), 1, board) || positionUnderThreat(new Position(3, 0), 1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
@@ -571,7 +565,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(5, 7), -1, board) || positionUnderThreat(new Position(6, 7), -1, board)) {
+                    if(positionUnderThreat(new Position(4, 7), -1, board) || positionUnderThreat(new Position(5, 7), -1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
@@ -587,7 +581,7 @@ public class MoveValidator {
                         }
                     }
                     // cannot castle when a king has to pass thru threatened square, or is in check.
-                    if(positionUnderThreat(new Position(3, 7), -1, board) || positionUnderThreat(new Position(2, 7), -1, board) || positionUnderThreat(new Position(1, 7), -1, board)) {
+                    if(positionUnderThreat(new Position(4, 7), -1, board) || positionUnderThreat(new Position(3, 7), -1, board)) {
                         legalMoveFlag = false;
                     }
                     if(legalMoveFlag)
