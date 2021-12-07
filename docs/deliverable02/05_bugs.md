@@ -1,2 +1,3 @@
 ## Known Bugs
 - ~~Pawns which reach the final rank they can move to are promoted to queens, but shortly after are reverted back to pawns.~~ FIXED [5482760](https://github.com/uis-se-capstone-fall2021-2/chess/commit/54827605ef11c31e18fe6355043ef07b8c4d1283)
+- Move validation does not reject castling out of check, which is prohibited under the rules of chess
