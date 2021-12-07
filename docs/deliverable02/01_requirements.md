@@ -169,11 +169,12 @@ See [README](../../README.md)
               2. Stalemate **shall** be a function of `Game.status == complete && Game.winner == null`, rather than an explicitly stored state
          3. Attempting to move after a Game has completed **must** result in an error
          4. Upon Game completion, User **must** be routed to the Completed Game view
-            1.  Completed Game view **should** show a Game Summary (TODO)
-                 1.  winner
-                 2.  move count
-                 3.  option to download game
-                 4.  if User lost, **should** present option for rematch (sends invite to opponent)
+            1.  Completed Game view **should** show a Game Summary
+                1.  winner
+                2.  move count
+                3.  option to download game
+                4.  if User lost, **should** present option for rematch (sends invite to opponent)
+            2. Completed Game view **should** allow player to review the game move-by-move
 
 
 ## 4. Appendicies

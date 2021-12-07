@@ -52,8 +52,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       ]);
       this.setState({
         moveHistory
-      });
-      this.loadSnapshot(moveHistory.length);
+      }, () => this.loadSnapshot(moveHistory.length));
     } catch(e) {
       this.setState({error: e as Error});
     }
@@ -77,7 +76,7 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
       if(moveHistory) {
         const movesToReplay = moveHistory.slice(i, version);
         for(const move of movesToReplay) {
-          this.game.move(move, {sloppy: true});
+          this.game.move(move);
           this.boards[++i] = this.game.fen();
         }
       }

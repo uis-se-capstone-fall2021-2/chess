@@ -40,7 +40,7 @@ gradle bootRun --args="--spring.profiles.active=development"
 
 ### API Documentation
 
-Interact with the data (app must be running, and since we use the H2 in-memory database for now, data will reset when app restarts)
+Interact with the REST API (java app must be running)
 
 [Swagger WEB UI](http://localhost:8080/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config)
 
@@ -50,9 +50,11 @@ Authenticate by runnng the client app, logging in, and getting a token. Copy the
 
 ### Access Database
 
-database is stored as ./app/database/developmentDb.mv.db
+Interact with the database (java app must be running)
 
 [H2 Console](http://localhost:8080/h2-console)
+
+Database is stored as ./app/database/developmentDb.mv.db
 
 
 ### Tests
