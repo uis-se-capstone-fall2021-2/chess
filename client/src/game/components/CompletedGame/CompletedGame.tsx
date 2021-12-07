@@ -113,8 +113,8 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
                 boardOrientation={this.user.playerId === players[0] ? 'white' : 'black'}
                 arePiecesDraggable={false}
               />
-              <div style={{width, height: 12}}/>
-              <div style={{width, display: 'flex', justifyContent: 'center'}}>
+              <div style={{maxWidth: width, height: 12}}/>
+              <div style={{maxWidth: width, display: 'flex', justifyContent: 'center'}}>
                 <this.Controls/>
               </div>
             </>
@@ -128,8 +128,10 @@ export class CompletedGame extends React.Component<CompletedGame.Props, Complete
     const {game: gameState} = this.props;
     const {error, moveHistory, boardVersion} = this.state;
     const {width} = props;
-    const sx = {width, marginBottom: 1};
-    const whoseTurn = this.game.turn() === 'w' ? gameState.players[0] : gameState.players[1];
+    const sx = {maxWidth: width, marginBottom: 1};
+    const whoseTurn = boardVersion % 2 === 0
+      ? gameState.players[0]
+      : gameState.players[1];
     const winner = gameState.winner;
     const loser = gameState.players.find(playerId => playerId !== winner);
     const userIsWinner = winner === this.user.playerId;
